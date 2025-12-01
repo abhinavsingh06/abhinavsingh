@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Google Tag Manager */}
         <script
@@ -39,18 +40,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         {/* End Google Tag Manager */}
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* Google Tag Manager (noscript) */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-M7SHGMX8"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          />
-        </noscript>
-        {/* End Google Tag Manager (noscript) */}
-        {children}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning>
+        <ThemeProvider>
+          {/* Google Tag Manager (noscript) */}
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-M7SHGMX8"
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+          {/* End Google Tag Manager (noscript) */}
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

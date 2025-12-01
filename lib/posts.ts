@@ -165,3 +165,12 @@ export function getAllPosts(): BlogPost[] {
 export function getFeaturedPosts(): BlogPost[] {
   return blogPosts.filter((post) => post.featured);
 }
+
+export function getCategories(): string[] {
+  const categories = new Set(blogPosts.map((post) => post.category));
+  return Array.from(categories).sort();
+}
+
+export function getPostsByCategory(category: string): BlogPost[] {
+  return blogPosts.filter((post) => post.category === category);
+}
