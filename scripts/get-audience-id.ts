@@ -38,7 +38,11 @@ async function getAudienceId() {
       data.data.forEach((audience, index) => {
         console.log(`${index + 1}. ${audience.name}`);
         console.log(`   ID: ${audience.id}`);
-        console.log(`   Created: ${audience.created_at}\n`);
+        if ("created_at" in audience && audience.created_at) {
+          console.log(`   Created: ${audience.created_at}\n`);
+        } else {
+          console.log();
+        }
       });
 
       // If there's only one audience, show it prominently

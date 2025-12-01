@@ -47,7 +47,6 @@ async function createAudience() {
       console.log("Audience Details:");
       console.log(`  Name: ${data.name}`);
       console.log(`  ID: ${data.id}`);
-      console.log(`  Created: ${data.created_at}`);
     }
   } catch (error) {
     console.error("❌ Unexpected error:", error);
