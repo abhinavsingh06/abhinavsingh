@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
+import Newsletter from "../../components/Newsletter";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -221,6 +222,11 @@ export default function BlogPostPage({
           </div>
         </div>
       </article>
+
+      {/* Newsletter Section */}
+      <section className="px-6 py-16 sm:py-24">
+        <Newsletter />
+      </section>
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white px-6 py-12 dark:border-slate-800 dark:bg-slate-900">

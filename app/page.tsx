@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getFeaturedPosts } from "@/lib/posts";
+import Newsletter from "./components/Newsletter";
 
 export default function Home() {
   const featuredPosts = getFeaturedPosts();
@@ -142,6 +143,11 @@ export default function Home() {
             </Link>
           </div>
         </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="px-6 py-16 sm:py-24">
+        <Newsletter />
       </section>
 
       {/* About Section */}
