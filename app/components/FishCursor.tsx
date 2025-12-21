@@ -10,7 +10,7 @@ export default function FishCursor() {
     vertical: 0,
   });
   const [tailAnimation, setTailAnimation] = useState(0);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
   const smoothRotationRef = useRef({ horizontal: 0, vertical: 0 });
   const lastPositionRef = useRef({ x: 0, y: 0 });
   const velocityRef = useRef({ x: 0, y: 0 });
