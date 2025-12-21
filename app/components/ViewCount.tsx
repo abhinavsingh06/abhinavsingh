@@ -10,27 +10,30 @@ export default function ViewCount({ postId }: ViewCountProps) {
   const [views, setViews] = useState(0);
 
   useEffect(() => {
-    // Load views from localStorage
-    const stored = localStorage.getItem(`views-${postId}`);
-    if (stored) {
-      setViews(parseInt(stored, 10));
-    } else {
-      // Initialize with random views for demo (in production, fetch from API)
-      const initialViews = Math.floor(Math.random() * 500) + 100;
-      setViews(initialViews);
-      localStorage.setItem(`views-${postId}`, initialViews.toString());
-    }
+    // Defer state updates to avoid synchronous setState in effect
+    setTimeout(() => {
+      // Load views from localStorage
+      const stored = localStorage.getItem(`views-${postId}`);
+      if (stored) {
+        setViews(parseInt(stored, 10));
+      } else {
+        // Initialize with random views for demo (in production, fetch from API)
+        const initialViews = Math.floor(Math.random() * 500) + 100;
+        setViews(initialViews);
+        localStorage.setItem(`views-${postId}`, initialViews.toString());
+      }
 
-    // Increment view count (only once per session)
-    const sessionKey = `viewed-${postId}-${new Date().toDateString()}`;
-    if (!sessionStorage.getItem(sessionKey)) {
-      setViews((prev) => {
-        const newViews = prev + 1;
-        localStorage.setItem(`views-${postId}`, newViews.toString());
-        sessionStorage.setItem(sessionKey, "true");
-        return newViews;
-      });
-    }
+      // Increment view count (only once per session)
+      const sessionKey = `viewed-${postId}-${new Date().toDateString()}`;
+      if (!sessionStorage.getItem(sessionKey)) {
+        setViews((prev) => {
+          const newViews = prev + 1;
+          localStorage.setItem(`views-${postId}`, newViews.toString());
+          sessionStorage.setItem(sessionKey, "true");
+          return newViews;
+        });
+      }
+    }, 0);
   }, [postId]);
 
   return (

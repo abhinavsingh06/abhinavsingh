@@ -48,7 +48,7 @@ export default function CodeBlock({ code, language }: CodeBlockProps) {
   };
 
   return (
-    <div className="code-block-wrapper my-8 group">
+    <div className="code-block-wrapper my-8 group px-4 sm:px-6">
       <div className="relative overflow-hidden rounded-xl bg-[#1e1e1e] shadow-2xl transition-all duration-300 hover:shadow-blue-500/20 hover:scale-[1.01]">
         {/* VS Code-like header */}
         <div className="flex items-center gap-2 bg-[#252526] px-4 py-3">

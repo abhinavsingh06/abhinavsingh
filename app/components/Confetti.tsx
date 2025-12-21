@@ -37,7 +37,10 @@ export default function Confetti({ trigger }: ConfettiProps) {
         size: Math.random() * 8 + 4,
       }));
 
-      setConfetti(newConfetti);
+      // Defer state update to avoid synchronous setState in effect
+      setTimeout(() => {
+        setConfetti(newConfetti);
+      }, 0);
 
       const interval = setInterval(() => {
         setConfetti((prev) =>

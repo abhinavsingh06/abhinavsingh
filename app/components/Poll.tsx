@@ -24,17 +24,20 @@ export default function Poll({
   const [hasVoted, setHasVoted] = useState(false);
 
   useEffect(() => {
-    // Check if user has already voted
-    const voted = localStorage.getItem(`poll-${pollId}`);
-    if (voted) {
-      setHasVoted(true);
-      setSelected(voted);
-      // Load saved results
-      const saved = localStorage.getItem(`poll-results-${pollId}`);
-      if (saved) {
-        setOptions(JSON.parse(saved));
+    // Defer state updates to avoid synchronous setState in effect
+    setTimeout(() => {
+      // Check if user has already voted
+      const voted = localStorage.getItem(`poll-${pollId}`);
+      if (voted) {
+        setHasVoted(true);
+        setSelected(voted);
+        // Load saved results
+        const saved = localStorage.getItem(`poll-results-${pollId}`);
+        if (saved) {
+          setOptions(JSON.parse(saved));
+        }
       }
-    }
+    }, 0);
   }, [pollId]);
 
   const handleVote = (optionId: string) => {
