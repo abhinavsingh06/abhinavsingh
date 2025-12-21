@@ -56,13 +56,13 @@ export default function StickyLikeButton({ postId }: StickyLikeButtonProps) {
 
   return (
     <div
-      className="fixed z-50 animate-fade-in-up transition-all duration-300"
+      className="fixed z-50 animate-fade-in-up transition-all duration-300 pointer-events-auto"
       style={{
         right: `${rightOffset}px`,
         top: `${topOffset}px`,
       }}>
-      <div className="ocean-card rounded-2xl p-3 shadow-2xl backdrop-blur-md bg-white/95 dark:bg-blue-950/95 border-2 border-blue-300/50 dark:border-blue-600/50 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300 hover:scale-105">
-        <div className="flex flex-col items-center gap-2">
+      <div className="ocean-card rounded-2xl p-3 shadow-2xl backdrop-blur-md bg-white/95 dark:bg-blue-950/95 border-2 border-blue-300/50 dark:border-blue-600/50 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300 hover:scale-105 pointer-events-auto">
+        <div className="flex flex-col items-center gap-2 pointer-events-auto">
           <LikeButton postId={postId} />
           <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider opacity-80">
             Like

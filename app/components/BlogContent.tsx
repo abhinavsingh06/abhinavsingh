@@ -54,7 +54,10 @@ export default function BlogContent({
           .replace(/`(.+?)`/g, "<code>$1</code>");
         elements.push(
           <ScrollReveal key={keyCounter++} delay={50}>
-            <p dangerouslySetInnerHTML={{ __html: processed }} />
+            <p
+              className="text-[18px] leading-[1.75] mb-6 text-blue-800/90 dark:text-blue-200/90"
+              dangerouslySetInnerHTML={{ __html: processed }}
+            />
           </ScrollReveal>
         );
         paragraphContent = [];
@@ -73,7 +76,7 @@ export default function BlogContent({
                 return (
                   <li
                     key={idx}
-                    className="my-2"
+                    className="my-2 text-[18px] leading-[1.75] text-blue-800/90 dark:text-blue-200/90"
                     dangerouslySetInnerHTML={{ __html: processed }}
                   />
                 );
@@ -90,7 +93,7 @@ export default function BlogContent({
                 return (
                   <li
                     key={idx}
-                    className="my-2"
+                    className="my-2 text-[18px] leading-[1.75] text-blue-800/90 dark:text-blue-200/90"
                     dangerouslySetInnerHTML={{ __html: processed }}
                   />
                 );
@@ -266,7 +269,7 @@ export default function BlogContent({
           <ScrollReveal key={keyCounter++} delay={0}>
             <h2
               id={id}
-              className="mb-3 mt-6 text-2xl font-bold text-blue-900 dark:text-blue-100 sm:text-3xl scroll-mt-24">
+              className="mb-4 mt-8 text-3xl font-bold text-blue-900 dark:text-blue-100 leading-tight scroll-mt-24">
               <span className="text-gradient-animated">{text}</span>
             </h2>
           </ScrollReveal>
@@ -283,7 +286,7 @@ export default function BlogContent({
           <ScrollReveal key={keyCounter++} delay={0}>
             <h3
               id={id}
-              className="mb-2 mt-4 text-xl font-bold text-blue-900 dark:text-blue-100 sm:text-2xl scroll-mt-24">
+              className="mb-3 mt-6 text-2xl font-semibold text-blue-900 dark:text-blue-100 leading-tight scroll-mt-24">
               <span className="text-gradient-animated">{text}</span>
             </h3>
           </ScrollReveal>
@@ -369,7 +372,20 @@ export default function BlogContent({
   }, [headings, onHeadingsExtracted]);
 
   return (
-    <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-headings:text-blue-900 dark:prose-headings:text-blue-100 prose-headings:leading-tight prose-p:text-blue-800/90 dark:prose-p:text-blue-200/90 prose-p:leading-relaxed prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:font-semibold prose-strong:text-blue-900 dark:prose-strong:text-blue-100 prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-li:text-blue-800/90 dark:prose-li:text-blue-200/90">
+    <div
+      className="prose prose-lg max-w-none dark:prose-invert 
+      prose-headings:font-bold prose-headings:text-blue-900 dark:prose-headings:text-blue-100 prose-headings:leading-tight 
+      prose-p:text-[18px] prose-p:leading-[1.75] prose-p:mb-6 prose-p:text-blue-800/90 dark:prose-p:text-blue-200/90 
+      prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:font-semibold 
+      prose-strong:text-blue-900 dark:prose-strong:text-blue-100 
+      prose-code:text-[16px] prose-code:text-blue-600 dark:prose-code:text-blue-400 
+      prose-li:text-[18px] prose-li:leading-[1.75] prose-li:text-blue-800/90 dark:prose-li:text-blue-200/90 prose-li:mb-2
+      prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-8
+      prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-8 prose-h2:font-bold
+      prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-6 prose-h3:font-semibold
+      prose-h4:text-xl prose-h4:mb-2 prose-h4:mt-4
+      prose-blockquote:text-lg prose-blockquote:leading-relaxed prose-blockquote:border-l-4 prose-blockquote:border-blue-300 dark:prose-blockquote:border-blue-600
+      prose-pre:text-[15px] prose-pre:leading-relaxed">
       {elements}
     </div>
   );

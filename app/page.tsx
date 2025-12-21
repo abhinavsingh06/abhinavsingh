@@ -15,7 +15,7 @@ export default function Home() {
       <BackgroundFish />
       <NatureGraphics />
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-blue-200/30 bg-white/70 backdrop-blur-md dark:border-blue-900/30 dark:bg-blue-950/70">
+      <nav className="fixed top-[4px] left-0 right-0 z-50 border-b border-blue-200/30 bg-white/70 backdrop-blur-md dark:border-blue-900/30 dark:bg-blue-950/70">
         <div className="mx-auto max-w-6xl px-6 py-4">
           <div className="flex items-center justify-between">
             <Link
@@ -45,7 +45,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden px-6 py-24 sm:py-32">
+      <section className="relative overflow-hidden px-6 pt-24 pb-24 sm:pt-32 sm:pb-32">
         <div className="mx-auto max-w-4xl text-center">
           {/* <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/50 px-4 py-2 text-sm text-slate-600 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400 animate-fade-in-up">
             <span className="relative flex h-2 w-2">

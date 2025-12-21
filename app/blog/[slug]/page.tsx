@@ -123,12 +123,12 @@ export default function BlogPostPage({
                 <h1 className="mb-6 text-4xl font-bold leading-tight text-blue-900 sm:text-5xl dark:text-blue-100">
                   <span className="text-gradient-animated">{post.title}</span>
                 </h1>
-                <p className="text-xl leading-relaxed text-blue-800/80 dark:text-blue-200/80">
+                <p className="text-[19px] leading-[1.7] text-blue-800/90 dark:text-blue-200/90 mb-6">
                   {post.excerpt}
                 </p>
 
                 {/* Decorative ocean line */}
-                <div className="mt-8 h-px bg-gradient-to-r from-transparent via-blue-300 to-transparent dark:via-blue-700"></div>
+                <div className="mt-8 h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent dark:via-blue-600 shadow-sm"></div>
               </header>
             </ScrollReveal>
 

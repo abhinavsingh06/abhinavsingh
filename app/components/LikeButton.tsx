@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface LikeButtonProps {
   postId: string;
@@ -13,29 +13,32 @@ export default function LikeButton({
   initialLikes = 0,
   initialLiked = false,
 }: LikeButtonProps) {
-  // Lazy initialization from localStorage
-  const getInitialState = () => {
-    if (typeof window === "undefined") {
-      return { liked: initialLiked, likes: initialLikes };
-    }
-    const stored = localStorage.getItem(`like-${postId}`);
-    if (stored) {
-      try {
-        const data = JSON.parse(stored);
-        return { liked: data.liked || false, likes: data.likes || 0 };
-      } catch {
-        return { liked: initialLiked, likes: initialLikes };
-      }
-    }
-    return { liked: initialLiked, likes: initialLikes };
-  };
-
-  const initialState = getInitialState();
-  const [liked, setLiked] = useState(initialState.liked);
-  const [likes, setLikes] = useState(initialState.likes);
+  // Start with default values to avoid hydration mismatch
+  const [liked, setLiked] = useState(initialLiked);
+  const [likes, setLikes] = useState(initialLikes);
   const [animating, setAnimating] = useState(false);
 
-  const handleLike = () => {
+  // Load from localStorage only on client after hydration
+  useEffect(() => {
+    // Defer to next tick to avoid hydration mismatch
+    setTimeout(() => {
+      const stored = localStorage.getItem(`like-${postId}`);
+      if (stored) {
+        try {
+          const data = JSON.parse(stored);
+          setLiked(data.liked || false);
+          setLikes(data.likes || 0);
+        } catch {
+          // Keep default values if parsing fails
+        }
+      }
+    }, 0);
+  }, [postId]);
+
+  const handleLike = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (liked) {
       // Unlike
       setLikes((prev: number) => Math.max(0, prev - 1));
@@ -48,21 +51,40 @@ export default function LikeButton({
       setTimeout(() => setAnimating(false), 600);
     }
 
-    // Save to localStorage
-    localStorage.setItem(
-      `like-${postId}`,
-      JSON.stringify({ liked: !liked, likes: liked ? likes - 1 : likes + 1 })
-    );
+    // Save to localStorage with unique user identifier
+    // Generate a unique user ID if it doesn't exist
+    let userId = localStorage.getItem("user-id");
+    if (!userId) {
+      userId = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem("user-id", userId);
+    }
+
+    // Store like data with user ID to ensure uniqueness
+    const likeData = {
+      liked: !liked,
+      likes: liked ? likes - 1 : likes + 1,
+      userId: userId,
+      timestamp: Date.now(),
+    };
+
+    localStorage.setItem(`like-${postId}`, JSON.stringify(likeData));
+
+    // Also store in a global likes object to track all user likes
+    const allLikes = JSON.parse(localStorage.getItem("all-likes") || "{}");
+    allLikes[postId] = likeData;
+    localStorage.setItem("all-likes", JSON.stringify(allLikes));
   };
 
   return (
     <button
       onClick={handleLike}
-      className={`group inline-flex items-center gap-2 rounded-full px-5 py-3 transition-all duration-300 cursor-pointer ${
+      type="button"
+      className={`group inline-flex items-center gap-2 rounded-full px-5 py-3 transition-all duration-300 cursor-pointer pointer-events-auto relative z-[100] ${
         liked
           ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/40 scale-105"
           : "bg-gradient-to-r from-blue-400 to-cyan-400 text-white hover:from-blue-500 hover:to-cyan-500 shadow-md shadow-blue-400/30 hover:shadow-lg hover:shadow-blue-500/40"
-      } ${animating ? "scale-110" : "hover:scale-110 active:scale-95"}`}>
+      } ${animating ? "scale-110" : "hover:scale-110 active:scale-95"}`}
+      aria-label={liked ? "Unlike this post" : "Like this post"}>
       <svg
         className={`h-6 w-6 transition-all duration-300 ${
           animating ? "animate-bounce" : ""

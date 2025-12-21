@@ -104,7 +104,7 @@ export default function CodeBlock({ code, language }: CodeBlockProps) {
         {/* Code content */}
         <div className="overflow-x-auto bg-[#1e1e1e]">
           <pre
-            className="m-0 p-6 sm:p-8 text-sm leading-relaxed"
+            className="m-0 px-8 py-6 sm:px-10 sm:py-8 text-sm leading-relaxed"
             suppressHydrationWarning>
             <code
               className={`language-${normalizedLanguage}`}

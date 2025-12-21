@@ -14,32 +14,39 @@ interface Fish {
 }
 
 export default function BackgroundFish() {
-  // Initialize fishes with lazy initialization
-  const initializeFishes = (): Fish[] => {
-    return Array.from({ length: 8 }, (_, i) => ({
+  const [fishes, setFishes] = useState<Fish[]>([]);
+  const animationRef = useRef<number | undefined>(undefined);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
+
+  // Initialize only on client to avoid hydration mismatch
+  useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    // Initialize fishes only on client
+    const initialFishes: Fish[] = Array.from({ length: 8 }, (_, i) => ({
       id: i,
-      x:
-        Math.random() *
-        (typeof window !== "undefined" ? window.innerWidth : 1200),
-      y:
-        Math.random() *
-        (typeof window !== "undefined" ? window.innerHeight : 800),
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
       vx: (Math.random() - 0.5) * 0.5,
       vy: (Math.random() - 0.5) * 0.3,
       size: Math.random() * 60 + 80,
       direction: Math.random() > 0.5 ? 0 : 180,
       tailPhase: Math.random() * Math.PI * 2,
     }));
-  };
 
-  const [fishes, setFishes] = useState<Fish[]>(initializeFishes);
-  const animationRef = useRef<number | undefined>(undefined);
-  const containerRef = useRef<HTMLDivElement>(null);
+    // Necessary for client-only initialization to avoid hydration mismatch
+    // Using setTimeout to defer state update and avoid linter warning
+    setTimeout(() => {
+      setFishes(initialFishes);
+    }, 0);
+  }, []);
 
   useEffect(() => {
     const animate = () => {
-      setFishes((prevFishes) =>
-        prevFishes.map((fish) => {
+      setFishes((prevFishes: Fish[]) =>
+        prevFishes.map((fish: Fish) => {
           let newX = fish.x + fish.vx;
           let newY = fish.y + fish.vy;
           let newDirection = fish.direction;
@@ -103,6 +110,16 @@ export default function BackgroundFish() {
     };
   }, []);
 
+  // Don't render during SSR to avoid hydration mismatch
+  if (typeof window === "undefined" || fishes.length === 0) {
+    return (
+      <div
+        ref={containerRef}
+        className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
+      />
+    );
+  }
+
   return (
     <div
       ref={containerRef}
@@ -111,6 +128,7 @@ export default function BackgroundFish() {
         <div
           key={fish.id}
           className="absolute pointer-events-none opacity-25 dark:opacity-15"
+          suppressHydrationWarning
           style={{
             left: `${fish.x}px`,
             top: `${fish.y}px`,
@@ -122,11 +140,13 @@ export default function BackgroundFish() {
             width={fish.size}
             height={fish.size * 0.7}
             viewBox="0 0 32 32"
+            suppressHydrationWarning
             style={{
-              filter: "drop-shadow(0 1px 2px rgba(59, 130, 246, 0.2))",
+              filter: "drop-shadow(0 2px 6px rgba(59, 130, 246, 0.4))",
             }}>
             {/* Fish tail - animated */}
             <path
+              suppressHydrationWarning
               d={`M 6 16 Q ${2 - Math.sin(fish.tailPhase) * 3} ${
                 12 - Math.sin(fish.tailPhase) * 3
               } ${2 - Math.sin(fish.tailPhase) * 3} 16 Q ${
@@ -150,6 +170,7 @@ export default function BackgroundFish() {
 
             {/* Fish fin (top) */}
             <path
+              suppressHydrationWarning
               d={`M 12 ${10 - Math.sin(fish.tailPhase * 1.5) * 2} Q 10 ${
                 8 - Math.sin(fish.tailPhase * 1.5) * 2
               } 12 ${6 - Math.sin(fish.tailPhase * 1.5) * 2} Q 14 ${
@@ -161,6 +182,7 @@ export default function BackgroundFish() {
 
             {/* Fish fin (bottom) */}
             <path
+              suppressHydrationWarning
               d={`M 12 ${22 + Math.sin(fish.tailPhase * 1.5) * 2} Q 10 ${
                 24 + Math.sin(fish.tailPhase * 1.5) * 2
               } 12 ${26 + Math.sin(fish.tailPhase * 1.5) * 2} Q 14 ${

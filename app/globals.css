@@ -53,9 +53,14 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  font-size: 18px;
+  line-height: 1.75;
   transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
   cursor: none !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Show text cursor for text inputs and textareas only when focused */
