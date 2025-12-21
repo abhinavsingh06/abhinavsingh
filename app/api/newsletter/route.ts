@@ -24,7 +24,14 @@ export async function POST(request: NextRequest) {
     if (!apiKey) {
       console.error("RESEND_API_KEY is not configured");
       return NextResponse.json(
-        { error: "Newsletter service is not configured" },
+        {
+          error:
+            "Newsletter service is not configured properly. Missing RESEND_API_KEY environment variable. Please add it to your production environment variables.",
+          details:
+            process.env.NODE_ENV === "development"
+              ? "Add RESEND_API_KEY to your .env.local file"
+              : "Add RESEND_API_KEY to your hosting platform's environment variables (e.g., Vercel, Netlify)",
+        },
         { status: 500 }
       );
     }
@@ -35,7 +42,14 @@ export async function POST(request: NextRequest) {
     if (!audienceId) {
       console.error("RESEND_AUDIENCE_ID is not configured");
       return NextResponse.json(
-        { error: "Newsletter service is not configured" },
+        {
+          error:
+            "Newsletter service is not configured properly. Missing RESEND_AUDIENCE_ID environment variable. Please add it to your production environment variables.",
+          details:
+            process.env.NODE_ENV === "development"
+              ? "Add RESEND_AUDIENCE_ID to your .env.local file"
+              : "Add RESEND_AUDIENCE_ID to your hosting platform's environment variables (e.g., Vercel, Netlify)",
+        },
         { status: 500 }
       );
     }
