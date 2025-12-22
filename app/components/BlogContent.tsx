@@ -55,7 +55,7 @@ export default function BlogContent({
         elements.push(
           <ScrollReveal key={keyCounter++} delay={50}>
             <p
-              className="text-[18px] leading-[1.75] mb-6 text-blue-800/90 dark:text-blue-200/90"
+              className="text-base sm:text-lg leading-[1.75] mb-4 sm:mb-6 text-blue-800/90 dark:text-blue-200/90"
               dangerouslySetInnerHTML={{ __html: processed }}
             />
           </ScrollReveal>
@@ -76,7 +76,7 @@ export default function BlogContent({
                 return (
                   <li
                     key={idx}
-                    className="my-2 text-[18px] leading-[1.75] text-blue-800/90 dark:text-blue-200/90"
+                    className="my-2 text-base sm:text-lg leading-[1.75] text-blue-800/90 dark:text-blue-200/90"
                     dangerouslySetInnerHTML={{ __html: processed }}
                   />
                 );
@@ -93,7 +93,7 @@ export default function BlogContent({
                 return (
                   <li
                     key={idx}
-                    className="my-2 text-[18px] leading-[1.75] text-blue-800/90 dark:text-blue-200/90"
+                    className="my-2 text-base sm:text-lg leading-[1.75] text-blue-800/90 dark:text-blue-200/90"
                     dangerouslySetInnerHTML={{ __html: processed }}
                   />
                 );
@@ -252,7 +252,7 @@ export default function BlogContent({
           <ScrollReveal key={keyCounter++} delay={0}>
             <h1
               id={id}
-              className="mb-4 mt-8 text-3xl font-bold text-blue-900 dark:text-blue-100 sm:text-4xl scroll-mt-24">
+              className="mb-4 mt-6 sm:mt-8 text-2xl sm:text-3xl md:text-4xl font-bold text-blue-900 dark:text-blue-100 scroll-mt-20 sm:scroll-mt-24">
               <span className="text-gradient-animated">{text}</span>
             </h1>
           </ScrollReveal>
@@ -269,7 +269,7 @@ export default function BlogContent({
           <ScrollReveal key={keyCounter++} delay={0}>
             <h2
               id={id}
-              className="mb-4 mt-8 text-3xl font-bold text-blue-900 dark:text-blue-100 leading-tight scroll-mt-24">
+              className="mb-3 sm:mb-4 mt-6 sm:mt-8 text-xl sm:text-2xl md:text-3xl font-bold text-blue-900 dark:text-blue-100 leading-tight scroll-mt-20 sm:scroll-mt-24">
               <span className="text-gradient-animated">{text}</span>
             </h2>
           </ScrollReveal>
@@ -286,7 +286,7 @@ export default function BlogContent({
           <ScrollReveal key={keyCounter++} delay={0}>
             <h3
               id={id}
-              className="mb-3 mt-6 text-2xl font-semibold text-blue-900 dark:text-blue-100 leading-tight scroll-mt-24">
+              className="mb-2 sm:mb-3 mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl font-semibold text-blue-900 dark:text-blue-100 leading-tight scroll-mt-20 sm:scroll-mt-24">
               <span className="text-gradient-animated">{text}</span>
             </h3>
           </ScrollReveal>

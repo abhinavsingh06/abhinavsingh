@@ -79,14 +79,14 @@ export default function LikeButton({
     <button
       onClick={handleLike}
       type="button"
-      className={`group inline-flex items-center gap-2 rounded-full px-5 py-3 transition-all duration-300 cursor-pointer pointer-events-auto relative z-[100] ${
+      className={`group inline-flex items-center gap-1 sm:gap-1.5 md:gap-2 rounded-full px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-5 md:py-3 transition-all duration-300 cursor-pointer pointer-events-auto relative z-[100] touch-manipulation ${
         liked
           ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/40 scale-105"
           : "bg-gradient-to-r from-blue-400 to-cyan-400 text-white hover:from-blue-500 hover:to-cyan-500 shadow-md shadow-blue-400/30 hover:shadow-lg hover:shadow-blue-500/40"
       } ${animating ? "scale-110" : "hover:scale-110 active:scale-95"}`}
       aria-label={liked ? "Unlike this post" : "Like this post"}>
       <svg
-        className={`h-6 w-6 transition-all duration-300 ${
+        className={`h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-6 md:w-6 transition-all duration-300 flex-shrink-0 ${
           animating ? "animate-bounce" : ""
         } ${liked ? "fill-current" : ""}`}
         fill={liked ? "currentColor" : "none"}
@@ -99,7 +99,9 @@ export default function LikeButton({
           d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
         />
       </svg>
-      <span className="font-bold text-base">{likes}</span>
+      <span className="font-bold text-xs sm:text-sm md:text-base whitespace-nowrap">
+        {likes}
+      </span>
     </button>
   );
 }

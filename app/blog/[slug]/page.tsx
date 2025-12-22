@@ -43,24 +43,24 @@ export default function BlogPostPage({
       <StickyLikeButton postId={post.slug} />
       {/* Navigation */}
       <nav className="fixed top-[4px] left-0 right-0 z-50 border-b border-blue-200/30 bg-white/70 backdrop-blur-md dark:border-blue-900/30 dark:bg-blue-950/70">
-        <div className="mx-auto max-w-6xl px-6 py-4">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <Link
               href="/"
-              className="text-xl font-bold text-blue-900 transition-all hover:scale-105 dark:text-blue-100">
+              className="text-lg sm:text-xl font-bold text-blue-900 transition-all hover:scale-105 dark:text-blue-100">
               <span className="text-gradient-animated">Abhinav Singh</span>
             </Link>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link
                 href="/blog"
-                className="group relative px-4 py-2 text-sm font-semibold text-blue-700 transition-all hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
+                className="group relative px-2 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-blue-700 transition-all hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
                 <span className="relative z-10">Blog</span>
                 <span className="absolute inset-0 rounded-lg bg-blue-100/50 opacity-0 transition-all duration-300 group-hover:opacity-100 dark:bg-blue-900/30"></span>
                 <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <Link
                 href="/#about"
-                className="group relative px-4 py-2 text-sm font-semibold text-blue-700 transition-all hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
+                className="group relative px-2 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-blue-700 transition-all hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 hidden sm:block">
                 <span className="relative z-10">About</span>
                 <span className="absolute inset-0 rounded-lg bg-blue-100/50 opacity-0 transition-all duration-300 group-hover:opacity-100 dark:bg-blue-900/30"></span>
                 <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300 group-hover:w-full"></span>
@@ -72,16 +72,16 @@ export default function BlogPostPage({
       </nav>
 
       {/* Article */}
-      <article className="px-6 pt-24 pb-16 sm:pt-32 sm:pb-24">
+      <article className="px-4 sm:px-6 pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-24">
         <div className="mx-auto max-w-5xl">
           {/* Content Card */}
-          <div className="ocean-card rounded-2xl p-8 sm:p-12 shadow-lg relative z-10">
+          <div className="ocean-card rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 shadow-lg relative z-10">
             {/* Back link */}
             <Link
               href="/blog"
-              className="group mb-8 inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-blue-700 transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 hover:scale-105 hover:shadow-md dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:border-blue-500 dark:hover:bg-blue-900/50 relative z-10">
+              className="group mb-6 sm:mb-8 inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-blue-700 transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 hover:scale-105 hover:shadow-md dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:border-blue-500 dark:hover:bg-blue-900/50 relative z-10">
               <svg
-                className="h-4 w-4 transition-transform group-hover:-translate-x-1"
+                className="h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:-translate-x-1"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -92,43 +92,44 @@ export default function BlogPostPage({
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              Back to blog
+              <span className="hidden sm:inline">Back to blog</span>
+              <span className="sm:hidden">Back</span>
             </Link>
 
             {/* Header */}
             <ScrollReveal>
-              <header className="mb-12">
-                <div className="mb-6 flex flex-wrap items-center gap-3">
-                  <span className="rounded-full bg-gradient-to-r from-blue-100 to-cyan-100 px-4 py-1.5 text-xs font-semibold text-blue-700 dark:from-blue-900/30 dark:to-cyan-900/30 dark:text-blue-400">
+              <header className="mb-8 sm:mb-12">
+                <div className="mb-4 sm:mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
+                  <span className="rounded-full bg-gradient-to-r from-blue-100 to-cyan-100 px-3 sm:px-4 py-1 sm:py-1.5 text-xs font-semibold text-blue-700 dark:from-blue-900/30 dark:to-cyan-900/30 dark:text-blue-400">
                     {post.category}
                   </span>
-                  <time className="text-sm text-blue-600 dark:text-blue-400">
+                  <time className="text-xs sm:text-sm text-blue-600 dark:text-blue-400">
                     {new Date(post.date).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
                     })}
                   </time>
-                  <span className="text-sm text-blue-600 dark:text-blue-400">
+                  <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hidden sm:inline">
                     •
                   </span>
-                  <span className="text-sm text-blue-600 dark:text-blue-400">
+                  <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400">
                     {post.readTime}
                   </span>
-                  <span className="text-sm text-blue-600 dark:text-blue-400">
+                  <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hidden sm:inline">
                     •
                   </span>
                   <ViewCount postId={post.slug} />
                 </div>
-                <h1 className="mb-6 text-4xl font-bold leading-tight text-blue-900 sm:text-5xl dark:text-blue-100">
+                <h1 className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-blue-900 dark:text-blue-100">
                   <span className="text-gradient-animated">{post.title}</span>
                 </h1>
-                <p className="text-[19px] leading-[1.7] text-blue-800/90 dark:text-blue-200/90 mb-6">
+                <p className="text-base sm:text-lg md:text-[19px] leading-[1.7] text-blue-800/90 dark:text-blue-200/90 mb-4 sm:mb-6">
                   {post.excerpt}
                 </p>
 
                 {/* Decorative ocean line */}
-                <div className="mt-8 h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent dark:via-blue-600 shadow-sm"></div>
+                <div className="mt-6 sm:mt-8 h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent dark:via-blue-600 shadow-sm"></div>
               </header>
             </ScrollReveal>
 
@@ -139,12 +140,12 @@ export default function BlogPostPage({
             <ReadingCelebration />
 
             {/* Footer */}
-            <div className="mt-12 border-t border-blue-200 pt-8 dark:border-blue-800">
+            <div className="mt-8 sm:mt-12 border-t border-blue-200 pt-6 sm:pt-8 dark:border-blue-800">
               <Link
                 href="/blog"
-                className="group inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-6 py-3 text-base font-semibold text-blue-600 transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:shadow-lg hover:scale-105 hover:shadow-blue-500/20 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-400 dark:hover:border-blue-500 dark:hover:bg-blue-900/50 relative z-10">
+                className="group inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-blue-600 transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:shadow-lg hover:scale-105 hover:shadow-blue-500/20 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-400 dark:hover:border-blue-500 dark:hover:bg-blue-900/50 relative z-10">
                 <svg
-                  className="h-5 w-5 transition-transform group-hover:-translate-x-1"
+                  className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:-translate-x-1"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24">
@@ -155,7 +156,8 @@ export default function BlogPostPage({
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                Back to all posts
+                <span className="hidden sm:inline">Back to all posts</span>
+                <span className="sm:hidden">Back</span>
               </Link>
             </div>
           </div>
@@ -163,14 +165,14 @@ export default function BlogPostPage({
       </article>
 
       {/* Newsletter Section */}
-      <section className="px-6 py-16 sm:py-24">
+      <section className="px-4 sm:px-6 py-12 sm:py-16 md:py-24">
         <Newsletter />
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-blue-200/50 bg-white/70 px-6 py-12 dark:border-blue-900/50 dark:bg-blue-950/70">
+      <footer className="border-t border-blue-200/50 bg-white/70 px-4 sm:px-6 py-8 sm:py-12 dark:border-blue-900/50 dark:bg-blue-950/70">
         <div className="mx-auto max-w-6xl text-center">
-          <p className="text-blue-700 dark:text-blue-300">
+          <p className="text-sm sm:text-base text-blue-700 dark:text-blue-300">
             © {new Date().getFullYear()} Abhinav Singh. All rights reserved.
           </p>
         </div>

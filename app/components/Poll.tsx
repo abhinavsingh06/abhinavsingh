@@ -60,11 +60,11 @@ export default function Poll({
   const totalVotes = options.reduce((sum, opt) => sum + opt.votes, 0);
 
   return (
-    <div className="ocean-card my-8 rounded-xl p-6 shadow-lg">
-      <h3 className="mb-4 text-xl font-bold text-blue-900 dark:text-blue-100">
+    <div className="ocean-card my-6 sm:my-8 rounded-xl p-4 sm:p-6 shadow-lg">
+      <h3 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-blue-900 dark:text-blue-100">
         {question}
       </h3>
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         {options.map((option) => {
           const percentage =
             totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
@@ -75,14 +75,14 @@ export default function Poll({
               key={option.id}
               onClick={() => handleVote(option.id)}
               disabled={hasVoted}
-              className={`w-full rounded-lg border-2 p-4 text-left transition-all duration-300 ${
+              className={`w-full rounded-lg border-2 p-3 sm:p-4 text-left transition-all duration-300 ${
                 isSelected
                   ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
                   : "border-blue-200 bg-white hover:border-blue-300 hover:bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/50 dark:hover:bg-blue-900/30"
               } ${hasVoted ? "cursor-default" : "cursor-pointer"}`}>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <span
-                  className={`font-medium ${
+                  className={`text-sm sm:text-base font-medium ${
                     isSelected
                       ? "text-blue-700 dark:text-blue-300"
                       : "text-blue-800 dark:text-blue-200"
@@ -90,13 +90,13 @@ export default function Poll({
                   {option.text}
                 </span>
                 {hasVoted && (
-                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                  <span className="text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 flex-shrink-0">
                     {percentage.toFixed(1)}%
                   </span>
                 )}
               </div>
               {hasVoted && (
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-blue-200 dark:bg-blue-900">
+                <div className="mt-2 h-1.5 sm:h-2 overflow-hidden rounded-full bg-blue-200 dark:bg-blue-900">
                   <div
                     className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-500"
                     style={{ width: `${percentage}%` }}
@@ -108,7 +108,7 @@ export default function Poll({
         })}
       </div>
       {hasVoted && (
-        <p className="mt-4 text-sm text-blue-600 dark:text-blue-400">
+        <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-blue-600 dark:text-blue-400">
           {totalVotes} {totalVotes === 1 ? "vote" : "votes"}
         </p>
       )}

@@ -91,16 +91,16 @@ export default function CodeRunner({ code, language }: CodeRunnerProps) {
   };
 
   return (
-    <div className="my-8 overflow-hidden rounded-xl border-2 border-blue-200/50 dark:border-blue-800/50 bg-[#1e1e1e] shadow-xl">
+    <div className="my-6 sm:my-8 overflow-hidden rounded-lg sm:rounded-xl border-2 border-blue-200/50 dark:border-blue-800/50 bg-[#1e1e1e] shadow-xl">
       {/* Header with Run button */}
-      <div className="flex items-center justify-between border-b border-slate-700 bg-[#252526] px-4 py-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+      <div className="flex items-center justify-between border-b border-slate-700 bg-[#252526] px-3 sm:px-4 py-2 sm:py-3">
+        <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-300 truncate flex-1 mr-2">
           {language}
         </span>
         <button
           onClick={runCode}
           disabled={isRunning}
-          className="ocean-button rounded px-4 py-1.5 text-xs font-semibold text-white transition-all disabled:opacity-50">
+          className="ocean-button rounded px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold text-white transition-all disabled:opacity-50 whitespace-nowrap flex-shrink-0">
           {isRunning ? "Running..." : "▶ Run Code"}
         </button>
       </div>
@@ -108,7 +108,7 @@ export default function CodeRunner({ code, language }: CodeRunnerProps) {
       {/* Code display */}
       <div className="overflow-x-auto bg-[#1e1e1e]">
         <pre
-          className="m-0 px-8 py-6 sm:px-10 sm:py-8 text-sm leading-relaxed"
+          className="m-0 px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 text-xs sm:text-sm leading-relaxed"
           suppressHydrationWarning>
           <code
             className={`language-${normalizedLanguage}`}
@@ -120,12 +120,12 @@ export default function CodeRunner({ code, language }: CodeRunnerProps) {
 
       {/* Output section */}
       {(output || error) && (
-        <div className="border-t border-slate-700 bg-[#252526] p-4">
-          <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <div className="border-t border-slate-700 bg-[#252526] p-3 sm:p-4">
+          <div className="mb-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">
             Output:
           </div>
           <pre
-            className={`overflow-x-auto rounded bg-[#1e1e1e] p-4 text-sm ${
+            className={`overflow-x-auto rounded bg-[#1e1e1e] p-3 sm:p-4 text-xs sm:text-sm ${
               error ? "text-red-400" : "text-green-400"
             }`}>
             {error || output}

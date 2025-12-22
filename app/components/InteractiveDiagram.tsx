@@ -29,13 +29,13 @@ export default function InteractiveDiagram({
   };
 
   return (
-    <div className="ocean-card my-8 rounded-xl p-6 shadow-lg">
+    <div className="ocean-card my-6 sm:my-8 rounded-xl p-4 sm:p-6 shadow-lg">
       {title && (
-        <h3 className="mb-6 text-xl font-bold text-blue-900 dark:text-blue-100">
+        <h3 className="mb-4 sm:mb-6 text-lg sm:text-xl font-bold text-blue-900 dark:text-blue-100">
           {title}
         </h3>
       )}
-      <div className="relative h-96 w-full overflow-hidden rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50">
+      <div className="relative h-64 sm:h-80 md:h-96 w-full overflow-hidden rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50">
         <svg
           className="h-full w-full"
           viewBox="0 0 400 300"
@@ -109,8 +109,8 @@ export default function InteractiveDiagram({
         </svg>
       </div>
       {selectedNode && (
-        <div className="mt-4 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/30">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+        <div className="mt-3 sm:mt-4 rounded-lg bg-blue-50 p-3 sm:p-4 dark:bg-blue-900/30">
+          <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-200">
             Selected:{" "}
             <strong>{nodes.find((n) => n.id === selectedNode)?.label}</strong>
           </p>

@@ -48,28 +48,28 @@ export default function CodeBlock({ code, language }: CodeBlockProps) {
   };
 
   return (
-    <div className="code-block-wrapper my-8 group px-4 sm:px-6">
-      <div className="relative overflow-hidden rounded-xl bg-[#1e1e1e] shadow-2xl transition-all duration-300 hover:shadow-blue-500/20 hover:scale-[1.01]">
+    <div className="code-block-wrapper my-6 sm:my-8 group">
+      <div className="relative overflow-hidden rounded-lg sm:rounded-xl bg-[#1e1e1e] shadow-2xl transition-all duration-300 hover:shadow-blue-500/20 hover:scale-[1.01]">
         {/* VS Code-like header */}
-        <div className="flex items-center gap-2 bg-[#252526] px-4 py-3">
-          <div className="flex gap-1.5">
-            <div className="h-3 w-3 rounded-full bg-[#ff5f56] shadow-sm"></div>
-            <div className="h-3 w-3 rounded-full bg-[#ffbd2e] shadow-sm"></div>
-            <div className="h-3 w-3 rounded-full bg-[#27c93f] shadow-sm"></div>
+        <div className="flex items-center gap-1 sm:gap-2 bg-[#252526] px-3 sm:px-4 py-2 sm:py-3">
+          <div className="flex gap-1 sm:gap-1.5 flex-shrink-0">
+            <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-[#ff5f56] shadow-sm"></div>
+            <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-[#ffbd2e] shadow-sm"></div>
+            <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-[#27c93f] shadow-sm"></div>
           </div>
-          <div className="ml-3 flex-1 text-center">
-            <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+          <div className="ml-2 sm:ml-3 flex-1 text-center min-w-0">
+            <span className="text-[10px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider truncate block">
               {normalizedLanguage}
             </span>
           </div>
           <button
             onClick={handleCopy}
-            className="ml-auto flex items-center gap-2 rounded px-3 py-1.5 text-xs font-medium text-slate-400 transition-all hover:bg-[#3e3e3e] hover:text-slate-200 active:scale-95"
+            className="ml-auto flex items-center gap-1 sm:gap-2 rounded px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium text-slate-400 transition-all hover:bg-[#3e3e3e] hover:text-slate-200 active:scale-95 flex-shrink-0"
             title="Copy code">
             {copied ? (
               <>
                 <svg
-                  className="h-4 w-4"
+                  className="h-3 w-3 sm:h-4 sm:w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24">
@@ -80,12 +80,12 @@ export default function CodeBlock({ code, language }: CodeBlockProps) {
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                <span>Copied!</span>
+                <span className="hidden sm:inline">Copied!</span>
               </>
             ) : (
               <>
                 <svg
-                  className="h-4 w-4"
+                  className="h-3 w-3 sm:h-4 sm:w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24">
@@ -96,7 +96,7 @@ export default function CodeBlock({ code, language }: CodeBlockProps) {
                     d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                   />
                 </svg>
-                <span>Copy</span>
+                <span className="hidden sm:inline">Copy</span>
               </>
             )}
           </button>
@@ -104,7 +104,7 @@ export default function CodeBlock({ code, language }: CodeBlockProps) {
         {/* Code content */}
         <div className="overflow-x-auto bg-[#1e1e1e]">
           <pre
-            className="m-0 px-8 py-6 sm:px-10 sm:py-8 text-sm leading-relaxed"
+            className="m-0 px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 text-xs sm:text-sm leading-relaxed"
             suppressHydrationWarning>
             <code
               className={`language-${normalizedLanguage}`}
