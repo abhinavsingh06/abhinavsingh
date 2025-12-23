@@ -28,37 +28,58 @@ export async function POST(request: NextRequest) {
 
     // Send subscription to Web3Forms
     try {
-      // Web3Forms supports both JSON and form-data formats
-      // Using JSON format for better reliability
-      const payload = {
-        access_key: accessKey,
+      // Web3Forms expects form-urlencoded format (standard format)
+      const formData = new URLSearchParams();
+      formData.append("access_key", accessKey);
+      formData.append("email", email);
+      formData.append("subject", "New Newsletter Subscription");
+      formData.append("from_name", "Blog Newsletter");
+      formData.append("message", `New newsletter subscription from: ${email}`);
+      formData.append("success_url", successUrl);
+
+      console.log("Sending to Web3Forms:", {
+        url: "https://api.web3forms.com/submit",
+        accessKey: accessKey.substring(0, 10) + "...",
         email: email,
-        subject: "New Newsletter Subscription",
-        from_name: "Blog Newsletter",
-        message: `New newsletter subscription from: ${email}`,
-        success_url: successUrl,
-      };
+      });
 
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify(payload),
+        body: formData.toString(),
       });
 
       const responseText = await response.text();
-      let responseData;
+      console.log("Web3Forms response:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: responseText.substring(0, 200), // First 200 chars
+      });
 
+      let responseData;
       try {
         responseData = JSON.parse(responseText);
       } catch {
-        // If response is not JSON, log it for debugging
+        // If response is not JSON, it might be HTML or plain text
         console.error("Web3Forms non-JSON response:", responseText);
+        // Check if it's an HTML error page
+        if (
+          responseText.includes("<!DOCTYPE") ||
+          responseText.includes("<html")
+        ) {
+          return NextResponse.json(
+            {
+              error: "Service temporarily unavailable. Please try again later.",
+            },
+            { status: 503 }
+          );
+        }
         responseData = { success: false, message: responseText };
       }
 
+      // Check response status
       if (!response.ok) {
         console.error("Web3Forms API error:", {
           status: response.status,
@@ -85,6 +106,16 @@ export async function POST(request: NextRequest) {
           );
         }
 
+        if (response.status === 401 || response.status === 403) {
+          return NextResponse.json(
+            {
+              error:
+                "Invalid access key. Please contact the site administrator.",
+            },
+            { status: 500 }
+          );
+        }
+
         throw new Error(
           responseData.message || `Web3Forms returned status ${response.status}`
         );
@@ -93,7 +124,11 @@ export async function POST(request: NextRequest) {
       // Web3Forms returns { success: true } on success
       if (responseData.success === false) {
         console.error("Web3Forms returned success: false", responseData);
-        throw new Error(responseData.message || "Subscription failed");
+        const errorMessage =
+          responseData.message ||
+          responseData.error ||
+          "Subscription failed. Please try again.";
+        throw new Error(errorMessage);
       }
 
       // Success!

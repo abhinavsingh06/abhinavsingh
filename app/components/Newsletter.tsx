@@ -19,17 +19,39 @@ export default function Newsletter() {
     setMessage("");
 
     try {
-      const response = await fetch("/api/newsletter", {
+      // Web3Forms must be called from client-side (browser) to avoid Cloudflare protection
+      const accessKey = "50d76527-8aaa-4be3-9610-af0ea18a4abe";
+      const successUrl = "https://abhinavsingh.online/subscribe";
+
+      // Create form data
+      const formData = new URLSearchParams();
+      formData.append("access_key", accessKey);
+      formData.append("email", email);
+      formData.append("subject", "New Newsletter Subscription");
+      formData.append("from_name", "Blog Newsletter");
+      formData.append("message", `New newsletter subscription from: ${email}`);
+      formData.append("success_url", successUrl);
+
+      // Call Web3Forms directly from client
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify({ email }),
+        body: formData.toString(),
       });
 
-      const data = await response.json();
+      const responseText = await response.text();
+      let data;
 
-      if (response.ok) {
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        // If response is not JSON, it might be an error
+        throw new Error("Invalid response from server");
+      }
+
+      if (data.success === true) {
         setStatus("success");
         setMessage("Thanks for subscribing! Check your email to confirm.");
         setEmail("");
@@ -38,16 +60,16 @@ export default function Newsletter() {
         setTimeout(() => setShowConfetti(false), 3000);
       } else {
         setStatus("error");
-        setMessage(data.error || "Something went wrong. Please try again.");
-        toast.showToast(
-          data.error || "Something went wrong. Please try again.",
-          "error"
-        );
+        const errorMsg =
+          data.message || "Something went wrong. Please try again.";
+        setMessage(errorMsg);
+        toast.showToast(errorMsg, "error");
       }
     } catch (error) {
       setStatus("error");
       setMessage("Something went wrong. Please try again.");
       toast.showToast("Something went wrong. Please try again.", "error");
+      console.error("Newsletter subscription error:", error);
     }
   };
 
