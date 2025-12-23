@@ -28,43 +28,87 @@ export async function POST(request: NextRequest) {
 
     // Send subscription to Web3Forms
     try {
-      // Web3Forms expects form data format
-      const formData = new URLSearchParams();
-      formData.append("access_key", accessKey);
-      formData.append("email", email);
-      formData.append("subject", "New Newsletter Subscription");
-      formData.append("from_name", "Blog Newsletter");
-      formData.append("message", `New newsletter subscription from: ${email}`);
-      formData.append("success_url", successUrl);
+      // Web3Forms supports both JSON and form-data formats
+      // Using JSON format for better reliability
+      const payload = {
+        access_key: accessKey,
+        email: email,
+        subject: "New Newsletter Subscription",
+        from_name: "Blog Newsletter",
+        message: `New newsletter subscription from: ${email}`,
+        success_url: successUrl,
+      };
 
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: formData.toString(),
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => "Unknown error");
-        console.error("Web3Forms error:", errorText);
-        throw new Error(`Web3Forms returned status ${response.status}`);
+      const responseText = await response.text();
+      let responseData;
+
+      try {
+        responseData = JSON.parse(responseText);
+      } catch {
+        // If response is not JSON, log it for debugging
+        console.error("Web3Forms non-JSON response:", responseText);
+        responseData = { success: false, message: responseText };
       }
 
-      const responseData = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        console.error("Web3Forms API error:", {
+          status: response.status,
+          statusText: response.statusText,
+          body: responseData,
+        });
+
+        // Handle specific error cases
+        if (response.status === 429) {
+          return NextResponse.json(
+            { error: "Too many requests. Please try again later." },
+            { status: 429 }
+          );
+        }
+
+        if (response.status === 400 || response.status === 422) {
+          return NextResponse.json(
+            {
+              error:
+                responseData.message ||
+                "Invalid request. Please check your email address.",
+            },
+            { status: 400 }
+          );
+        }
+
+        throw new Error(
+          responseData.message || `Web3Forms returned status ${response.status}`
+        );
+      }
 
       // Web3Forms returns { success: true } on success
       if (responseData.success === false) {
+        console.error("Web3Forms returned success: false", responseData);
         throw new Error(responseData.message || "Subscription failed");
       }
 
+      // Success!
+      console.log("Newsletter subscription successful:", email);
       return NextResponse.json(
         { message: "Successfully subscribed to newsletter" },
         { status: 200 }
       );
     } catch (web3formsError: unknown) {
       const error = web3formsError as { message?: string };
-      console.error("Web3Forms error:", error);
+      console.error("Web3Forms error details:", {
+        error,
+        email,
+        accessKey: accessKey.substring(0, 10) + "...",
+      });
 
       // Handle specific errors
       if (
@@ -79,16 +123,23 @@ export async function POST(request: NextRequest) {
 
       if (
         error.message?.includes("Invalid") ||
-        error.message?.includes("invalid")
+        error.message?.includes("invalid") ||
+        error.message?.includes("access_key")
       ) {
         return NextResponse.json(
-          { error: "Invalid email or configuration. Please contact support." },
-          { status: 400 }
+          { error: "Invalid configuration. Please contact support." },
+          { status: 500 }
         );
       }
 
       return NextResponse.json(
-        { error: "Failed to process subscription. Please try again later." },
+        {
+          error: "Failed to process subscription. Please try again later.",
+          // Include error details in development
+          ...(process.env.NODE_ENV === "development" && {
+            details: error.message,
+          }),
+        },
         { status: 500 }
       );
     }
