@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,67 +18,79 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if Resend is configured
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      console.error("RESEND_API_KEY is not configured");
-      return NextResponse.json(
-        {
-          error:
-            "Newsletter service is not configured properly. Missing RESEND_API_KEY environment variable. Please add it to your production environment variables.",
-          details:
-            process.env.NODE_ENV === "development"
-              ? "Add RESEND_API_KEY to your .env.local file"
-              : "Add RESEND_API_KEY to your hosting platform's environment variables (e.g., Vercel, Netlify)",
-        },
-        { status: 500 }
-      );
-    }
+    // Check if Web3Forms is configured
+    const accessKey =
+      process.env.WEB3FORMS_ACCESS_KEY ||
+      "50d76527-8aaa-4be3-9610-af0ea18a4abe";
+    const successUrl =
+      process.env.WEB3FORMS_SUCCESS_URL ||
+      "https://abhinavsingh.online/subscribe";
 
-    // Add contact to Resend audience
-    const audienceId = process.env.RESEND_AUDIENCE_ID;
-
-    if (!audienceId) {
-      console.error("RESEND_AUDIENCE_ID is not configured");
-      return NextResponse.json(
-        {
-          error:
-            "Newsletter service is not configured properly. Missing RESEND_AUDIENCE_ID environment variable. Please add it to your production environment variables.",
-          details:
-            process.env.NODE_ENV === "development"
-              ? "Add RESEND_AUDIENCE_ID to your .env.local file"
-              : "Add RESEND_AUDIENCE_ID to your hosting platform's environment variables (e.g., Vercel, Netlify)",
-        },
-        { status: 500 }
-      );
-    }
-
-    // Create Resend instance only when needed (not at module level)
-    const resend = new Resend(apiKey);
-
+    // Send subscription to Web3Forms
     try {
-      await resend.contacts.create({
-        email,
-        audienceId,
+      // Web3Forms expects form data format
+      const formData = new URLSearchParams();
+      formData.append("access_key", accessKey);
+      formData.append("email", email);
+      formData.append("subject", "New Newsletter Subscription");
+      formData.append("from_name", "Blog Newsletter");
+      formData.append("message", `New newsletter subscription from: ${email}`);
+      formData.append("success_url", successUrl);
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => "Unknown error");
+        console.error("Web3Forms error:", errorText);
+        throw new Error(`Web3Forms returned status ${response.status}`);
+      }
+
+      const responseData = await response.json().catch(() => ({}));
+
+      // Web3Forms returns { success: true } on success
+      if (responseData.success === false) {
+        throw new Error(responseData.message || "Subscription failed");
+      }
 
       return NextResponse.json(
         { message: "Successfully subscribed to newsletter" },
         { status: 200 }
       );
-    } catch (resendError: unknown) {
-      // Handle duplicate email error gracefully
-      const error = resendError as { message?: string; statusCode?: number };
+    } catch (web3formsError: unknown) {
+      const error = web3formsError as { message?: string };
+      console.error("Web3Forms error:", error);
+
+      // Handle specific errors
       if (
-        error.message?.includes("already exists") ||
-        error.statusCode === 422
+        error.message?.includes("429") ||
+        error.message?.includes("rate limit")
       ) {
         return NextResponse.json(
-          { message: "You're already subscribed to our newsletter!" },
-          { status: 200 }
+          { error: "Too many requests. Please try again later." },
+          { status: 429 }
         );
       }
-      throw resendError;
+
+      if (
+        error.message?.includes("Invalid") ||
+        error.message?.includes("invalid")
+      ) {
+        return NextResponse.json(
+          { error: "Invalid email or configuration. Please contact support." },
+          { status: 400 }
+        );
+      }
+
+      return NextResponse.json(
+        { error: "Failed to process subscription. Please try again later." },
+        { status: 500 }
+      );
     }
   } catch (error: unknown) {
     console.error("Newsletter subscription error:", error);
