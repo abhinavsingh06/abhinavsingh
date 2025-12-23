@@ -52,8 +52,24 @@ export default function Newsletter() {
       }
 
       if (data.success === true) {
+        // Send welcome email
+        try {
+          await fetch("/api/welcome-email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+          });
+        } catch (emailError) {
+          // Don't fail subscription if welcome email fails
+          console.error("Welcome email error:", emailError);
+        }
+
         setStatus("success");
-        setMessage("Thanks for subscribing! Check your email to confirm.");
+        setMessage(
+          "Thanks for subscribing! Check your email for a welcome message! 🎉"
+        );
         setEmail("");
         setShowConfetti(true);
         toast.showToast("Successfully subscribed! 🎉", "success");
