@@ -52,22 +52,9 @@ export default function Newsletter() {
       }
 
       if (data.success === true) {
-        // Store subscriber locally
+        // Store subscriber locally and send welcome email (handled server-side)
         try {
-          await fetch("/api/subscribe", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email }),
-          });
-        } catch (error) {
-          console.error("Error storing subscriber:", error);
-        }
-
-        // Send welcome email
-        try {
-          const welcomeResponse = await fetch("/api/welcome-email", {
+          const subscribeResponse = await fetch("/api/subscribe", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -75,19 +62,23 @@ export default function Newsletter() {
             body: JSON.stringify({ email }),
           });
 
-          const welcomeData = await welcomeResponse.json().catch(() => ({}));
+          const subscribeData = await subscribeResponse
+            .json()
+            .catch(() => ({}));
 
-          if (!welcomeResponse.ok) {
-            console.error("Welcome email API error:", {
-              status: welcomeResponse.status,
-              data: welcomeData,
+          if (!subscribeResponse.ok) {
+            console.error("Subscribe API error:", {
+              status: subscribeResponse.status,
+              data: subscribeData,
             });
           } else {
-            console.log("Welcome email sent successfully:", welcomeData);
+            console.log(
+              "Subscriber added and welcome email sent:",
+              subscribeData
+            );
           }
-        } catch (emailError) {
-          // Don't fail subscription if welcome email fails
-          console.error("Welcome email error:", emailError);
+        } catch (error) {
+          console.error("Error storing subscriber:", error);
         }
 
         setStatus("success");

@@ -94,6 +94,75 @@ export async function sendEmailViaBrevo(
 }
 
 /**
+ * Add contact to Brevo
+ */
+export async function addContactToBrevo(
+  email: string,
+  listIds?: number[]
+): Promise<{ success: boolean; error?: any }> {
+  try {
+    const brevoApiKey = process.env.BREVO_API_KEY;
+
+    if (!brevoApiKey) {
+      console.error("Brevo API key not configured");
+      return {
+        success: false,
+        error: "Brevo API key not configured",
+      };
+    }
+
+    const response = await fetch("https://api.brevo.com/v3/contacts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": brevoApiKey,
+      },
+      body: JSON.stringify({
+        email: email,
+        listIds: listIds || [],
+        updateEnabled: true, // Update if contact already exists
+      }),
+    });
+
+    const responseText = await response.text();
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch {
+      responseData = { text: responseText, status: response.status };
+    }
+
+    if (!response.ok) {
+      // If contact already exists (409), that's okay
+      if (response.status === 409) {
+        console.log("Contact already exists in Brevo:", email);
+        return { success: true };
+      }
+
+      console.error("Brevo contact creation error:", {
+        status: response.status,
+        statusText: response.statusText,
+        data: responseData,
+        email: email,
+      });
+      return {
+        success: false,
+        error: responseData,
+      };
+    }
+
+    console.log("Contact added to Brevo successfully:", email);
+    return { success: true };
+  } catch (error) {
+    console.error("Error adding contact to Brevo:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+/**
  * Check if Brevo is configured
  */
 export function isBrevoConfigured(): boolean {

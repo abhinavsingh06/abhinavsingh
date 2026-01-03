@@ -60,7 +60,36 @@ This is your complete guide to setting up the automatic newsletter system with w
    - **Copy the API key** (you'll only see it once!)
    - It looks like: `xkeysib-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxxxxxxx`
 
-### Step 3: Verify Your Sender Email
+### Step 3: (Optional) Create a Contact List
+
+**This is optional but recommended for better organization:**
+
+1. **Go to Contacts:**
+
+   - Navigate to **Contacts** → **Lists**
+   - Or go to: https://app.brevo.com/lists/list
+
+2. **Create a List:**
+
+   - Click **Create a list**
+   - Name it (e.g., "Newsletter Subscribers")
+   - Click **Create**
+
+3. **Get List ID:**
+
+   - Click on your list
+   - The URL will show the list ID: `https://app.brevo.com/lists/list/1` (1 is the list ID)
+   - Or check the list settings
+
+4. **Add to Environment Variables (Optional):**
+   ```env
+   BREVO_LIST_ID=1
+   ```
+   Replace `1` with your actual list ID
+
+**Note:** If you don't set `BREVO_LIST_ID`, subscribers will still be added to Brevo but won't be in a specific list.
+
+### Step 4: Verify Your Sender Email
 
 1. **Go to Senders:**
 
@@ -167,6 +196,10 @@ BREVO_API_KEY=xkeysib-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxxxxxxx
 
 # Newsletter Secret (generated above)
 NEWSLETTER_SECRET=your-generated-secret-here
+
+# Optional: Brevo List ID (to add subscribers to a specific list)
+# Get this from Brevo dashboard → Contacts → Lists
+# BREVO_LIST_ID=1
 ```
 
 ### Production (Vercel/Netlify)
@@ -365,9 +398,15 @@ Make sure these are set:
 ### Welcome Emails
 
 1. User subscribes via newsletter form
-2. Subscriber added to `data/subscribers.json`
-3. Welcome email sent automatically via Brevo
-4. Beautiful ocean-themed email delivered
+2. Subscriber added to `data/subscribers.json` (local storage)
+3. **Contact added to Brevo** (appears in Brevo dashboard)
+4. Welcome email sent automatically via Brevo
+5. Beautiful ocean-themed email delivered
+
+**Subscribers are now synced to Brevo!** You can see them in:
+
+- Brevo Dashboard → **Contacts** → **All contacts**
+- Or in your list if you set up `BREVO_LIST_ID`
 
 ### Automatic Newsletters
 
