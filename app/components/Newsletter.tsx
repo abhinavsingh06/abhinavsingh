@@ -54,6 +54,7 @@ export default function Newsletter() {
       if (data.success === true) {
         // Store subscriber locally and send welcome email (handled server-side)
         try {
+          console.log("Calling /api/subscribe for:", email);
           const subscribeResponse = await fetch("/api/subscribe", {
             method: "POST",
             headers: {
@@ -66,19 +67,22 @@ export default function Newsletter() {
             .json()
             .catch(() => ({}));
 
+          console.log("Subscribe API response:", {
+            status: subscribeResponse.status,
+            ok: subscribeResponse.ok,
+            data: subscribeData,
+          });
+
           if (!subscribeResponse.ok) {
-            console.error("Subscribe API error:", {
+            console.error("❌ Subscribe API error:", {
               status: subscribeResponse.status,
               data: subscribeData,
             });
           } else {
-            console.log(
-              "Subscriber added and welcome email sent:",
-              subscribeData
-            );
+            console.log("✅ Subscriber added successfully:", subscribeData);
           }
         } catch (error) {
-          console.error("Error storing subscriber:", error);
+          console.error("❌ Error calling subscribe API:", error);
         }
 
         setStatus("success");

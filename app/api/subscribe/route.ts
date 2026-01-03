@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addSubscriber } from "@/lib/subscribers";
-import {
-  sendEmailViaBrevo,
-  isBrevoConfigured,
-  addContactToBrevo,
-} from "@/lib/email";
+import * as emailLib from "@/lib/email";
 
 // Welcome email HTML template
 const getWelcomeEmailHTML = () => {
@@ -134,30 +130,41 @@ export async function POST(request: NextRequest) {
     }
 
     // Add contact to Brevo and send welcome email
-    if (isBrevoConfigured()) {
+    if (emailLib.isBrevoConfigured()) {
+      console.log(
+        "Brevo is configured, adding contact and sending welcome email for:",
+        email
+      );
+
       // Add contact to Brevo (optional: add to a list if you have one)
-      // To add to a list, get the list ID from Brevo dashboard and set:
-      // const brevoListId = process.env.BREVO_LIST_ID ? [parseInt(process.env.BREVO_LIST_ID)] : [];
       const brevoListId = process.env.BREVO_LIST_ID
         ? [parseInt(process.env.BREVO_LIST_ID)]
         : [];
 
       try {
-        const contactResult = await addContactToBrevo(email, brevoListId);
+        console.log("Attempting to add contact to Brevo...");
+        const contactResult = await emailLib.addContactToBrevo(
+          email,
+          brevoListId
+        );
         if (contactResult.success) {
-          console.log("Contact added to Brevo successfully:", email);
+          console.log("✅ Contact added to Brevo successfully:", email);
         } else {
-          console.error("Failed to add contact to Brevo:", contactResult.error);
+          console.error(
+            "❌ Failed to add contact to Brevo:",
+            JSON.stringify(contactResult.error, null, 2)
+          );
           // Don't fail subscription if Brevo contact creation fails
         }
       } catch (contactError) {
-        console.error("Error adding contact to Brevo:", contactError);
+        console.error("❌ Error adding contact to Brevo:", contactError);
         // Don't fail subscription if Brevo contact creation fails
       }
 
       // Send welcome email
       try {
-        const emailResult = await sendEmailViaBrevo({
+        console.log("Attempting to send welcome email...");
+        const emailResult = await emailLib.sendEmailViaBrevo({
           to: email,
           toName: "Subscriber",
           subject: "🎉 Welcome to My Newsletter!",
@@ -168,19 +175,21 @@ export async function POST(request: NextRequest) {
         });
 
         if (emailResult.success) {
-          console.log("Welcome email sent successfully to:", email);
+          console.log("✅ Welcome email sent successfully to:", email);
         } else {
-          console.error("Welcome email failed:", emailResult.error);
+          console.error(
+            "❌ Welcome email failed:",
+            JSON.stringify(emailResult.error, null, 2)
+          );
           // Don't fail subscription if email fails
         }
       } catch (emailError) {
-        console.error("Welcome email error:", emailError);
+        console.error("❌ Welcome email error:", emailError);
         // Don't fail subscription if email fails
       }
     } else {
-      console.warn(
-        "Brevo not configured - contact not added and welcome email not sent"
-      );
+      console.error("❌ Brevo not configured! BREVO_API_KEY is missing.");
+      console.error("Please add BREVO_API_KEY to .env.local");
     }
 
     return NextResponse.json(
