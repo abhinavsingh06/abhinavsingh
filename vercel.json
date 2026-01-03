@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/auto-newsletter?secret=YOUR_SECRET_KEY_HERE",
+      "schedule": "0 10 * * *"
+    }
+  ]
+}

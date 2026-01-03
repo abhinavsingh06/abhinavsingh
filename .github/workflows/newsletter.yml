@@ -1,0 +1,47 @@
+name: Auto Newsletter
+
+on:
+  # Run on a schedule (daily at 10 AM UTC)
+  schedule:
+    - cron: "0 10 * * *"
+
+  # Also run on push to main when posts are added/modified
+  # NOTE: Only triggers if files in content/posts/ are changed
+  # Random fixes to other files won't trigger this workflow
+  push:
+    branches:
+      - main
+    paths:
+      - "content/posts/**"
+
+  # Allow manual triggering from GitHub UI
+  workflow_dispatch:
+
+jobs:
+  send-newsletter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Newsletter API
+        env:
+          WEBHOOK_URL: ${{ secrets.NEWSLETTER_WEBHOOK_URL || 'https://abhinavsingh.online/api/auto-newsletter' }}
+          SECRET: ${{ secrets.NEWSLETTER_SECRET }}
+        run: |
+          if [ -z "$SECRET" ]; then
+            echo "Error: NEWSLETTER_SECRET secret is not set"
+            exit 1
+          fi
+
+          echo "Triggering newsletter API..."
+          response=$(curl -s -w "\n%{http_code}" -X POST "${WEBHOOK_URL}?secret=${SECRET}")
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "HTTP Status: $http_code"
+          echo "Response: $body"
+
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
+            echo "✅ Newsletter triggered successfully"
+          else
+            echo "❌ Newsletter trigger failed with status $http_code"
+            exit 1
+          fi

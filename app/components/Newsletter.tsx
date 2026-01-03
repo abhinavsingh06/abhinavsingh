@@ -52,6 +52,19 @@ export default function Newsletter() {
       }
 
       if (data.success === true) {
+        // Store subscriber locally
+        try {
+          await fetch("/api/subscribe", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+          });
+        } catch (error) {
+          console.error("Error storing subscriber:", error);
+        }
+
         // Send welcome email
         try {
           await fetch("/api/welcome-email", {
