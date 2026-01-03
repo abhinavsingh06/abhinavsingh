@@ -67,13 +67,24 @@ export default function Newsletter() {
 
         // Send welcome email
         try {
-          await fetch("/api/welcome-email", {
+          const welcomeResponse = await fetch("/api/welcome-email", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ email }),
           });
+
+          const welcomeData = await welcomeResponse.json().catch(() => ({}));
+
+          if (!welcomeResponse.ok) {
+            console.error("Welcome email API error:", {
+              status: welcomeResponse.status,
+              data: welcomeData,
+            });
+          } else {
+            console.log("Welcome email sent successfully:", welcomeData);
+          }
         } catch (emailError) {
           // Don't fail subscription if welcome email fails
           console.error("Welcome email error:", emailError);

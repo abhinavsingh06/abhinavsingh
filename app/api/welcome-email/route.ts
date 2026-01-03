@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendEmailViaBrevo, isBrevoConfigured } from "@/lib/email";
 
 // Welcome email HTML template with enhanced ocean theme
 const getWelcomeEmailHTML = () => {
@@ -136,83 +137,56 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if EmailJS is configured
-    const emailjsServiceId =
-      process.env.EMAILJS_SERVICE_ID || "service_7nmxoqi";
-    const emailjsTemplateId = process.env.EMAILJS_TEMPLATE_ID;
-    const emailjsPublicKey = process.env.EMAILJS_PUBLIC_KEY;
-
-    if (!emailjsServiceId || !emailjsTemplateId || !emailjsPublicKey) {
-      // If EmailJS is not configured, we'll use a simple approach
-      // For now, just log that we would send the email
-      console.log("Welcome email would be sent to:", email);
-      console.log(
-        "EmailJS not configured. Set EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, and EMAILJS_PUBLIC_KEY to enable welcome emails."
+    // Check if Brevo is configured
+    if (!isBrevoConfigured()) {
+      console.error("Welcome email failed - Brevo not configured:", {
+        email: email,
+        hasApiKey: false,
+      });
+      console.error(
+        "Set BREVO_API_KEY environment variable to enable welcome emails."
       );
 
-      // Return success anyway so the subscription flow continues
       return NextResponse.json(
-        { message: "Welcome email queued (EmailJS not configured)" },
+        {
+          message: "Welcome email failed - Brevo not configured",
+          error: "Missing Brevo API key",
+          configured: {
+            brevoApiKey: false,
+          },
+        },
         { status: 200 }
       );
     }
 
-    // Send welcome email via EmailJS
-    try {
-      const response = await fetch(
-        "https://api.emailjs.com/api/v1.0/email/send",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            service_id: emailjsServiceId,
-            template_id: emailjsTemplateId,
-            user_id: emailjsPublicKey,
-            template_params: {
-              to_email: email,
-              to_name: "Subscriber",
-              from_name: "Abhinav Singh",
-              from_email: "abhinavsingh9986@gmail.com",
-              subject: "🎉 Welcome to My Newsletter!",
-              message_html: getWelcomeEmailHTML(),
-              reply_to: "abhinavsingh9986@gmail.com",
-            },
-          }),
-        }
-      );
+    // Send welcome email via Brevo
+    const result = await sendEmailViaBrevo({
+      to: email,
+      toName: "Subscriber",
+      subject: "🎉 Welcome to My Newsletter!",
+      htmlContent: getWelcomeEmailHTML(),
+      fromEmail: "abhinavsingh9986@gmail.com",
+      fromName: "Abhinav Singh",
+      replyTo: "abhinavsingh9986@gmail.com",
+    });
 
-      const responseData = await response.json().catch(async () => {
-        const text = await response.text();
-        return { text, status: response.status };
-      });
-
-      if (!response.ok) {
-        console.error("EmailJS error:", {
-          status: response.status,
-          data: responseData,
-        });
-        // Don't fail the subscription if email fails
-        return NextResponse.json(
-          { message: "Subscribed, but welcome email failed to send" },
-          { status: 200 }
-        );
-      }
-
-      console.log("Welcome email sent successfully to:", email);
-      return NextResponse.json(
-        { message: "Welcome email sent successfully" },
-        { status: 200 }
-      );
-    } catch (emailError) {
-      console.error("Welcome email error:", emailError);
+    if (!result.success) {
+      console.error("Welcome email failed:", result.error);
       // Don't fail the subscription if email fails
       return NextResponse.json(
-        { message: "Subscribed, but welcome email failed to send" },
+        {
+          message: "Subscribed, but welcome email failed to send",
+          error: result.error,
+        },
         { status: 200 }
       );
     }
+
+    console.log("Welcome email sent successfully to:", email);
+    return NextResponse.json(
+      { message: "Welcome email sent successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Welcome email API error:", error);
     // Don't fail the subscription if email fails

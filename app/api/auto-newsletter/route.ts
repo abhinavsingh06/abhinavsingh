@@ -6,6 +6,7 @@ import {
   markNewsletterAsSent,
   getUnsentPostSlugs,
 } from "@/lib/newsletter-tracker";
+import { sendEmailViaBrevo } from "@/lib/email";
 
 // Newsletter email HTML template for new blog posts
 const getNewsletterHTML = (post: BlogPost) => {
@@ -119,58 +120,23 @@ const getNewsletterHTML = (post: BlogPost) => {
   `;
 };
 
-// Send email via EmailJS
-async function sendEmailViaEmailJS(
+// Send email via Brevo
+async function sendEmailViaBrevoWrapper(
   toEmail: string,
   subject: string,
   htmlContent: string
 ): Promise<boolean> {
-  try {
-    const emailjsServiceId =
-      process.env.EMAILJS_SERVICE_ID || "service_7nmxoqi";
-    const emailjsTemplateId = process.env.EMAILJS_TEMPLATE_ID;
-    const emailjsPublicKey = process.env.EMAILJS_PUBLIC_KEY;
+  const result = await sendEmailViaBrevo({
+    to: toEmail,
+    toName: "Subscriber",
+    subject: subject,
+    htmlContent: htmlContent,
+    fromEmail: "abhinavsingh9986@gmail.com",
+    fromName: "Abhinav Singh",
+    replyTo: "abhinavsingh9986@gmail.com",
+  });
 
-    if (!emailjsTemplateId || !emailjsPublicKey) {
-      console.error("EmailJS not configured");
-      return false;
-    }
-
-    const response = await fetch(
-      "https://api.emailjs.com/api/v1.0/email/send",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          service_id: emailjsServiceId,
-          template_id: emailjsTemplateId,
-          user_id: emailjsPublicKey,
-          template_params: {
-            to_email: toEmail,
-            to_name: "Subscriber",
-            from_name: "Abhinav Singh",
-            from_email: "abhinavsingh9986@gmail.com",
-            subject: subject,
-            message_html: htmlContent,
-            reply_to: "abhinavsingh9986@gmail.com",
-          },
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const responseData = await response.json().catch(() => ({}));
-      console.error("EmailJS error:", responseData);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Error sending email:", error);
-    return false;
-  }
+  return result.success;
 }
 
 // Send newsletter for a specific post
@@ -190,7 +156,7 @@ async function sendNewsletterForPost(post: BlogPost): Promise<{
   let failedCount = 0;
 
   for (const subscriber of subscribers) {
-    const success = await sendEmailViaEmailJS(
+    const success = await sendEmailViaBrevoWrapper(
       subscriber.email,
       subject,
       htmlContent
@@ -200,7 +166,7 @@ async function sendNewsletterForPost(post: BlogPost): Promise<{
     } else {
       failedCount++;
     }
-    // Small delay to avoid rate limiting
+    // Small delay to avoid rate limiting (Brevo allows 300 emails/day free)
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
