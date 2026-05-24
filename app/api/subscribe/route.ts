@@ -129,6 +129,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Track results for response
+    const results = {
+      subscriberAdded: true,
+      brevoContactAdded: false,
+      welcomeEmailSent: false,
+      errors: [] as string[],
+    };
+
     // Add contact to Brevo and send welcome email
     if (emailLib.isBrevoConfigured()) {
       console.log(
@@ -149,15 +157,23 @@ export async function POST(request: NextRequest) {
         );
         if (contactResult.success) {
           console.log("✅ Contact added to Brevo successfully:", email);
+          results.brevoContactAdded = true;
         } else {
-          console.error(
-            "❌ Failed to add contact to Brevo:",
-            JSON.stringify(contactResult.error, null, 2)
-          );
+          const errorMsg = `Failed to add contact to Brevo: ${JSON.stringify(
+            contactResult.error
+          )}`;
+          console.error("❌", errorMsg);
+          results.errors.push(errorMsg);
           // Don't fail subscription if Brevo contact creation fails
         }
       } catch (contactError) {
-        console.error("❌ Error adding contact to Brevo:", contactError);
+        const errorMsg = `Error adding contact to Brevo: ${
+          contactError instanceof Error
+            ? contactError.message
+            : String(contactError)
+        }`;
+        console.error("❌", errorMsg);
+        results.errors.push(errorMsg);
         // Don't fail subscription if Brevo contact creation fails
       }
 
@@ -176,24 +192,36 @@ export async function POST(request: NextRequest) {
 
         if (emailResult.success) {
           console.log("✅ Welcome email sent successfully to:", email);
+          results.welcomeEmailSent = true;
         } else {
-          console.error(
-            "❌ Welcome email failed:",
-            JSON.stringify(emailResult.error, null, 2)
-          );
+          const errorMsg = `Welcome email failed: ${JSON.stringify(
+            emailResult.error
+          )}`;
+          console.error("❌", errorMsg);
+          results.errors.push(errorMsg);
           // Don't fail subscription if email fails
         }
       } catch (emailError) {
-        console.error("❌ Welcome email error:", emailError);
+        const errorMsg = `Welcome email error: ${
+          emailError instanceof Error ? emailError.message : String(emailError)
+        }`;
+        console.error("❌", errorMsg);
+        results.errors.push(errorMsg);
         // Don't fail subscription if email fails
       }
     } else {
-      console.error("❌ Brevo not configured! BREVO_API_KEY is missing.");
-      console.error("Please add BREVO_API_KEY to .env.local");
+      const errorMsg =
+        "Brevo not configured! BREVO_API_KEY is missing in production environment.";
+      console.error("❌", errorMsg);
+      console.error("Please add BREVO_API_KEY to Vercel environment variables");
+      results.errors.push(errorMsg);
     }
 
     return NextResponse.json(
-      { message: "Subscriber added successfully" },
+      {
+        message: "Subscriber added successfully",
+        ...(process.env.NODE_ENV === "development" && { details: results }),
+      },
       { status: 200 }
     );
   } catch (error) {

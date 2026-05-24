@@ -2,7 +2,6 @@
 
 import { useMemo, useEffect } from "react";
 import CodeBlock from "./CodeBlock";
-import ScrollReveal from "./ScrollReveal";
 import Poll from "./Poll";
 import CodeRunner from "./CodeRunner";
 import InteractiveDiagram from "./InteractiveDiagram";
@@ -23,7 +22,6 @@ export default function BlogContent({
   onHeadingsExtracted,
 }: BlogContentProps) {
   const { elements, headings } = useMemo(() => {
-    // Unescape backticks in content
     const unescapedContent = content
       .replace(/\\`\\`\\`/g, "```")
       .replace(/\\`/g, "`");
@@ -53,12 +51,10 @@ export default function BlogContent({
           .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
           .replace(/`(.+?)`/g, "<code>$1</code>");
         elements.push(
-          <ScrollReveal key={keyCounter++} delay={50}>
-            <p
-              className="text-base sm:text-lg leading-[1.75] mb-4 sm:mb-6 text-blue-800/90 dark:text-blue-200/90"
-              dangerouslySetInnerHTML={{ __html: processed }}
-            />
-          </ScrollReveal>
+          <p
+            key={keyCounter++}
+            dangerouslySetInnerHTML={{ __html: processed }}
+          />
         );
         paragraphContent = [];
       }
@@ -66,40 +62,21 @@ export default function BlogContent({
 
     const flushList = () => {
       if (listItems.length > 0) {
+        const items = listItems.map((item, idx) => {
+          const processed = item
+            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(/`(.+?)`/g, "<code>$1</code>");
+          return (
+            <li
+              key={idx}
+              dangerouslySetInnerHTML={{ __html: processed }}
+            />
+          );
+        });
         if (listType === "ol") {
-          elements.push(
-            <ol key={keyCounter++} className="list-decimal pl-6">
-              {listItems.map((item, idx) => {
-                const processed = item
-                  .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-                  .replace(/`(.+?)`/g, "<code>$1</code>");
-                return (
-                  <li
-                    key={idx}
-                    className="my-2 text-base sm:text-lg leading-[1.75] text-blue-800/90 dark:text-blue-200/90"
-                    dangerouslySetInnerHTML={{ __html: processed }}
-                  />
-                );
-              })}
-            </ol>
-          );
+          elements.push(<ol key={keyCounter++}>{items}</ol>);
         } else {
-          elements.push(
-            <ul key={keyCounter++} className="list-disc pl-6">
-              {listItems.map((item, idx) => {
-                const processed = item
-                  .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-                  .replace(/`(.+?)`/g, "<code>$1</code>");
-                return (
-                  <li
-                    key={idx}
-                    className="my-2 text-base sm:text-lg leading-[1.75] text-blue-800/90 dark:text-blue-200/90"
-                    dangerouslySetInnerHTML={{ __html: processed }}
-                  />
-                );
-              })}
-            </ul>
-          );
+          elements.push(<ul key={keyCounter++}>{items}</ul>);
         }
         listItems = [];
         inList = false;
@@ -110,7 +87,6 @@ export default function BlogContent({
       const line = lines[i];
       const trimmed = line.trim();
 
-      // Handle special directives
       if (trimmed.startsWith("[POLL:")) {
         flushParagraph();
         flushList();
@@ -124,13 +100,12 @@ export default function BlogContent({
             votes: 0,
           }));
           elements.push(
-            <ScrollReveal key={keyCounter++} delay={100}>
-              <Poll
-                question={question}
-                options={pollOptions}
-                pollId={`poll-${keyCounter}`}
-              />
-            </ScrollReveal>
+            <Poll
+              key={keyCounter++}
+              question={question}
+              options={pollOptions}
+              pollId={`poll-${keyCounter}`}
+            />
           );
         }
         continue;
@@ -142,26 +117,25 @@ export default function BlogContent({
         const runnerMatch = trimmed.match(/\[CODE-RUNNER:(.+?)\]/);
         if (runnerMatch) {
           const language = runnerMatch[1].trim();
-          // Look ahead for the code block
           let runnerCode = "";
           let j = i + 1;
-          while (j < lines.length && !lines[j].trim().startsWith("```")) {
-            j++;
-          }
+          while (j < lines.length && !lines[j].trim().startsWith("```")) j++;
           if (j < lines.length) {
-            j++; // Skip opening ```
+            j++;
             while (j < lines.length && !lines[j].trim().startsWith("```")) {
               runnerCode += lines[j] + "\n";
               j++;
             }
             if (runnerCode.trim()) {
               elements.push(
-                <ScrollReveal key={keyCounter++} delay={100}>
-                  <CodeRunner code={runnerCode.trim()} language={language} />
-                </ScrollReveal>
+                <CodeRunner
+                  key={keyCounter++}
+                  code={runnerCode.trim()}
+                  language={language}
+                />
               );
             }
-            i = j; // Skip processed lines
+            i = j;
           }
         }
         continue;
@@ -173,7 +147,6 @@ export default function BlogContent({
         const diagramMatch = trimmed.match(/\[DIAGRAM:(.+?)\]/);
         if (diagramMatch) {
           const title = diagramMatch[1].trim();
-          // Look ahead for JSON structure
           const jsonLines: string[] = [];
           let j = i + 1;
           while (j < lines.length && !lines[j].trim().startsWith("```")) {
@@ -184,50 +157,49 @@ export default function BlogContent({
             const jsonStr = jsonLines.join("\n");
             const nodes = JSON.parse(jsonStr);
             elements.push(
-              <ScrollReveal key={keyCounter++} delay={100}>
-                <InteractiveDiagram nodes={nodes} title={title} />
-              </ScrollReveal>
+              <InteractiveDiagram
+                key={keyCounter++}
+                nodes={nodes}
+                title={title}
+              />
             );
-            i = j - 1; // Skip processed lines
+            i = j - 1;
           } catch {
-            // If JSON parsing fails, create a simple default diagram
             const defaultNodes = [
               { id: "1", label: "Start", x: 50, y: 150, connections: ["2"] },
               { id: "2", label: "Process", x: 200, y: 150, connections: ["3"] },
               { id: "3", label: "End", x: 350, y: 150 },
             ];
             elements.push(
-              <ScrollReveal key={keyCounter++} delay={100}>
-                <InteractiveDiagram nodes={defaultNodes} title={title} />
-              </ScrollReveal>
+              <InteractiveDiagram
+                key={keyCounter++}
+                nodes={defaultNodes}
+                title={title}
+              />
             );
           }
         }
         continue;
       }
 
-      // Handle code blocks
       if (trimmed.startsWith("```")) {
         if (inCodeBlock) {
-          // End code block
           flushParagraph();
           flushList();
           const codeContent = codeBlockContent.join("\n").trim();
           if (codeContent) {
             elements.push(
-              <ScrollReveal key={keyCounter++} delay={100}>
-                <CodeBlock
-                  code={codeContent}
-                  language={codeBlockLanguage || "javascript"}
-                />
-              </ScrollReveal>
+              <CodeBlock
+                key={keyCounter++}
+                code={codeContent}
+                language={codeBlockLanguage || "javascript"}
+              />
             );
           }
           codeBlockContent = [];
           codeBlockLanguage = "";
           inCodeBlock = false;
         } else {
-          // Start code block
           flushParagraph();
           flushList();
           codeBlockLanguage = trimmed.substring(3).trim() || "javascript";
@@ -241,7 +213,6 @@ export default function BlogContent({
         continue;
       }
 
-      // Handle headers
       if (trimmed.startsWith("# ")) {
         flushParagraph();
         flushList();
@@ -249,13 +220,9 @@ export default function BlogContent({
         const id = generateId(text);
         headings.push({ id, text, level: 1 });
         elements.push(
-          <ScrollReveal key={keyCounter++} delay={0}>
-            <h1
-              id={id}
-              className="mb-4 mt-6 sm:mt-8 text-2xl sm:text-3xl md:text-4xl font-bold text-blue-900 dark:text-blue-100 scroll-mt-20 sm:scroll-mt-24">
-              <span className="text-gradient-animated">{text}</span>
-            </h1>
-          </ScrollReveal>
+          <h1 key={keyCounter++} id={id} className="scroll-mt-24">
+            {text}
+          </h1>
         );
         continue;
       }
@@ -266,13 +233,9 @@ export default function BlogContent({
         const id = generateId(text);
         headings.push({ id, text, level: 2 });
         elements.push(
-          <ScrollReveal key={keyCounter++} delay={0}>
-            <h2
-              id={id}
-              className="mb-3 sm:mb-4 mt-6 sm:mt-8 text-xl sm:text-2xl md:text-3xl font-bold text-blue-900 dark:text-blue-100 leading-tight scroll-mt-20 sm:scroll-mt-24">
-              <span className="text-gradient-animated">{text}</span>
-            </h2>
-          </ScrollReveal>
+          <h2 key={keyCounter++} id={id} className="scroll-mt-24">
+            {text}
+          </h2>
         );
         continue;
       }
@@ -283,25 +246,18 @@ export default function BlogContent({
         const id = generateId(text);
         headings.push({ id, text, level: 3 });
         elements.push(
-          <ScrollReveal key={keyCounter++} delay={0}>
-            <h3
-              id={id}
-              className="mb-2 sm:mb-3 mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl font-semibold text-blue-900 dark:text-blue-100 leading-tight scroll-mt-20 sm:scroll-mt-24">
-              <span className="text-gradient-animated">{text}</span>
-            </h3>
-          </ScrollReveal>
+          <h3 key={keyCounter++} id={id} className="scroll-mt-24">
+            {text}
+          </h3>
         );
         continue;
       }
 
-      // Handle numbered list items (1. 2. 3. etc.)
       const numberedListMatch = trimmed.match(/^\d+\.\s+(.+)$/);
       if (numberedListMatch) {
         flushParagraph();
         if (!inList || listType !== "ol") {
-          if (inList) {
-            flushList();
-          }
+          if (inList) flushList();
           inList = true;
           listType = "ol";
         }
@@ -309,13 +265,10 @@ export default function BlogContent({
         continue;
       }
 
-      // Handle bullet list items
       if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
         flushParagraph();
         if (!inList || listType !== "ul") {
-          if (inList) {
-            flushList();
-          }
+          if (inList) flushList();
           inList = true;
           listType = "ul";
         }
@@ -323,22 +276,18 @@ export default function BlogContent({
         continue;
       }
 
-      // Close list if we were in one and hit empty line
       if (inList && trimmed === "") {
         flushList();
         continue;
       }
 
-      // Handle regular paragraphs
       if (trimmed === "") {
         flushParagraph();
         flushList();
         continue;
       }
 
-      if (inList) {
-        flushList();
-      }
+      if (inList) flushList();
 
       paragraphContent.push(trimmed);
     }
@@ -346,17 +295,15 @@ export default function BlogContent({
     flushParagraph();
     flushList();
 
-    // Handle unclosed code block at end of content
     if (inCodeBlock && codeBlockContent.length > 0) {
       const codeContent = codeBlockContent.join("\n").trim();
       if (codeContent) {
         elements.push(
-          <ScrollReveal key={keyCounter++} delay={100}>
-            <CodeBlock
-              code={codeContent}
-              language={codeBlockLanguage || "javascript"}
-            />
-          </ScrollReveal>
+          <CodeBlock
+            key={keyCounter++}
+            code={codeContent}
+            language={codeBlockLanguage || "javascript"}
+          />
         );
       }
     }
@@ -364,29 +311,11 @@ export default function BlogContent({
     return { elements, headings };
   }, [content]);
 
-  // Notify parent of extracted headings
   useEffect(() => {
     if (onHeadingsExtracted) {
       onHeadingsExtracted(headings);
     }
   }, [headings, onHeadingsExtracted]);
 
-  return (
-    <div
-      className="prose prose-lg max-w-none dark:prose-invert 
-      prose-headings:font-bold prose-headings:text-blue-900 dark:prose-headings:text-blue-100 prose-headings:leading-tight 
-      prose-p:text-[18px] prose-p:leading-[1.75] prose-p:mb-6 prose-p:text-blue-800/90 dark:prose-p:text-blue-200/90 
-      prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:font-semibold 
-      prose-strong:text-blue-900 dark:prose-strong:text-blue-100 
-      prose-code:text-[16px] prose-code:text-blue-600 dark:prose-code:text-blue-400 
-      prose-li:text-[18px] prose-li:leading-[1.75] prose-li:text-blue-800/90 dark:prose-li:text-blue-200/90 prose-li:mb-2
-      prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-8
-      prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-8 prose-h2:font-bold
-      prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-6 prose-h3:font-semibold
-      prose-h4:text-xl prose-h4:mb-2 prose-h4:mt-4
-      prose-blockquote:text-lg prose-blockquote:leading-relaxed prose-blockquote:border-l-4 prose-blockquote:border-blue-300 dark:prose-blockquote:border-blue-600
-      prose-pre:text-[15px] prose-pre:leading-relaxed">
-      {elements}
-    </div>
-  );
+  return <div className="prose">{elements}</div>;
 }

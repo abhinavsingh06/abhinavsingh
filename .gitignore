@@ -37,6 +37,9 @@ yarn-error.log*
 /data/subscribers.json
 /data/sent-newsletters.json
 
+# deployment notes (may contain secrets — keep local only)
+VERCEL_ENV_SETUP.md
+
 # vercel
 .vercel
 

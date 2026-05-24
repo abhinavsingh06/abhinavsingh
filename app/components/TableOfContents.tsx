@@ -19,29 +19,21 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
+          if (entry.isIntersecting) setActiveId(entry.target.id);
         });
       },
-      {
-        rootMargin: "-100px 0px -66%",
-      }
+      { rootMargin: "-100px 0px -66%" }
     );
 
     headings.forEach((heading) => {
       const element = document.getElementById(heading.id);
-      if (element) {
-        observer.observe(element);
-      }
+      if (element) observer.observe(element);
     });
 
     return () => {
       headings.forEach((heading) => {
         const element = document.getElementById(heading.id);
-        if (element) {
-          observer.unobserve(element);
-        }
+        if (element) observer.unobserve(element);
       });
     };
   }, [headings]);
@@ -49,57 +41,43 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const offset = 100; // Account for fixed header
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
+      const offset = 120;
+      const top = element.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top, behavior: "smooth" });
     }
   };
 
   if (headings.length === 0) return null;
 
   return (
-    <div className="sticky top-28 hidden lg:block">
-      <div className="rounded-lg border border-blue-200/50 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-blue-800/50 dark:bg-blue-950/50">
-        <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-          Table of Contents
-        </h3>
-        <nav className="space-y-1.5">
-          {headings.map((heading) => {
-            const isActive = activeId === heading.id;
-            const indentClass =
-              heading.level === 1
-                ? "pl-0 text-sm"
-                : heading.level === 2
-                ? "pl-3 text-sm"
-                : "pl-6 text-xs";
-
-            return (
-              <button
-                key={heading.id}
-                onClick={() => scrollToHeading(heading.id)}
-                className={`block w-full text-left transition-all duration-200 ${indentClass} ${
-                  isActive
-                    ? "font-semibold text-blue-600 dark:text-blue-400"
-                    : "text-blue-700/80 hover:text-blue-600 dark:text-blue-300/80 dark:hover:text-blue-400"
-                }`}>
-                <span
-                  className={`inline-block transition-all ${
-                    isActive
-                      ? "translate-x-0.5 border-l-2 border-blue-500 pl-2 text-blue-600 dark:text-blue-400"
-                      : "hover:translate-x-0.5"
-                  }`}>
-                  {heading.text}
-                </span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
-    </div>
+    <aside className="sticky top-32 hidden lg:block">
+      <p className="font-mono-xs mb-4 text-[var(--muted)]">/ On this page</p>
+      <nav className="space-y-1 border-l border-[var(--line)] pl-4">
+        {headings.map((heading) => {
+          const isActive = activeId === heading.id;
+          const indent =
+            heading.level === 1
+              ? "pl-0"
+              : heading.level === 2
+              ? "pl-3"
+              : "pl-6";
+          return (
+            <button
+              key={heading.id}
+              onClick={() => scrollToHeading(heading.id)}
+              className={`group flex w-full items-start gap-2 text-left text-[13px] leading-snug transition-colors ${indent} ${
+                isActive
+                  ? "text-[var(--accent)]"
+                  : "text-[var(--muted)] hover:text-[var(--fg)]"
+              }`}>
+              {isActive && (
+                <span className="mt-1 inline-block h-1 w-1 flex-shrink-0 rounded-full bg-[var(--accent)] shadow-[0_0_6px_var(--accent-glow)]" />
+              )}
+              <span>{heading.text}</span>
+            </button>
+          );
+        })}
+      </nav>
+    </aside>
   );
 }

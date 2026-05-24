@@ -1,283 +1,394 @@
 import Link from "next/link";
-import { getFeaturedPosts, getCategories } from "@/lib/posts";
+import { getAllPosts, getCategories } from "@/lib/posts";
 import Newsletter from "./components/Newsletter";
-import ThemeToggle from "./components/ThemeToggle";
-import NatureGraphics from "./components/NatureGraphics";
-import ScrollLink from "./components/ScrollLink";
-import BackgroundFish from "./components/BackgroundFish";
+import SiteHeader from "./components/SiteHeader";
+import SiteFooter from "./components/SiteFooter";
+import SpotlightCard from "./components/SpotlightCard";
+import NumberTicker from "./components/NumberTicker";
+import LiveClock from "./components/LiveClock";
+import ScrambleText from "./components/ScrambleText";
 
 export default function Home() {
-  const featuredPosts = getFeaturedPosts();
+  const posts = getAllPosts();
+  const recentPosts = posts.slice(0, 4);
   const categories = getCategories();
+  const totalPosts = posts.length;
+  const year = new Date().getFullYear();
+  const yearsCoding = year - 2017;
+
+  const marqueeWords = [
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Node.js",
+    "Python",
+    "Go",
+    "Postgres",
+    "Redis",
+    "Distributed Systems",
+    "Developer Tools",
+    "Design Engineering",
+    "Performance",
+  ];
+
+  const techStack = [
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Tailwind",
+    "Node.js",
+    "Postgres",
+    "Redis",
+    "Docker",
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/30 via-cyan-50/20 to-teal-50/30 dark:from-blue-950/30 dark:via-cyan-950/20 dark:to-teal-950/30 relative overflow-hidden">
-      <BackgroundFish />
-      <NatureGraphics />
-      {/* Navigation */}
-      <nav className="fixed top-[4px] left-0 right-0 z-50 border-b border-blue-200/30 bg-white/70 backdrop-blur-md dark:border-blue-900/30 dark:bg-blue-950/70">
-        <div className="mx-auto max-w-6xl px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="text-xl font-bold text-blue-900 transition-all hover:scale-105 dark:text-blue-100">
-              <span className="text-gradient-animated">Abhinav Singh</span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/blog"
-                className="group relative px-4 py-2 text-sm font-semibold text-blue-700 transition-all hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
-                <span className="relative z-10">Blog</span>
-                <span className="absolute inset-0 rounded-lg bg-blue-100/50 opacity-0 transition-all duration-300 group-hover:opacity-100 dark:bg-blue-900/30"></span>
-                <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <Link
-                href="#about"
-                className="group relative px-4 py-2 text-sm font-semibold text-blue-700 transition-all hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
-                <span className="relative z-10">About</span>
-                <span className="absolute inset-0 rounded-lg bg-blue-100/50 opacity-0 transition-all duration-300 group-hover:opacity-100 dark:bg-blue-900/30"></span>
-                <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <ThemeToggle />
-            </div>
+    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--fg)]">
+      <SiteHeader />
+
+      {/* ──────────────── HERO ──────────────── */}
+      <section className="relative mx-auto max-w-[1400px] px-5 pt-10 sm:px-8 sm:pt-16">
+        <div className="grid grid-cols-12 gap-3 sm:gap-4">
+          {/* Big headline card */}
+          <div className="col-span-12 row-span-2 lg:col-span-8">
+            <SpotlightCard className="reveal h-full p-8 sm:p-12">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-12">
+                <div>
+                  <p className="font-mono-xs mb-6 text-[var(--muted)]">
+                    <span className="dot-live mr-3 inline-block translate-y-[1px]" />
+                    Portfolio / Field Notes · INDEX {year}
+                  </p>
+                  <h1 className="font-display text-[clamp(2.75rem,7vw,6.5rem)]">
+                    Building things <br />
+                    <span className="text-[var(--accent)]">
+                      that don&apos;t
+                    </span>
+                    <br />
+                    fall apart.
+                  </h1>
+                </div>
+
+                <div className="flex flex-col gap-6">
+                  <p className="max-w-xl text-base leading-[1.55] text-[var(--fg-2)] sm:text-[17px]">
+                    I&apos;m Abhinav — a software engineer based in India. I
+                    write code, ship products, and keep field notes on the
+                    craft. This is where I think out loud.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Link href="/blog" className="btn btn-primary">
+                      Read the writing <span aria-hidden>→</span>
+                    </Link>
+                    <Link href="#about" className="btn btn-ghost">
+                      About me
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </SpotlightCard>
+          </div>
+
+          {/* Avatar / status card */}
+          <div className="col-span-6 lg:col-span-4">
+            <SpotlightCard className="reveal reveal-1 h-full p-6">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-8">
+                <div className="flex items-center justify-between">
+                  <p className="font-mono-xs text-[var(--muted)]">/ Operator</p>
+                  <span className="dot-live" />
+                </div>
+
+                <div className="relative">
+                  <div className="aspect-square w-full overflow-hidden rounded-xl bg-gradient-to-br from-[var(--bg-elev-2)] to-[var(--bg-elev)] ring-1 ring-[var(--line-strong)]">
+                    <div className="flex h-full w-full items-center justify-center">
+                      <span
+                        className="font-display text-[clamp(5rem,12vw,9rem)] leading-none text-[var(--accent)]"
+                        aria-hidden>
+                        AS
+                      </span>
+                    </div>
+                  </div>
+                  <span className="absolute -bottom-2 -right-2 inline-flex items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--bg)] px-3 py-1.5">
+                    <span className="font-mono-xs text-[var(--accent)]">
+                      ONLINE
+                    </span>
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <p className="font-mono-xs text-[var(--muted)]">Identifier</p>
+                  <p className="font-mono-sm">
+                    <ScrambleText text="@abhinavsingh" />
+                  </p>
+                </div>
+              </div>
+            </SpotlightCard>
+          </div>
+
+          {/* Stat: years */}
+          <div className="col-span-6 lg:col-span-2">
+            <SpotlightCard className="reveal reveal-2 h-full p-6">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-6">
+                <p className="font-mono-xs text-[var(--muted)]">/ Tenure</p>
+                <p className="font-display text-6xl leading-none">
+                  <NumberTicker value={yearsCoding} />
+                  <span className="ml-1 text-[var(--accent)]">y</span>
+                </p>
+                <p className="font-mono-xs text-[var(--muted)]">
+                  Years writing code
+                </p>
+              </div>
+            </SpotlightCard>
+          </div>
+
+          {/* Stat: posts */}
+          <div className="col-span-6 lg:col-span-2">
+            <SpotlightCard className="reveal reveal-3 h-full p-6">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-6">
+                <p className="font-mono-xs text-[var(--muted)]">/ Essays</p>
+                <p className="font-display text-6xl leading-none">
+                  <NumberTicker value={totalPosts} />
+                </p>
+                <Link
+                  href="/blog"
+                  className="link-arrow font-mono-xs text-[var(--accent)]">
+                  Browse <span className="arrow">→</span>
+                </Link>
+              </div>
+            </SpotlightCard>
+          </div>
+
+          {/* Location / clock */}
+          <div className="col-span-12 lg:col-span-4">
+            <SpotlightCard className="reveal reveal-4 h-full p-6">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+                <div className="flex items-center justify-between">
+                  <p className="font-mono-xs text-[var(--muted)]">/ Locale</p>
+                  <p className="font-mono-xs text-[var(--accent)]">28.6°N 77.2°E</p>
+                </div>
+                <p className="font-display text-4xl">India</p>
+                <div className="flex items-end justify-between border-t border-[var(--line)] pt-4">
+                  <p className="font-mono-xs text-[var(--muted)]">Local time</p>
+                  <p className="text-[var(--accent)]">
+                    <LiveClock />
+                  </p>
+                </div>
+              </div>
+            </SpotlightCard>
           </div>
         </div>
-      </nav>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden px-6 pt-24 pb-24 sm:pt-32 sm:pb-32">
-        <div className="mx-auto max-w-4xl text-center">
-          {/* <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/50 px-4 py-2 text-sm text-slate-600 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400 animate-fade-in-up">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
+        {/* Tech stack inline */}
+        <div className="reveal reveal-5 mt-6 flex flex-wrap gap-2">
+          {techStack.map((tech) => (
+            <span key={tech} className="chip">
+              {tech}
             </span>
-            Available for opportunities
-          </div> */}
-          <h1 className="mb-6 text-5xl font-bold tracking-tight text-blue-900 sm:text-6xl lg:text-7xl dark:text-blue-100 animate-fade-in-up">
-            Hi, I&apos;m{" "}
-            <span className="text-gradient-animated inline-block">
-              Abhinav Singh
-            </span>
-          </h1>
-          <p
-            className="mb-8 text-xl text-blue-700 sm:text-2xl dark:text-blue-300 animate-fade-in-up"
-            style={{ animationDelay: "0.1s" }}>
-            Software Engineer & Tech Enthusiast
-          </p>
-          <p
-            className="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-blue-800/70 dark:text-blue-200/70 animate-fade-in-up"
-            style={{ animationDelay: "0.2s" }}>
-            Welcome to my personal tech blog where I share insights on software
-            engineering, web development, and the latest in technology. Join me
-            as I explore the ever-evolving world of code.
-          </p>
-          <div
-            className="flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in-up"
-            style={{ animationDelay: "0.3s" }}>
-            <Link
-              href="/blog"
-              className="group relative overflow-hidden rounded-full bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 px-8 py-3 text-base font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/50">
-              <span className="relative z-10">Read My Blog</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-teal-600 via-blue-600 to-cyan-600 opacity-0 transition-opacity group-hover:opacity-100"></span>
-            </Link>
-            <ScrollLink
-              href="#about"
-              className="group rounded-full border-2 border-blue-300 bg-white px-8 py-3 text-base font-semibold text-blue-700 transition-all hover:border-blue-500 hover:bg-blue-50 hover:text-blue-800 dark:border-blue-700 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:border-blue-500 dark:hover:bg-blue-900/50">
-              Learn More
-              <svg
-                className="ml-2 inline h-4 w-4 transition-transform group-hover:translate-y-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </ScrollLink>
-          </div>
-        </div>
-        {/* Ocean-inspired organic decorative elements */}
-        <div className="absolute left-1/4 top-20 h-72 w-72 organic-blob bg-blue-400/20 blur-3xl animate-wave-float"></div>
-        <div
-          className="absolute right-1/4 bottom-20 h-96 w-96 organic-blob bg-cyan-400/20 blur-3xl animate-wave-float"
-          style={{ animationDelay: "2s" }}></div>
-        <div
-          className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 organic-blob bg-teal-400/15 blur-3xl animate-ocean-pulse"
-          style={{ animationDelay: "4s" }}></div>
-        <div
-          className="absolute right-1/3 top-1/3 h-80 w-80 organic-blob bg-aqua-400/15 blur-3xl animate-wave-sway"
-          style={{ animationDelay: "1s" }}></div>
-
-        {/* Ocean wave pattern overlay */}
-        <div className="absolute inset-0 -z-10 opacity-5 dark:opacity-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(30,64,175,0.1)_0%,transparent_50%),radial-gradient(circle_at_70%_80%,rgba(8,145,178,0.1)_0%,transparent_50%)]"></div>
+          ))}
         </div>
       </section>
 
-      {/* Articles and Tutorials */}
-      <section className="px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-blue-900 sm:text-4xl dark:text-blue-100">
-              Articles and Tutorials
-            </h2>
-            <p className="text-lg text-blue-700 dark:text-blue-300">
-              Latest thoughts and insights from my journey
-            </p>
+      {/* ──────────────── MARQUEE ──────────────── */}
+      <section className="relative mt-24 border-y border-[var(--line)] py-6">
+        <div className="marquee marquee-fast">
+          <div className="marquee-track font-display text-4xl sm:text-6xl">
+            {[...marqueeWords, ...marqueeWords].map((w, i) => (
+              <span key={i} className="flex items-center gap-10">
+                {w}
+                <span className="text-[var(--accent)]">★</span>
+              </span>
+            ))}
           </div>
+        </div>
+      </section>
 
-          <div className="space-y-12">
-            {featuredPosts.map((post, index) => (
-              <Link
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="group block">
-                <article
-                  className="ocean-card relative overflow-hidden rounded-2xl p-8 sm:p-10 animate-fade-in-up"
-                  style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className="mb-4 flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                      {post.category}
-                    </span>
-                    <span className="text-sm text-blue-600 dark:text-blue-400">
+      {/* ──────────────── WRITING ──────────────── */}
+      <section
+        id="writing"
+        className="relative mx-auto max-w-[1400px] px-5 pt-28 sm:px-8 sm:pt-36">
+        <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p className="label-tag mb-4">/ 01 — Recent writing</p>
+            <h2 className="font-display text-5xl sm:text-7xl">
+              Notes &amp; <span className="text-[var(--accent)]">essays</span>
+            </h2>
+          </div>
+          <Link href="/blog" className="link-arrow font-mono-sm">
+            All {totalPosts} posts <span className="arrow">→</span>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+          {recentPosts.map((post, i) => (
+            <SpotlightCard
+              key={post.slug}
+              as="a"
+              href={`/blog/${post.slug}`}
+              className={`reveal group block p-6 sm:p-8 ${
+                i === 0 ? "sm:col-span-2 sm:row-span-1" : ""
+              }`}>
+              <div className="relative z-10 flex h-full flex-col gap-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="chip chip-accent">{post.category}</span>
+                    <span className="font-mono-xs text-[var(--muted)]">
                       {post.readTime}
                     </span>
                   </div>
-                  <h3 className="mb-4 text-2xl font-bold leading-tight text-blue-900 transition-colors group-hover:text-blue-600 dark:text-blue-100 dark:group-hover:text-blue-400 sm:text-3xl">
-                    {post.title}
-                  </h3>
-                  <p className="mb-6 text-lg leading-relaxed text-blue-800/80 dark:text-blue-200/80">
-                    {post.excerpt}
-                  </p>
-                  <div className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 transition-colors group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300">
-                    Read more
-                    <svg
-                      className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </div>
-                </article>
-              </Link>
-            ))}
-          </div>
+                  <span className="font-mono-xs text-[var(--muted)]">
+                    {String(i + 1).padStart(2, "0")} / {recentPosts.length}
+                  </span>
+                </div>
 
-          <div className="mt-16 text-center">
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 rounded-lg border border-blue-300 bg-white px-6 py-3 text-base font-semibold text-blue-700 transition-all hover:border-blue-500 hover:bg-blue-50 hover:text-blue-800 dark:border-blue-700 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:border-blue-500 dark:hover:bg-blue-900/50">
-              View all posts
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </section>
+                <h3
+                  className={`font-display leading-[1.05] transition-colors group-hover:text-[var(--accent)] ${
+                    i === 0 ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl"
+                  }`}>
+                  {post.title}
+                </h3>
 
-      {/* Browse By Category */}
-      <section className="px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-blue-900 sm:text-4xl dark:text-blue-100">
-              Browse By Category
-            </h2>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3">
-            {categories.map((category) => (
-              <Link
-                key={category}
-                href={`/blog?category=${encodeURIComponent(category)}`}
-                className="group ocean-button rounded-lg border-2 border-blue-600 bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:from-blue-700 hover:to-cyan-700 dark:from-blue-700 dark:to-cyan-700 dark:hover:from-blue-600 dark:hover:to-cyan-600">
-                {category}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Newsletter Section */}
-      <section className="px-6 py-16 sm:py-24">
-        <Newsletter />
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-4xl">
-          <div className="ocean-card group relative overflow-hidden rounded-2xl p-8 shadow-sm sm:p-12">
-            {/* Decorative ocean gradient */}
-            <div className="absolute -right-20 -top-20 h-64 w-64 organic-blob bg-gradient-to-br from-blue-400/20 via-cyan-400/20 to-teal-400/20 blur-3xl transition-all duration-500 group-hover:scale-150"></div>
-
-            <div className="relative z-10">
-              <h2 className="mb-6 text-3xl font-bold text-blue-900 sm:text-4xl dark:text-blue-100">
-                About Me
-              </h2>
-              <div className="prose max-w-none dark:prose-invert">
-                <p className="text-lg leading-relaxed text-blue-800/90 dark:text-blue-200/90">
-                  I&apos;m a passionate software engineer with a love for
-                  building beautiful, functional, and user-friendly
-                  applications. My journey in tech has been driven by curiosity
-                  and a desire to solve complex problems with elegant solutions.
+                <p className="text-[15px] leading-relaxed text-[var(--fg-2)]">
+                  {post.excerpt}
                 </p>
-                <p className="mt-4 text-lg leading-relaxed text-blue-800/90 dark:text-blue-200/90">
-                  Through this blog, I share my experiences, learnings, and
-                  insights about software development, emerging technologies,
-                  and best practices. Whether you&apos;re a fellow developer or
-                  someone curious about tech, I hope you find something valuable
-                  here.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  {[
-                    "JavaScript",
-                    "TypeScript",
-                    "React",
-                    "Next.js",
-                    "Node.js",
-                  ].map((tech) => (
-                    <span
-                      key={tech}
-                      className="group/tech rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 px-4 py-2 text-sm font-medium text-blue-800 transition-all duration-300 hover:scale-110 hover:shadow-md dark:from-blue-900/50 dark:to-cyan-900/50 dark:text-blue-200">
-                      {tech}
-                    </span>
-                  ))}
+
+                <div className="mt-auto flex items-center justify-between border-t border-[var(--line)] pt-4">
+                  <span className="font-mono-xs text-[var(--muted)]">
+                    {new Date(post.date).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                    })}
+                  </span>
+                  <span className="link-arrow font-mono-sm text-[var(--accent)]">
+                    Read <span className="arrow">→</span>
+                  </span>
                 </div>
               </div>
+            </SpotlightCard>
+          ))}
+        </div>
+      </section>
+
+      {/* ──────────────── TOPICS ──────────────── */}
+      <section
+        id="topics"
+        className="relative mx-auto max-w-[1400px] px-5 pt-28 sm:px-8 sm:pt-36">
+        <p className="label-tag mb-4">/ 02 — Topics</p>
+        <h2 className="font-display mb-12 text-5xl sm:text-7xl">
+          What I think <span className="text-[var(--accent)]">about</span>
+        </h2>
+
+        <ul className="flex flex-wrap gap-2 sm:gap-3">
+          {categories.map((cat) => (
+            <li key={cat}>
+              <Link
+                href={`/blog?category=${encodeURIComponent(cat)}`}
+                className="group inline-flex items-center gap-2 rounded-full border border-[var(--line-strong)] bg-[var(--bg-elev)] px-5 py-2.5 transition-all hover:-translate-y-0.5 hover:border-[var(--accent)]">
+                <span className="text-sm font-medium transition-colors group-hover:text-[var(--accent)]">
+                  {cat}
+                </span>
+                <span className="font-mono-xs text-[var(--muted)] transition-colors group-hover:text-[var(--accent)]">
+                  ↗
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* ──────────────── REVERSE MARQUEE ──────────────── */}
+      <section className="relative mt-28 border-y border-[var(--line)] py-5">
+        <div className="marquee marquee-reverse">
+          <div className="marquee-track font-mono-sm text-[var(--muted)]">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <span key={i} className="flex items-center gap-8 whitespace-nowrap">
+                BUILD · SHIP · WRITE · REPEAT
+                <span className="text-[var(--accent)]">✦</span>
+                {year} EDITION
+                <span className="text-[var(--accent)]">✦</span>
+                CRAFTED IN INDIA
+                <span className="text-[var(--accent)]">✦</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────── ABOUT ──────────────── */}
+      <section
+        id="about"
+        className="relative mx-auto max-w-[1400px] px-5 pt-28 sm:px-8 sm:pt-36">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-span-12 lg:col-span-4">
+            <p className="label-tag mb-4">/ 03 — About</p>
+            <h2 className="font-display text-5xl sm:text-6xl">
+              Operator&apos;s
+              <br />
+              <span className="text-[var(--accent)]">manual.</span>
+            </h2>
+          </div>
+
+          <div className="col-span-12 lg:col-span-8">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+              <SpotlightCard className="p-6">
+                <p className="font-mono-xs mb-3 text-[var(--muted)]">
+                  / Background
+                </p>
+                <p className="text-base leading-relaxed text-[var(--fg-2)]">
+                  I&apos;m a software engineer with{" "}
+                  <NumberTicker value={yearsCoding} suffix="+ years" /> of
+                  experience building web apps, developer tools, and the
+                  unglamorous middle layers that keep systems honest.
+                </p>
+              </SpotlightCard>
+
+              <SpotlightCard className="p-6">
+                <p className="font-mono-xs mb-3 text-[var(--muted)]">/ Care about</p>
+                <ul className="space-y-2 text-sm text-[var(--fg-2)]">
+                  <li className="flex items-baseline gap-3">
+                    <span className="text-[var(--accent)]">›</span>
+                    Performance &amp; correctness over speed of shipping
+                  </li>
+                  <li className="flex items-baseline gap-3">
+                    <span className="text-[var(--accent)]">›</span>
+                    Honest design — no dark patterns, no tracking pixels
+                  </li>
+                  <li className="flex items-baseline gap-3">
+                    <span className="text-[var(--accent)]">›</span>
+                    Writing clearly about complicated things
+                  </li>
+                  <li className="flex items-baseline gap-3">
+                    <span className="text-[var(--accent)]">›</span>
+                    The boring parts that make things last
+                  </li>
+                </ul>
+              </SpotlightCard>
+
+              <SpotlightCard className="p-6 sm:col-span-2">
+                <p className="font-mono-xs mb-4 text-[var(--muted)]">/ Currently</p>
+                <p className="text-lg leading-relaxed">
+                  Writing software for a living. Writing about software for
+                  myself. Reading too much. Available for{" "}
+                  <span className="stroke-accent">interesting problems</span>{" "}
+                  and the right kind of trouble.
+                </p>
+                <a
+                  href="mailto:hello@abhinavsingh.online"
+                  className="btn btn-primary mt-6">
+                  Say hello <span aria-hidden>↗</span>
+                </a>
+              </SpotlightCard>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-blue-200/50 bg-white/70 px-6 py-12 dark:border-blue-900/50 dark:bg-blue-950/70">
-        <div className="mx-auto max-w-6xl text-center">
-          <p className="text-blue-700 dark:text-blue-300">
-            © {new Date().getFullYear()} Abhinav Singh. All rights reserved.
-          </p>
-          <p className="mt-2 text-sm text-blue-600/80 dark:text-blue-400/80">
-            Built with Next.js, TypeScript, and Tailwind CSS
-          </p>
-        </div>
-      </footer>
+      {/* ──────────────── NEWSLETTER ──────────────── */}
+      <section
+        id="newsletter"
+        className="relative mx-auto max-w-[1400px] px-5 pt-28 sm:px-8 sm:pt-36">
+        <Newsletter />
+      </section>
+
+      <SiteFooter />
     </div>
   );
 }

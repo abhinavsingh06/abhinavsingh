@@ -7,104 +7,43 @@ export default function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Avoid hydration mismatch - this is a necessary pattern for theme toggles
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMounted(true);
-    }, 0);
+    const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
   }, []);
 
-  // Show placeholder during SSR to prevent hydration mismatch
   if (!mounted) {
     return (
       <div
-        className="h-10 w-10 rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+        className="h-8 w-14 rounded-full border border-[var(--line-strong)]"
         suppressHydrationWarning
       />
     );
   }
 
-  // Determine if dark mode is active
-  // Use resolvedTheme if available, otherwise check the HTML element
-  const isDark =
-    resolvedTheme === "dark" ||
-    (typeof window !== "undefined" &&
-      document.documentElement.classList.contains("dark"));
+  const isDark = resolvedTheme !== "light";
 
-  const toggleTheme = () => {
-    // Always set explicit theme (not system) when toggling
-    const newTheme = isDark ? "light" : "dark";
-    setTheme(newTheme);
-
-    // Force apply the class immediately as a fallback
-    // This ensures the class is applied even if next-themes has a delay
-    if (typeof window !== "undefined") {
-      const html = document.documentElement;
-      if (newTheme === "dark") {
-        html.classList.add("dark");
-      } else {
-        html.classList.remove("dark");
-      }
-    }
+  const toggle = () => {
+    const next = isDark ? "light" : "dark";
+    setTheme(next);
   };
 
   return (
     <button
-      onClick={toggleTheme}
-      className="group relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-cyan-50 transition-all duration-300 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/30 dark:border-blue-700 dark:from-blue-950/50 dark:to-cyan-950/50 dark:hover:border-blue-600 dark:hover:shadow-blue-500/20"
-      aria-label="Toggle theme">
-      {/* Animated background gradient */}
+      onClick={toggle}
+      aria-label="Toggle theme"
+      className="group relative h-8 w-14 rounded-full border border-[var(--line-strong)] bg-[var(--bg-elev)] transition-colors hover:border-[var(--accent)]">
       <span
-        className={`absolute inset-0 rounded-lg bg-gradient-to-br transition-all duration-500 ${
-          isDark
-            ? "from-blue-600/20 via-cyan-600/20 to-teal-600/20"
-            : "from-blue-400/30 via-cyan-400/30 to-teal-400/30"
-        } opacity-0 group-hover:opacity-100`}
-      />
-
-      {/* Sun Icon */}
-      <svg
-        className={`absolute h-5 w-5 text-amber-500 transition-all duration-500 ${
-          isDark
-            ? "rotate-90 scale-0 opacity-0"
-            : "rotate-0 scale-100 opacity-100"
-        }`}
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2.5}
-          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-        />
-      </svg>
-
-      {/* Moon Icon */}
-      <svg
-        className={`absolute h-5 w-5 text-blue-400 transition-all duration-500 ${
-          isDark
-            ? "rotate-0 scale-100 opacity-100"
-            : "-rotate-90 scale-0 opacity-0"
-        }`}
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2.5}
-          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-        />
-      </svg>
-
-      {/* Pulsing ring effect */}
-      <span
-        className={`absolute inset-0 rounded-lg ring-2 ring-blue-400/0 transition-all duration-500 group-hover:ring-blue-400/50 ${
-          isDark ? "group-hover:ring-blue-500/30" : ""
+        className={`absolute top-1/2 -translate-y-1/2 h-6 w-6 rounded-full bg-[var(--accent)] transition-all duration-500 shadow-[0_0_12px_var(--accent-glow)] ${
+          isDark ? "left-[3px]" : "left-[27px]"
         }`}
       />
+      <span className="font-mono-xs absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)]">
+        {isDark ? "" : "☀"}
+      </span>
+      <span className="font-mono-xs absolute left-2 top-1/2 -translate-y-1/2 text-[var(--muted)]">
+        {isDark ? "☾" : ""}
+      </span>
     </button>
   );
 }

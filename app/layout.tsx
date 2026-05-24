@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import ToastProvider from "./components/ToastProvider";
-import FishCursor from "./components/FishCursor";
+import MouseSpotlight from "./components/MouseSpotlight";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Abhinav Singh | Tech Blog",
+  title: "Abhinav Singh / Software Engineer",
   description:
-    "Personal tech blog by Abhinav Singh. Exploring software engineering, web development, and technology.",
+    "Personal site of Abhinav Singh — software engineer, writer. Field notes, essays, and experiments on the web.",
 };
 
 export default function RootLayout({
@@ -27,9 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning style={{ cursor: "none" }}>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Google Tag Manager */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -39,16 +38,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-M7SHGMX8');`,
           }}
         />
-        {/* End Google Tag Manager */}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        style={{ cursor: "none" }}
         suppressHydrationWarning>
         <ThemeProvider>
           <ToastProvider>
-            <FishCursor />
-            {/* Google Tag Manager (noscript) */}
+            <MouseSpotlight />
             <noscript>
               <iframe
                 src="https://www.googletagmanager.com/ns.html?id=GTM-M7SHGMX8"
@@ -57,7 +53,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 style={{ display: "none", visibility: "hidden" }}
               />
             </noscript>
-            {/* End Google Tag Manager (noscript) */}
             {children}
           </ToastProvider>
         </ThemeProvider>

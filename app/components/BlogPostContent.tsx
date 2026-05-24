@@ -20,49 +20,38 @@ export default function BlogPostContent({ content }: BlogPostContentProps) {
 
   return (
     <>
-      {/* Mobile TOC Toggle Button */}
       {headings.length > 0 && (
         <button
           onClick={() => setShowMobileTOC(!showMobileTOC)}
-          className="lg:hidden mb-6 w-full rounded-lg border border-blue-200 bg-white px-4 py-3 text-sm font-semibold text-blue-700 transition-all hover:border-blue-400 hover:bg-blue-50 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:border-blue-500 dark:hover:bg-blue-900/50">
-          {showMobileTOC ? "Hide" : "Show"} Table of Contents
+          className="font-mono-sm lg:hidden mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--line-strong)] bg-[var(--bg-elev)] px-4 py-2 text-[var(--fg)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]">
+          {showMobileTOC ? "Hide" : "Show"} contents
         </button>
       )}
 
-      {/* Mobile TOC */}
       {showMobileTOC && headings.length > 0 && (
-        <div className="lg:hidden mb-6 rounded-lg border border-blue-200/50 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-blue-800/50 dark:bg-blue-950/50">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-            Table of Contents
-          </h3>
-          <nav className="space-y-1.5 max-h-64 overflow-y-auto">
+        <div className="lg:hidden mb-8 rounded-xl border border-[var(--line-strong)] bg-[var(--bg-elev)] p-5">
+          <p className="font-mono-xs mb-3 text-[var(--muted)]">/ On this page</p>
+          <nav className="space-y-1.5 max-h-72 overflow-y-auto">
             {headings.map((heading) => {
-              const indentClass =
+              const indent =
                 heading.level === 1
-                  ? "pl-0 text-sm"
+                  ? "pl-0"
                   : heading.level === 2
-                  ? "pl-3 text-sm"
-                  : "pl-6 text-xs";
-
+                  ? "pl-3"
+                  : "pl-6";
               return (
                 <button
                   key={heading.id}
                   onClick={() => {
-                    const element = document.getElementById(heading.id);
-                    if (element) {
-                      const offset = 100;
-                      const elementPosition =
-                        element.getBoundingClientRect().top;
-                      const offsetPosition =
-                        elementPosition + window.pageYOffset - offset;
-                      window.scrollTo({
-                        top: offsetPosition,
-                        behavior: "smooth",
-                      });
+                    const el = document.getElementById(heading.id);
+                    if (el) {
+                      const top =
+                        el.getBoundingClientRect().top + window.pageYOffset - 100;
+                      window.scrollTo({ top, behavior: "smooth" });
                       setShowMobileTOC(false);
                     }
                   }}
-                  className={`block w-full text-left transition-all duration-200 ${indentClass} text-blue-700/80 hover:text-blue-600 dark:text-blue-300/80 dark:hover:text-blue-400`}>
+                  className={`block w-full text-left text-sm text-[var(--muted)] transition-colors hover:text-[var(--accent)] ${indent}`}>
                   {heading.text}
                 </button>
               );
@@ -71,13 +60,10 @@ export default function BlogPostContent({ content }: BlogPostContentProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_280px]">
-        {/* Main Content */}
-        <div className="px-0">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_240px]">
+        <div>
           <BlogContent content={content} onHeadingsExtracted={setHeadings} />
         </div>
-
-        {/* Table of Contents Sidebar */}
         <div className="hidden lg:block">
           <TableOfContents headings={headings} />
         </div>

@@ -3,22 +3,17 @@ import { notFound } from "next/navigation";
 import { use } from "react";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
 import Newsletter from "../../components/Newsletter";
-import ThemeToggle from "../../components/ThemeToggle";
-import NatureGraphics from "../../components/NatureGraphics";
+import SiteHeader from "../../components/SiteHeader";
+import SiteFooter from "../../components/SiteFooter";
 import BlogPostContent from "../../components/BlogPostContent";
 import ReadingProgress from "../../components/ReadingProgress";
-import AnimatedParticles from "../../components/AnimatedParticles";
-import ScrollReveal from "../../components/ScrollReveal";
-import BackgroundFish from "../../components/BackgroundFish";
-import ReadingCelebration from "../../components/ReadingCelebration";
 import ViewCount from "../../components/ViewCount";
-import StickyLikeButton from "../../components/StickyLikeButton";
+import LikeButton from "../../components/LikeButton";
+import SpotlightCard from "../../components/SpotlightCard";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export default function BlogPostPage({
@@ -29,154 +24,130 @@ export default function BlogPostPage({
   const { slug } = use(params);
   const post = getPostBySlug(slug);
 
-  if (!post) {
-    notFound();
-  }
+  if (!post) notFound();
+
+  const allPosts = getAllPosts();
+  const idx = allPosts.findIndex((p) => p.slug === post.slug);
+  const prev = idx > 0 ? allPosts[idx - 1] : null;
+  const next = idx < allPosts.length - 1 ? allPosts[idx + 1] : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/30 via-cyan-50/20 to-teal-50/30 dark:from-blue-950/30 dark:via-cyan-950/20 dark:to-teal-950/30 relative overflow-hidden">
+    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--fg)]">
       <ReadingProgress />
-      <BackgroundFish />
-      <AnimatedParticles />
-      <NatureGraphics />
-      {/* Sticky Like Button - Always visible while scrolling */}
-      <StickyLikeButton postId={post.slug} />
-      {/* Navigation */}
-      <nav className="fixed top-[4px] left-0 right-0 z-50 border-b border-blue-200/30 bg-white/70 backdrop-blur-md dark:border-blue-900/30 dark:bg-blue-950/70">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="text-lg sm:text-xl font-bold text-blue-900 transition-all hover:scale-105 dark:text-blue-100">
-              <span className="text-gradient-animated">Abhinav Singh</span>
-            </Link>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Link
-                href="/blog"
-                className="group relative px-2 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-blue-700 transition-all hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
-                <span className="relative z-10">Blog</span>
-                <span className="absolute inset-0 rounded-lg bg-blue-100/50 opacity-0 transition-all duration-300 group-hover:opacity-100 dark:bg-blue-900/30"></span>
-                <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <Link
-                href="/#about"
-                className="group relative px-2 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-blue-700 transition-all hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 hidden sm:block">
-                <span className="relative z-10">About</span>
-                <span className="absolute inset-0 rounded-lg bg-blue-100/50 opacity-0 transition-all duration-300 group-hover:opacity-100 dark:bg-blue-900/30"></span>
-                <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <ThemeToggle />
-            </div>
-          </div>
+      <SiteHeader />
+
+      {/* ──────────────── HEADER ──────────────── */}
+      <header className="relative mx-auto max-w-[1400px] px-5 pt-10 sm:px-8 sm:pt-16">
+        <Link
+          href="/blog"
+          className="link-arrow font-mono-sm inline-flex text-[var(--muted)]">
+          <span className="arrow rotate-180 inline-block">→</span> All writing
+        </Link>
+
+        <div className="mt-10 flex flex-wrap items-center gap-3">
+          <span className="chip chip-accent">{post.category}</span>
+          <span className="font-mono-xs text-[var(--muted)]">
+            {new Date(post.date).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </span>
+          <span className="font-mono-xs text-[var(--muted)]">·</span>
+          <span className="font-mono-xs text-[var(--muted)]">
+            {post.readTime}
+          </span>
+          <span className="font-mono-xs text-[var(--muted)]">·</span>
+          <ViewCount postId={post.slug} />
         </div>
-      </nav>
 
-      {/* Article */}
-      <article className="px-4 sm:px-6 pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-24">
-        <div className="mx-auto max-w-5xl">
-          {/* Content Card */}
-          <div className="ocean-card rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 shadow-lg relative z-10">
-            {/* Back link */}
-            <Link
-              href="/blog"
-              className="group mb-6 sm:mb-8 inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-blue-700 transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 hover:scale-105 hover:shadow-md dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:border-blue-500 dark:hover:bg-blue-900/50 relative z-10">
-              <svg
-                className="h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:-translate-x-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              <span className="hidden sm:inline">Back to blog</span>
-              <span className="sm:hidden">Back</span>
-            </Link>
+        <h1 className="font-display reveal reveal-1 mt-8 max-w-5xl text-[clamp(2.5rem,7vw,6rem)]">
+          {post.title}
+        </h1>
 
-            {/* Header */}
-            <ScrollReveal>
-              <header className="mb-8 sm:mb-12">
-                <div className="mb-4 sm:mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
-                  <span className="rounded-full bg-gradient-to-r from-blue-100 to-cyan-100 px-3 sm:px-4 py-1 sm:py-1.5 text-xs font-semibold text-blue-700 dark:from-blue-900/30 dark:to-cyan-900/30 dark:text-blue-400">
-                    {post.category}
-                  </span>
-                  <time className="text-xs sm:text-sm text-blue-600 dark:text-blue-400">
-                    {new Date(post.date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </time>
-                  <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hidden sm:inline">
-                    •
-                  </span>
-                  <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400">
-                    {post.readTime}
-                  </span>
-                  <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hidden sm:inline">
-                    •
-                  </span>
-                  <ViewCount postId={post.slug} />
-                </div>
-                <h1 className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-blue-900 dark:text-blue-100">
-                  <span className="text-gradient-animated">{post.title}</span>
-                </h1>
-                <p className="text-base sm:text-lg md:text-[19px] leading-[1.7] text-blue-800/90 dark:text-blue-200/90 mb-4 sm:mb-6">
-                  {post.excerpt}
-                </p>
+        <p className="reveal reveal-2 mt-8 max-w-3xl text-[18px] leading-[1.55] text-[var(--fg-2)]">
+          {post.excerpt}
+        </p>
 
-                {/* Decorative ocean line */}
-                <div className="mt-6 sm:mt-8 h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent dark:via-blue-600 shadow-sm"></div>
-              </header>
-            </ScrollReveal>
+        <div className="reveal reveal-3 mt-10 flex items-center gap-3">
+          <LikeButton postId={post.slug} />
+          <span className="font-mono-xs text-[var(--muted)]">
+            Like this if it&apos;s useful
+          </span>
+        </div>
 
-            {/* Content */}
+        <div className="mt-14 h-px bg-[var(--line)]" />
+      </header>
+
+      {/* ──────────────── BODY ──────────────── */}
+      <article className="mx-auto max-w-[1400px] px-5 py-14 sm:px-8 sm:py-20">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-span-12 lg:col-span-9">
             <BlogPostContent content={post.content} />
 
-            {/* Reading Celebration */}
-            <ReadingCelebration />
-
-            {/* Footer */}
-            <div className="mt-8 sm:mt-12 border-t border-blue-200 pt-6 sm:pt-8 dark:border-blue-800">
-              <Link
-                href="/blog"
-                className="group inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-blue-600 transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:shadow-lg hover:scale-105 hover:shadow-blue-500/20 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-400 dark:hover:border-blue-500 dark:hover:bg-blue-900/50 relative z-10">
-                <svg
-                  className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:-translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                <span className="hidden sm:inline">Back to all posts</span>
-                <span className="sm:hidden">Back</span>
-              </Link>
+            {/* Post footer */}
+            <div className="mt-16 border-t border-[var(--line)] pt-10">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <LikeButton postId={post.slug} />
+                  <span className="font-mono-xs text-[var(--muted)]">
+                    Thanks for reading.
+                  </span>
+                </div>
+                <Link href="/blog" className="link-arrow font-mono-sm">
+                  More writing <span className="arrow">→</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </article>
 
-      {/* Newsletter Section */}
-      <section className="px-4 sm:px-6 py-12 sm:py-16 md:py-24">
+      {/* ──────────────── PREV / NEXT ──────────────── */}
+      {(prev || next) && (
+        <section className="mx-auto max-w-[1400px] px-5 sm:px-8">
+          <div className="grid grid-cols-1 gap-3 border-t border-[var(--line)] py-12 sm:gap-4 md:grid-cols-2">
+            {prev ? (
+              <SpotlightCard as="a" href={`/blog/${prev.slug}`} className="group p-6">
+                <div className="relative z-10">
+                  <p className="font-mono-xs mb-3 text-[var(--muted)]">
+                    ← Previous
+                  </p>
+                  <p className="font-display text-2xl leading-tight transition-colors group-hover:text-[var(--accent)] sm:text-3xl">
+                    {prev.title}
+                  </p>
+                </div>
+              </SpotlightCard>
+            ) : (
+              <div />
+            )}
+            {next ? (
+              <SpotlightCard
+                as="a"
+                href={`/blog/${next.slug}`}
+                className="group p-6 md:text-right">
+                <div className="relative z-10">
+                  <p className="font-mono-xs mb-3 text-[var(--muted)]">
+                    Next →
+                  </p>
+                  <p className="font-display text-2xl leading-tight transition-colors group-hover:text-[var(--accent)] sm:text-3xl">
+                    {next.title}
+                  </p>
+                </div>
+              </SpotlightCard>
+            ) : (
+              <div />
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ──────────────── NEWSLETTER ──────────────── */}
+      <section className="mx-auto max-w-[1400px] px-5 pt-16 sm:px-8 sm:pt-24">
         <Newsletter />
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-blue-200/50 bg-white/70 px-4 sm:px-6 py-8 sm:py-12 dark:border-blue-900/50 dark:bg-blue-950/70">
-        <div className="mx-auto max-w-6xl text-center">
-          <p className="text-sm sm:text-base text-blue-700 dark:text-blue-300">
-            © {new Date().getFullYear()} Abhinav Singh. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

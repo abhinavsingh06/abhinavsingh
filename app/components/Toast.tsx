@@ -16,69 +16,41 @@ export default function Toast({
   duration = 3000,
 }: ToastProps) {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onClose();
-    }, duration);
-
+    const timer = setTimeout(onClose, duration);
     return () => clearTimeout(timer);
   }, [duration, onClose]);
 
-  const typeStyles = {
-    success: "bg-green-500 text-white",
-    error: "bg-red-500 text-white",
-    info: "bg-blue-500 text-white",
-  };
+  const dotColor = {
+    success: "var(--accent)",
+    error: "var(--danger)",
+    info: "var(--info)",
+  }[type];
 
   return (
     <div
-      className={`fixed bottom-6 right-6 z-[100] rounded-lg px-6 py-4 shadow-2xl animate-slide-in-right ${typeStyles[type]}`}>
-      <div className="flex items-center gap-3">
-        {type === "success" && (
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        )}
-        {type === "error" && (
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        )}
-        <span className="font-medium">{message}</span>
-        <button
-          onClick={onClose}
-          className="ml-4 hover:opacity-70 transition-opacity">
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
+      role="status"
+      className="reveal fixed bottom-6 right-6 z-[100] flex items-center gap-3 rounded-xl border border-[var(--line-strong)] bg-[var(--bg-elev)] py-3 pl-4 pr-3 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-md">
+      <span
+        className="inline-block h-2 w-2 rounded-full"
+        style={{
+          background: dotColor,
+          boxShadow: `0 0 12px ${dotColor}`,
+        }}
+      />
+      <span className="text-sm text-[var(--fg)]">{message}</span>
+      <button
+        onClick={onClose}
+        aria-label="Dismiss"
+        className="ml-1 flex h-7 w-7 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--bg-elev-2)] hover:text-[var(--fg)]">
+        <svg
+          className="h-3.5 w-3.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8">
+          <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" />
+        </svg>
+      </button>
     </div>
   );
 }

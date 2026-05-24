@@ -14,16 +14,16 @@ export default function ReadingProgress() {
       setProgress(Math.min(100, Math.max(0, progressValue)));
     };
 
-    window.addEventListener("scroll", updateProgress);
-    updateProgress(); // Initial calculation
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
 
     return () => window.removeEventListener("scroll", updateProgress);
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[60] h-1 bg-blue-200/20 dark:bg-blue-900/20">
+    <div className="fixed top-0 left-0 right-0 z-[60] h-[2px] pointer-events-none">
       <div
-        className="h-full bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 transition-all duration-150 ease-out shadow-lg shadow-blue-500/30"
+        className="h-full bg-[var(--accent)] shadow-[0_0_12px_var(--accent-glow)] transition-[width] duration-100 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>

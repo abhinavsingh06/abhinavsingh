@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useToast } from "./ToastProvider";
-import Confetti from "./Confetti";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
@@ -10,7 +9,6 @@ export default function Newsletter() {
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [message, setMessage] = useState("");
-  const [showConfetti, setShowConfetti] = useState(false);
   const toast = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,11 +17,9 @@ export default function Newsletter() {
     setMessage("");
 
     try {
-      // Web3Forms must be called from client-side (browser) to avoid Cloudflare protection
       const accessKey = "50d76527-8aaa-4be3-9610-af0ea18a4abe";
       const successUrl = "https://abhinavsingh.online/subscribe";
 
-      // Create form data
       const formData = new URLSearchParams();
       formData.append("access_key", accessKey);
       formData.append("email", email);
@@ -32,67 +28,35 @@ export default function Newsletter() {
       formData.append("message", `New newsletter subscription from: ${email}`);
       formData.append("success_url", successUrl);
 
-      // Call Web3Forms directly from client
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData.toString(),
       });
 
       const responseText = await response.text();
       let data;
-
       try {
         data = JSON.parse(responseText);
       } catch {
-        // If response is not JSON, it might be an error
         throw new Error("Invalid response from server");
       }
 
       if (data.success === true) {
-        // Store subscriber locally and send welcome email (handled server-side)
         try {
-          console.log("Calling /api/subscribe for:", email);
-          const subscribeResponse = await fetch("/api/subscribe", {
+          await fetch("/api/subscribe", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email }),
           });
-
-          const subscribeData = await subscribeResponse
-            .json()
-            .catch(() => ({}));
-
-          console.log("Subscribe API response:", {
-            status: subscribeResponse.status,
-            ok: subscribeResponse.ok,
-            data: subscribeData,
-          });
-
-          if (!subscribeResponse.ok) {
-            console.error("❌ Subscribe API error:", {
-              status: subscribeResponse.status,
-              data: subscribeData,
-            });
-          } else {
-            console.log("✅ Subscriber added successfully:", subscribeData);
-          }
         } catch (error) {
-          console.error("❌ Error calling subscribe API:", error);
+          console.error("Subscribe API error:", error);
         }
 
         setStatus("success");
-        setMessage(
-          "Thanks for subscribing! Check your email for a welcome message! 🎉"
-        );
+        setMessage("You're in. Check your inbox.");
         setEmail("");
-        setShowConfetti(true);
-        toast.showToast("Successfully subscribed! 🎉", "success");
-        setTimeout(() => setShowConfetti(false), 3000);
+        toast.showToast("Successfully subscribed", "success");
       } else {
         setStatus("error");
         const errorMsg =
@@ -109,47 +73,57 @@ export default function Newsletter() {
   };
 
   return (
-    <>
-      <Confetti trigger={showConfetti} />
-      <section className="ocean-card mx-auto max-w-2xl rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 shadow-sm transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
-        <div className="text-center">
-          <h2 className="mb-3 text-xl sm:text-2xl md:text-3xl font-bold text-blue-900 dark:text-blue-100">
-            Stay Updated
+    <div className="card spotlight relative overflow-hidden p-8 sm:p-12">
+      <div className="relative z-10 grid grid-cols-1 gap-10 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <p className="label-tag mb-6">/ Stay in the loop</p>
+          <h2 className="font-display text-4xl sm:text-6xl">
+            Get the next one in <br />
+            your <span className="text-[var(--accent)]">inbox.</span>
           </h2>
-          <p className="mb-4 sm:mb-6 text-sm sm:text-base text-blue-700 dark:text-blue-300 px-2">
-            Get the latest posts and insights delivered straight to your inbox.
+          <p className="mt-6 max-w-md text-base text-[var(--fg-2)]">
+            New essays and field notes sent only when there&apos;s something
+            worth sending. No tracking, no spam, easy unsubscribe.
           </p>
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-3 sm:gap-4 sm:flex-row">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              disabled={status === "loading"}
-              className="flex-1 rounded-lg border border-blue-300 bg-white px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-blue-900 placeholder-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-blue-700 dark:bg-blue-950/50 dark:text-blue-100 dark:placeholder-blue-400 dark:focus:border-blue-400 relative z-10"
-            />
-            <button
-              type="submit"
-              disabled={status === "loading"}
-              className="ocean-button rounded-lg px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50 sm:whitespace-nowrap relative z-10">
-              {status === "loading" ? "Subscribing..." : "Subscribe"}
-            </button>
-          </form>
-          {message && (
-            <p
-              className={`mt-3 sm:mt-4 text-xs sm:text-sm ${
-                status === "success"
-                  ? "text-blue-600 dark:text-blue-400"
-                  : "text-red-600 dark:text-red-400"
-              }`}>
-              {message}
-            </p>
-          )}
         </div>
-      </section>
-    </>
+
+        <div className="lg:col-span-5 lg:self-end">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <label className="font-mono-xs text-[var(--muted)]">/ Email</label>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@somewhere.com"
+                required
+                disabled={status === "loading"}
+                className="flex-1 rounded-lg border border-[var(--line-strong)] bg-[var(--bg)] px-4 py-3 text-base text-[var(--fg)] placeholder:text-[var(--muted-2)] outline-none transition-colors focus:border-[var(--accent)]"
+              />
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="btn btn-primary justify-center disabled:cursor-not-allowed disabled:opacity-60">
+                {status === "loading" ? "Subscribing…" : "Subscribe"}
+                {status !== "loading" && <span aria-hidden>↗</span>}
+              </button>
+            </div>
+            {message && (
+              <p
+                className={`mt-1 text-sm ${
+                  status === "success"
+                    ? "text-[var(--accent)]"
+                    : "text-[var(--danger)]"
+                }`}>
+                {message}
+              </p>
+            )}
+            <p className="font-mono-xs mt-2 text-[var(--muted)]">
+              Join · No spam · One-click unsubscribe
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 }
