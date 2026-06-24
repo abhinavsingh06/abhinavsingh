@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
-import { getViewCount } from "@/lib/views";
-import { getLikeCount } from "@/lib/likes";
+import { getViewCountSync } from "@/lib/views";
+import { getLikeCountSync } from "@/lib/likes";
 import Newsletter from "../../components/Newsletter";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
@@ -34,8 +34,8 @@ export default function BlogPostPage({
   const prev = idx > 0 ? allPosts[idx - 1] : null;
   const next = idx < allPosts.length - 1 ? allPosts[idx + 1] : null;
 
-  const likeCount = getLikeCount(post.slug);
-  const viewCount = getViewCount(post.slug);
+  const likeCount = getLikeCountSync(post.slug);
+  const viewCount = getViewCountSync(post.slug);
 
   return (
     <div className="blog-post-page relative min-h-screen bg-[var(--bg)] text-[var(--fg)]">

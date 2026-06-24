@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getAllPosts, getCategories } from "@/lib/posts";
-import { getViewCount } from "@/lib/views";
+import { getViewCountSync } from "@/lib/views";
 import Newsletter from "../components/Newsletter";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
@@ -103,7 +103,7 @@ export default function BlogPage() {
                   </div>
                   <ViewCount
                     postId={post.slug}
-                    initialViews={getViewCount(post.slug)}
+                    initialViews={getViewCountSync(post.slug)}
                   />
                 </div>
               </div>

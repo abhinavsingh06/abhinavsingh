@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import ToastProvider from "./components/ToastProvider";
@@ -14,6 +15,9 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+const gtmId = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-M7SHGMX8";
+const isProduction = process.env.NODE_ENV === "production";
 
 export const metadata: Metadata = {
   title: "Abhinav Singh / Software Engineer",
@@ -32,34 +36,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-M7SHGMX8');`,
-          }}
-        />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning>
         <ThemeProvider>
           <ToastProvider>
             <MouseSpotlight />
-            <noscript>
-              <iframe
-                src="https://www.googletagmanager.com/ns.html?id=GTM-M7SHGMX8"
-                height="0"
-                width="0"
-                style={{ display: "none", visibility: "hidden" }}
-              />
-            </noscript>
             {children}
           </ToastProvider>
         </ThemeProvider>
+        {isProduction && gtmId ? <GoogleTagManager gtmId={gtmId} /> : null}
       </body>
     </html>
   );
