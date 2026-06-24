@@ -13,6 +13,34 @@ interface SendEmailOptions {
   replyTo?: string;
 }
 
+export const DEFAULT_CONTACT_EMAIL = "singh.abhinav6996@gmail.com";
+
+export function getBrevoSender(): {
+  email: string;
+  name: string;
+  replyTo: string;
+} {
+  const email =
+    process.env.BREVO_SENDER_EMAIL?.trim() || DEFAULT_CONTACT_EMAIL;
+  const name = process.env.BREVO_SENDER_NAME?.trim() || "Abhinav Singh";
+  const replyTo = process.env.BREVO_REPLY_TO_EMAIL?.trim() || email;
+  return { email, name, replyTo };
+}
+
+function formatBrevoError(error: unknown): string {
+  if (!error) return "Unknown Brevo error";
+  if (typeof error === "string") return error;
+  if (typeof error === "object") {
+    const record = error as Record<string, unknown>;
+    const message = record.message ?? record.text;
+    const code = record.code;
+    if (message && code) return `${code}: ${message}`;
+    if (message) return String(message);
+    return JSON.stringify(error);
+  }
+  return String(error);
+}
+
 /**
  * Send email via Brevo API
  */
@@ -31,9 +59,10 @@ export async function sendEmailViaBrevo(
       };
     }
 
-    const senderEmail = options.fromEmail || "abhinavsingh9986@gmail.com";
-    const senderName = options.fromName || "Abhinav Singh";
-    const replyToEmail = options.replyTo || "abhinavsingh9986@gmail.com";
+    const sender = getBrevoSender();
+    const senderEmail = options.fromEmail || sender.email;
+    const senderName = options.fromName || sender.name;
+    const replyToEmail = options.replyTo || sender.replyTo;
 
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
@@ -78,7 +107,7 @@ export async function sendEmailViaBrevo(
       });
       return {
         success: false,
-        error: responseData,
+        error: formatBrevoError(responseData),
       };
     }
 
@@ -216,4 +245,69 @@ export async function getBrevoListEmails(): Promise<string[]> {
   }
 
   return [...emails];
+}
+
+export async function getBrevoSenderStatus(): Promise<{
+  configured: boolean;
+  senderEmail: string;
+  verified: boolean | null;
+  senders: Array<{ email: string; active: boolean }>;
+  hint?: string;
+}> {
+  const sender = getBrevoSender();
+  const brevoApiKey = process.env.BREVO_API_KEY;
+
+  if (!brevoApiKey) {
+    return {
+      configured: false,
+      senderEmail: sender.email,
+      verified: null,
+      senders: [],
+      hint: "Set BREVO_API_KEY in Vercel environment variables.",
+    };
+  }
+
+  const response = await fetch("https://api.brevo.com/v3/senders", {
+    headers: {
+      "api-key": brevoApiKey,
+      accept: "application/json",
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    return {
+      configured: true,
+      senderEmail: sender.email,
+      verified: null,
+      senders: [],
+      hint: `Brevo sender lookup failed (${response.status}): ${body}`,
+    };
+  }
+
+  const data = (await response.json()) as {
+    senders?: Array<{ email?: string; active?: boolean }>;
+  };
+
+  const senders = (data.senders ?? [])
+    .filter((entry) => entry.email)
+    .map((entry) => ({
+      email: entry.email!.toLowerCase(),
+      active: Boolean(entry.active),
+    }));
+
+  const match = senders.find(
+    (entry) => entry.email === sender.email.toLowerCase()
+  );
+
+  return {
+    configured: true,
+    senderEmail: sender.email,
+    verified: match ? match.active : false,
+    senders,
+    hint: match?.active
+      ? "Sender is verified in Brevo."
+      : `Verify ${sender.email} in Brevo → Senders, or set BREVO_SENDER_EMAIL to a verified sender.`,
+  };
 }

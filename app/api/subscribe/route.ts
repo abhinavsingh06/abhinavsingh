@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { addSubscriber } from "@/lib/subscribers";
 import * as emailLib from "@/lib/email";
 
+const contactEmail = emailLib.DEFAULT_CONTACT_EMAIL;
+
 // Welcome email HTML template
 const getWelcomeEmailHTML = () => {
   return `
@@ -86,7 +88,7 @@ const getWelcomeEmailHTML = () => {
               <div style="margin: 20px 0;">
                 <a href="https://abhinavsingh.online" style="color: #3b82f6; text-decoration: none; margin: 0 12px; font-weight: 500; font-size: 14px;">Visit Blog</a>
                 <span style="color: #cbd5e1;">|</span>
-                <a href="mailto:abhinavsingh9986@gmail.com" style="color: #3b82f6; text-decoration: none; margin: 0 12px; font-weight: 500; font-size: 14px;">Contact Me</a>
+                <a href="mailto:${contactEmail}" style="color: #3b82f6; text-decoration: none; margin: 0 12px; font-weight: 500; font-size: 14px;">Contact Me</a>
               </div>
               <p style="margin: 15px 0 0 0; color: #94a3b8; font-size: 12px; line-height: 1.5;">
                 © ${new Date().getFullYear()} Abhinav Singh. All rights reserved.<br>
@@ -180,14 +182,15 @@ export async function POST(request: NextRequest) {
       // Send welcome email
       try {
         console.log("Attempting to send welcome email...");
+        const sender = emailLib.getBrevoSender();
         const emailResult = await emailLib.sendEmailViaBrevo({
           to: email,
           toName: "Subscriber",
           subject: "🎉 Welcome to My Newsletter!",
           htmlContent: getWelcomeEmailHTML(),
-          fromEmail: "abhinavsingh9986@gmail.com",
-          fromName: "Abhinav Singh",
-          replyTo: "abhinavsingh9986@gmail.com",
+          fromEmail: sender.email,
+          fromName: sender.name,
+          replyTo: sender.replyTo,
         });
 
         if (emailResult.success) {

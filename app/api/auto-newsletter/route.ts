@@ -5,12 +5,13 @@ import {
   markNewsletterAsSent,
   getUnsentPostSlugs,
 } from "@/lib/newsletter-tracker";
-import { sendEmailViaBrevo } from "@/lib/email";
+import { sendEmailViaBrevo, getBrevoSender, DEFAULT_CONTACT_EMAIL } from "@/lib/email";
 import { isNewsletterAuthorized } from "@/lib/newsletter-auth";
 
 // Newsletter email HTML template for new blog posts
 const getNewsletterHTML = (post: BlogPost) => {
   const postUrl = `https://abhinavsingh.online/blog/${post.slug}`;
+  const contactEmail = DEFAULT_CONTACT_EMAIL;
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -103,7 +104,7 @@ const getNewsletterHTML = (post: BlogPost) => {
                 <span style="color: #cbd5e1;">|</span>
                 <a href="https://abhinavsingh.online" style="color: #3b82f6; text-decoration: none; margin: 0 12px; font-weight: 500; font-size: 14px;">Visit Blog</a>
                 <span style="color: #cbd5e1;">|</span>
-                <a href="mailto:abhinavsingh9986@gmail.com?subject=Unsubscribe" style="color: #3b82f6; text-decoration: none; margin: 0 12px; font-weight: 500; font-size: 14px;">Unsubscribe</a>
+                <a href="mailto:${contactEmail}?subject=Unsubscribe" style="color: #3b82f6; text-decoration: none; margin: 0 12px; font-weight: 500; font-size: 14px;">Unsubscribe</a>
               </p>
               <p style="margin: 15px 0 0 0; color: #94a3b8; font-size: 12px; line-height: 1.5;">
                 © ${new Date().getFullYear()} Abhinav Singh. All rights reserved.<br>
@@ -125,28 +126,38 @@ async function sendEmailViaBrevoWrapper(
   toEmail: string,
   subject: string,
   htmlContent: string
-): Promise<boolean> {
+): Promise<{ success: boolean; error?: string }> {
+  const sender = getBrevoSender();
   const result = await sendEmailViaBrevo({
     to: toEmail,
     toName: "Subscriber",
-    subject: subject,
-    htmlContent: htmlContent,
-    fromEmail: "abhinavsingh9986@gmail.com",
-    fromName: "Abhinav Singh",
-    replyTo: "abhinavsingh9986@gmail.com",
+    subject,
+    htmlContent,
+    fromEmail: sender.email,
+    fromName: sender.name,
+    replyTo: sender.replyTo,
   });
 
-  return result.success;
+  return {
+    success: result.success,
+    error:
+      typeof result.error === "string"
+        ? result.error
+        : result.error
+          ? JSON.stringify(result.error)
+          : undefined,
+  };
 }
 
 // Send newsletter for a specific post
 async function sendNewsletterForPost(post: BlogPost): Promise<{
   sent: number;
   failed: number;
+  errors: string[];
 }> {
   const subscribers = await getAllSubscribers();
   if (subscribers.length === 0) {
-    return { sent: 0, failed: 0 };
+    return { sent: 0, failed: 0, errors: [] };
   }
 
   const subject = `🌊 New Blog Post: ${post.title}`;
@@ -154,23 +165,27 @@ async function sendNewsletterForPost(post: BlogPost): Promise<{
 
   let sentCount = 0;
   let failedCount = 0;
+  const errors: string[] = [];
 
   for (const subscriber of subscribers) {
-    const success = await sendEmailViaBrevoWrapper(
+    const result = await sendEmailViaBrevoWrapper(
       subscriber.email,
       subject,
       htmlContent
     );
-    if (success) {
+    if (result.success) {
       sentCount++;
     } else {
       failedCount++;
+      if (result.error) {
+        errors.push(`${subscriber.email}: ${result.error}`);
+      }
     }
     // Small delay to avoid rate limiting (Brevo allows 300 emails/day free)
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
-  return { sent: sentCount, failed: failedCount };
+  return { sent: sentCount, failed: failedCount, errors };
 }
 
 /** Skip emailing the full archive on first run — only notify for the newest post. */
@@ -240,6 +255,7 @@ export async function POST(request: NextRequest) {
       title: string;
       sent: number;
       failed: number;
+      errors?: string[];
     }> = [];
 
     for (const slug of unsentSlugs) {
@@ -247,7 +263,7 @@ export async function POST(request: NextRequest) {
       if (!post) continue;
 
       console.log(`Sending newsletter for post: ${post.title} (${slug})`);
-      const { sent, failed } = await sendNewsletterForPost(post);
+      const { sent, failed, errors } = await sendNewsletterForPost(post);
 
       // Mark as sent only if at least one email was sent successfully
       if (sent > 0) {
@@ -259,6 +275,7 @@ export async function POST(request: NextRequest) {
         title: post.title,
         sent,
         failed,
+        ...(errors.length > 0 ? { errors } : {}),
       });
 
       // Small delay between posts to avoid overwhelming the email service

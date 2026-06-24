@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllSubscribers } from "@/lib/subscribers";
 import { getPostBySlug, BlogPost } from "@/lib/posts";
-import { sendEmailViaBrevo } from "@/lib/email";
+import { sendEmailViaBrevo, getBrevoSender, DEFAULT_CONTACT_EMAIL } from "@/lib/email";
+
+const contactEmail = DEFAULT_CONTACT_EMAIL;
 
 // Newsletter email HTML template for new blog posts
 const getNewsletterHTML = (post: BlogPost) => {
@@ -98,7 +100,7 @@ const getNewsletterHTML = (post: BlogPost) => {
                 <span style="color: #cbd5e1;">|</span>
                 <a href="https://abhinavsingh.online" style="color: #3b82f6; text-decoration: none; margin: 0 12px; font-weight: 500; font-size: 14px;">Visit Blog</a>
                 <span style="color: #cbd5e1;">|</span>
-                <a href="mailto:abhinavsingh9986@gmail.com?subject=Unsubscribe" style="color: #3b82f6; text-decoration: none; margin: 0 12px; font-weight: 500; font-size: 14px;">Unsubscribe</a>
+                <a href="mailto:${contactEmail}?subject=Unsubscribe" style="color: #3b82f6; text-decoration: none; margin: 0 12px; font-weight: 500; font-size: 14px;">Unsubscribe</a>
               </p>
               <p style="margin: 15px 0 0 0; color: #94a3b8; font-size: 12px; line-height: 1.5;">
                 © ${new Date().getFullYear()} Abhinav Singh. All rights reserved.<br>
@@ -121,14 +123,15 @@ async function sendEmailViaBrevoWrapper(
   subject: string,
   htmlContent: string
 ): Promise<boolean> {
+  const sender = getBrevoSender();
   const result = await sendEmailViaBrevo({
     to: toEmail,
     toName: "Subscriber",
     subject: subject,
     htmlContent: htmlContent,
-    fromEmail: "abhinavsingh9986@gmail.com",
-    fromName: "Abhinav Singh",
-    replyTo: "abhinavsingh9986@gmail.com",
+    fromEmail: sender.email,
+    fromName: sender.name,
+    replyTo: sender.replyTo,
   });
 
   return result.success;
