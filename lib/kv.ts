@@ -20,10 +20,10 @@ export function getKv(): Redis | null {
   if (redis) return redis;
   const creds = getKvCredentials();
   if (!creds) {
-    if (process.env.VERCEL && !warned) {
+    if (process.env.VERCEL && !warned && !process.env.BLOB_READ_WRITE_TOKEN) {
       warned = true;
       console.warn(
-        "[storage] KV_REST_API_URL / KV_REST_API_TOKEN not set — likes and views will not persist on Vercel."
+        "[storage] No KV or Blob storage configured — connect Vercel KV or Blob for persistent likes/views."
       );
     }
     return null;

@@ -1,8 +1,11 @@
 import fs from "fs";
 import path from "path";
+import { readJsonBlob, writeJsonBlob } from "./blob-store";
 import { getKv } from "./kv";
 
 const likesFile = path.join(process.cwd(), "data", "post-likes.json");
+const likesBlobPath = "engagement/post-likes.json";
+
 type PostLikes = Record<string, string[]>;
 
 function ensureDataDirectory() {
@@ -21,7 +24,7 @@ function readLikesFile(): PostLikes {
     const content = fs.readFileSync(likesFile, "utf8");
     return JSON.parse(content) as PostLikes;
   } catch (error) {
-    console.error("Error reading like counts:", error);
+    console.error("Error reading like counts from file:", error);
     return {};
   }
 }
@@ -31,49 +34,65 @@ function writeLikesFile(likes: PostLikes) {
   fs.writeFileSync(likesFile, JSON.stringify(likes, null, 2));
 }
 
+async function readLikesDocument(): Promise<PostLikes> {
+  const fromBlob = await readJsonBlob<PostLikes>(likesBlobPath, {});
+  if (Object.keys(fromBlob).length > 0) return fromBlob;
+  return readLikesFile();
+}
+
+async function writeLikesDocument(likes: PostLikes): Promise<void> {
+  const wroteBlob = await writeJsonBlob(likesBlobPath, likes);
+  if (wroteBlob) return;
+
+  try {
+    writeLikesFile(likes);
+  } catch (error) {
+    console.error("Error writing like counts to file:", error);
+    throw new Error("Unable to persist likes");
+  }
+}
+
 function likesKey(slug: string) {
   return `likes:${slug}`;
 }
 
-export async function getLikeCount(slug: string): Promise<number> {
-  const kv = getKv();
-  if (kv) {
-    return (await kv.scard(likesKey(slug))) ?? 0;
-  }
-  const likes = readLikesFile();
-  return likes[slug]?.length ?? 0;
-}
-
-export async function hasUserLiked(
-  slug: string,
-  userId: string
-): Promise<boolean> {
-  const kv = getKv();
-  if (kv) {
-    return Boolean(await kv.sismember(likesKey(slug), userId));
-  }
-  const likes = readLikesFile();
-  return likes[slug]?.includes(userId) ?? false;
-}
-
-export async function toggleLike(
+async function toggleLikeKv(
   slug: string,
   userId: string
 ): Promise<{ likes: number; liked: boolean }> {
   const kv = getKv();
-  if (kv) {
-    const key = likesKey(slug);
-    const alreadyLiked = await kv.sismember(key, userId);
-    if (alreadyLiked) {
-      await kv.srem(key, userId);
-    } else {
-      await kv.sadd(key, userId);
-    }
-    const likes = (await kv.scard(key)) ?? 0;
-    return { likes, liked: !alreadyLiked };
+  if (!kv) throw new Error("KV not configured");
+
+  const key = likesKey(slug);
+  const alreadyLiked = Boolean(await kv.sismember(key, userId));
+
+  if (alreadyLiked) {
+    await kv.srem(key, userId);
+  } else {
+    await kv.sadd(key, userId);
   }
 
-  const allLikes = readLikesFile();
+  const likes = Number(await kv.scard(key)) || 0;
+  return { likes, liked: !alreadyLiked };
+}
+
+async function getLikeCountKv(slug: string): Promise<number> {
+  const kv = getKv();
+  if (!kv) throw new Error("KV not configured");
+  return Number(await kv.scard(likesKey(slug))) || 0;
+}
+
+async function hasUserLikedKv(slug: string, userId: string): Promise<boolean> {
+  const kv = getKv();
+  if (!kv) throw new Error("KV not configured");
+  return Boolean(await kv.sismember(likesKey(slug), userId));
+}
+
+async function toggleLikeDocument(
+  slug: string,
+  userId: string
+): Promise<{ likes: number; liked: boolean }> {
+  const allLikes = await readLikesDocument();
   const users = allLikes[slug] ?? [];
   const index = users.indexOf(userId);
 
@@ -84,9 +103,53 @@ export async function toggleLike(
   }
 
   allLikes[slug] = users;
-  writeLikesFile(allLikes);
+  await writeLikesDocument(allLikes);
 
   return { likes: users.length, liked: index < 0 };
+}
+
+export async function getLikeCount(slug: string): Promise<number> {
+  if (getKv()) {
+    try {
+      return await getLikeCountKv(slug);
+    } catch (error) {
+      console.error("[likes] KV read failed, using document store:", error);
+    }
+  }
+
+  const likes = await readLikesDocument();
+  return likes[slug]?.length ?? 0;
+}
+
+export async function hasUserLiked(
+  slug: string,
+  userId: string
+): Promise<boolean> {
+  if (getKv()) {
+    try {
+      return await hasUserLikedKv(slug, userId);
+    } catch (error) {
+      console.error("[likes] KV read failed, using document store:", error);
+    }
+  }
+
+  const likes = await readLikesDocument();
+  return likes[slug]?.includes(userId) ?? false;
+}
+
+export async function toggleLike(
+  slug: string,
+  userId: string
+): Promise<{ likes: number; liked: boolean }> {
+  if (getKv()) {
+    try {
+      return await toggleLikeKv(slug, userId);
+    } catch (error) {
+      console.error("[likes] KV write failed, using document store:", error);
+    }
+  }
+
+  return toggleLikeDocument(slug, userId);
 }
 
 export async function getLikeState(
@@ -98,7 +161,6 @@ export async function getLikeState(
   return { likes, liked };
 }
 
-/** Sync read for static build — always 0 in production without local file */
 export function getLikeCountSync(slug: string): number {
   const likes = readLikesFile();
   return likes[slug]?.length ?? 0;

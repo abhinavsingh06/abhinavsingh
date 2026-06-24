@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { dispatchLikeSync, LIKE_SYNC_EVENT, type LikeSyncDetail } from "./LikeButton";
 
 interface HeartLikeProps {
@@ -29,19 +29,22 @@ export default function HeartLike({
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [joyful, setJoyful] = useState(false);
+  const syncGen = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
+    const gen = syncGen.current;
 
     async function loadLikes() {
       try {
         const userId = getUserId();
         const res = await fetch(
-          `/api/likes/${encodeURIComponent(postId)}?userId=${encodeURIComponent(userId)}`
+          `/api/likes/${encodeURIComponent(postId)}?userId=${encodeURIComponent(userId)}`,
+          { cache: "no-store" }
         );
         if (res.ok) {
           const data = (await res.json()) as { likes: number; liked: boolean };
-          if (!cancelled) {
+          if (!cancelled && gen === syncGen.current) {
             setLikes(data.likes);
             setLiked(data.liked);
             dispatchLikeSync({ postId, likes: data.likes, liked: data.liked });
@@ -84,6 +87,8 @@ export default function HeartLike({
   const handleClick = async () => {
     if (loading) return;
 
+    syncGen.current += 1;
+
     const prevLiked = liked;
     const prevLikes = likes;
     const nextLiked = !liked;
@@ -99,6 +104,7 @@ export default function HeartLike({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),
+        cache: "no-store",
       });
 
       if (res.ok) {
