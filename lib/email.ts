@@ -170,32 +170,33 @@ export function isBrevoConfigured(): boolean {
 }
 
 /**
- * Fetch subscriber emails from a Brevo contact list (fallback for legacy subscribers).
+ * Fetch subscriber emails from Brevo (list if configured, otherwise all contacts).
  */
 export async function getBrevoListEmails(): Promise<string[]> {
   const brevoApiKey = process.env.BREVO_API_KEY;
-  const listId = process.env.BREVO_LIST_ID;
-  if (!brevoApiKey || !listId) return [];
+  if (!brevoApiKey) return [];
+
+  const listId = process.env.BREVO_LIST_ID?.trim();
+  const baseUrl = listId
+    ? `https://api.brevo.com/v3/contacts/lists/${listId}/contacts`
+    : "https://api.brevo.com/v3/contacts";
 
   const emails = new Set<string>();
   let offset = 0;
   const limit = 100;
 
   while (true) {
-    const response = await fetch(
-      `https://api.brevo.com/v3/contacts/lists/${listId}/contacts?limit=${limit}&offset=${offset}`,
-      {
-        headers: {
-          "api-key": brevoApiKey,
-          accept: "application/json",
-        },
-        cache: "no-store",
-      }
-    );
+    const response = await fetch(`${baseUrl}?limit=${limit}&offset=${offset}`, {
+      headers: {
+        "api-key": brevoApiKey,
+        accept: "application/json",
+      },
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       const body = await response.text();
-      console.error("[brevo] list contacts failed:", response.status, body);
+      console.error("[brevo] contacts fetch failed:", response.status, body);
       break;
     }
 
