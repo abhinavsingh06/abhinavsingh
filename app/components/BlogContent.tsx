@@ -9,6 +9,10 @@ import SlidingWindowAnimation from "./SlidingWindowAnimation";
 import MultiLangCodeBlock from "./MultiLangCodeBlock";
 import PracticeProblemsLadder from "./PracticeProblemsLadder";
 import SlidingWindowQuickRef from "./SlidingWindowQuickRef";
+import GitWorkflowAnimation from "./GitWorkflowAnimation";
+import GitBranchingAnimation from "./GitBranchingAnimation";
+import GitBranchingGuide from "./GitBranchingGuide";
+import GitBranchingStrategies from "./GitBranchingStrategies";
 
 interface Heading {
   id: string;
@@ -141,6 +145,44 @@ export default function BlogContent({
             }
             i = j;
           }
+        }
+        continue;
+      }
+
+      if (trimmed === "[GIT-STRATEGIES]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GitBranchingStrategies key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GIT-GUIDE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GitBranchingGuide key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed.startsWith("[GIT-WORKFLOW:")) {
+        flushParagraph();
+        flushList();
+        const match = trimmed.match(/\[GIT-WORKFLOW:(.+?)\]/);
+        if (match) {
+          elements.push(
+            <GitWorkflowAnimation key={keyCounter++} preset={match[1].trim()} />
+          );
+        }
+        continue;
+      }
+
+      if (trimmed.startsWith("[GIT-BRANCHING:")) {
+        flushParagraph();
+        flushList();
+        const match = trimmed.match(/\[GIT-BRANCHING:(.+?)\]/);
+        if (match) {
+          elements.push(
+            <GitBranchingAnimation key={keyCounter++} preset={match[1].trim()} />
+          );
         }
         continue;
       }

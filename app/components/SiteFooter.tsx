@@ -34,7 +34,7 @@ export default function SiteFooter() {
                 <ul className="space-y-2">
                   <li>
                     <a
-                      href="https://github.com/abhinavsingh"
+                      href="https://github.com/abhinavsingh06"
                       target="_blank"
                       rel="noreferrer noopener"
                       className="link-arrow font-mono-sm">
@@ -43,16 +43,7 @@ export default function SiteFooter() {
                   </li>
                   <li>
                     <a
-                      href="https://twitter.com/"
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="link-arrow font-mono-sm">
-                      Twitter <span className="arrow">↗</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://linkedin.com/"
+                      href="https://www.linkedin.com/in/abhinav9669/"
                       target="_blank"
                       rel="noreferrer noopener"
                       className="link-arrow font-mono-sm">
