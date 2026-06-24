@@ -36,6 +36,8 @@ yarn-error.log*
 # subscriber data
 /data/subscribers.json
 /data/sent-newsletters.json
+/data/post-views.json
+/data/post-likes.json
 
 # deployment notes (may contain secrets — keep local only)
 VERCEL_ENV_SETUP.md

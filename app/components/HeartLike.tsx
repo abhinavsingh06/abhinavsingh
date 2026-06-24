@@ -1,26 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { dispatchLikeSync, LIKE_SYNC_EVENT, type LikeSyncDetail } from "./LikeButton";
 
-export const LIKE_SYNC_EVENT = "post-like-sync";
-
-export interface LikeSyncDetail {
-  postId: string;
-  likes: number;
-  liked: boolean;
-}
-
-export function dispatchLikeSync(detail: LikeSyncDetail) {
-  window.dispatchEvent(new CustomEvent(LIKE_SYNC_EVENT, { detail }));
-}
-
-interface LikeButtonProps {
+interface HeartLikeProps {
   postId: string;
   initialLikes?: number;
-  initialLiked?: boolean;
-  highlighted?: boolean;
-  compact?: boolean;
-  onLiked?: () => void;
+  className?: string;
+  variant?: "inline" | "dock";
 }
 
 function getUserId(): string {
@@ -32,18 +19,16 @@ function getUserId(): string {
   return userId;
 }
 
-export default function LikeButton({
+export default function HeartLike({
   postId,
   initialLikes = 0,
-  initialLiked = false,
-  highlighted = false,
-  compact = false,
-  onLiked,
-}: LikeButtonProps) {
-  const [liked, setLiked] = useState(initialLiked);
+  className = "",
+  variant = "inline",
+}: HeartLikeProps) {
   const [likes, setLikes] = useState(initialLikes);
-  const [pulse, setPulse] = useState(false);
+  const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [joyful, setJoyful] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,7 +48,7 @@ export default function LikeButton({
           }
         }
       } catch {
-        // Keep server-rendered initial values on failure
+        // keep initial
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -88,9 +73,15 @@ export default function LikeButton({
     return () => window.removeEventListener(LIKE_SYNC_EVENT, handler);
   }, [postId]);
 
-  const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const playJoy = () => {
+    setJoyful(false);
+    requestAnimationFrame(() => {
+      setJoyful(true);
+      setTimeout(() => setJoyful(false), 520);
+    });
+  };
+
+  const handleClick = async () => {
     if (loading) return;
 
     const prevLiked = liked;
@@ -100,12 +91,7 @@ export default function LikeButton({
 
     setLiked(nextLiked);
     setLikes(nextLikes);
-
-    if (nextLiked) {
-      setPulse(true);
-      setTimeout(() => setPulse(false), 600);
-      onLiked?.();
-    }
+    playJoy();
 
     try {
       const userId = getUserId();
@@ -120,7 +106,6 @@ export default function LikeButton({
         setLikes(data.likes);
         setLiked(data.liked);
         dispatchLikeSync({ postId, likes: data.likes, liked: data.liked });
-        if (data.liked) onLiked?.();
       } else {
         setLiked(prevLiked);
         setLikes(prevLikes);
@@ -133,35 +118,29 @@ export default function LikeButton({
 
   return (
     <button
-      onClick={handleLike}
       type="button"
+      onClick={handleClick}
       disabled={loading}
-      aria-label={liked ? "Unlike this post" : "Like this post"}
-      className={`group relative inline-flex items-center rounded-full border font-medium transition-all duration-300 disabled:opacity-60 ${
-        compact ? "gap-1.5 px-3 py-1.5 text-xs" : "gap-2 px-4 py-2 text-sm"
-      } ${
+      aria-label={
         liked
-          ? "border-[var(--accent)] bg-[var(--accent)] text-black shadow-[0_0_20px_var(--accent-glow)]"
-          : "border-[var(--line-strong)] bg-[var(--bg-elev)] text-[var(--fg)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
-      } ${pulse ? "scale-105" : ""} ${
-        highlighted && !liked
-          ? "ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[var(--bg)] animate-like-nudge"
-          : ""
-      }`}>
+          ? `You liked this post. ${likes} likes. Click to unlike.`
+          : `Like this post. ${likes} likes.`
+      }
+      className={`heart-like heart-like--${variant} ${liked ? "heart-like--active" : ""} ${
+        joyful ? "heart-like--joy" : ""
+      } ${className}`}>
       <svg
-        className={`transition-transform ${compact ? "h-3.5 w-3.5" : "h-4 w-4"} ${pulse ? "scale-125" : ""} ${highlighted && !liked ? "animate-heart-beat" : ""}`}
+        className="heart-like-icon"
         viewBox="0 0 24 24"
         fill={liked ? "currentColor" : "none"}
         stroke="currentColor"
-        strokeWidth="1.8">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-        />
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+        aria-hidden>
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
       </svg>
-      <span className={`font-mono-sm tabular-nums ${compact ? "text-xs" : ""}`}>
-        {likes}
+      <span className="heart-like-meta">
+        <span className="heart-like-count tabular-nums">{likes.toLocaleString()}</span>
       </span>
     </button>
   );

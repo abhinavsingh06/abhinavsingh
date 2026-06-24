@@ -4,32 +4,52 @@ import { useEffect, useState } from "react";
 
 interface ViewCountProps {
   postId: string;
+  initialViews?: number;
+  trackView?: boolean;
 }
 
-export default function ViewCount({ postId }: ViewCountProps) {
-  const [views, setViews] = useState<number | null>(null);
+export default function ViewCount({
+  postId,
+  initialViews = 0,
+  trackView = false,
+}: ViewCountProps) {
+  const [views, setViews] = useState<number | null>(initialViews);
 
   useEffect(() => {
-    setTimeout(() => {
-      const stored = localStorage.getItem(`views-${postId}`);
-      let current: number;
-      if (stored) {
-        current = parseInt(stored, 10);
-      } else {
-        current = Math.floor(Math.random() * 500) + 100;
-        localStorage.setItem(`views-${postId}`, current.toString());
-      }
+    let cancelled = false;
 
-      const sessionKey = `viewed-${postId}-${new Date().toDateString()}`;
-      if (!sessionStorage.getItem(sessionKey)) {
-        current += 1;
-        localStorage.setItem(`views-${postId}`, current.toString());
-        sessionStorage.setItem(sessionKey, "true");
-      }
+    async function loadViews() {
+      try {
+        const sessionKey = `viewed-${postId}-${new Date().toDateString()}`;
+        const alreadyViewed = sessionStorage.getItem(sessionKey);
 
-      setViews(current);
-    }, 0);
-  }, [postId]);
+        if (trackView && !alreadyViewed) {
+          const res = await fetch(`/api/views/${encodeURIComponent(postId)}`, {
+            method: "POST",
+          });
+          if (res.ok) {
+            const data = (await res.json()) as { views: number };
+            if (!cancelled) setViews(data.views);
+            sessionStorage.setItem(sessionKey, "true");
+            return;
+          }
+        }
+
+        const res = await fetch(`/api/views/${encodeURIComponent(postId)}`);
+        if (res.ok) {
+          const data = (await res.json()) as { views: number };
+          if (!cancelled) setViews(data.views);
+        }
+      } catch {
+        if (!cancelled) setViews(initialViews);
+      }
+    }
+
+    loadViews();
+    return () => {
+      cancelled = true;
+    };
+  }, [postId, trackView, initialViews]);
 
   return (
     <span className="font-mono-xs inline-flex items-center gap-1.5 tabular-nums text-[var(--muted)]">

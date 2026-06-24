@@ -21,12 +21,12 @@ export default function Confetti({ trigger }: ConfettiProps) {
   useEffect(() => {
     if (trigger) {
       const colors = [
-        "#3b82f6",
-        "#06b6d4",
-        "#14b8a6",
-        "#8b5cf6",
-        "#ec4899",
-        "#f59e0b",
+        "#d4ff3a",
+        "#b8e632",
+        "#9acc28",
+        "#5eb3ff",
+        "#ededec",
+        "#ff5e57",
       ];
       const newConfetti = Array.from({ length: 50 }, () => ({
         x: Math.random() * window.innerWidth,
