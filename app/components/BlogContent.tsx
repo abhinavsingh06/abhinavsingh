@@ -5,6 +5,10 @@ import CodeBlock from "./CodeBlock";
 import Poll from "./Poll";
 import CodeRunner from "./CodeRunner";
 import InteractiveDiagram from "./InteractiveDiagram";
+import SlidingWindowAnimation from "./SlidingWindowAnimation";
+import MultiLangCodeBlock from "./MultiLangCodeBlock";
+import PracticeProblemsLadder from "./PracticeProblemsLadder";
+import SlidingWindowQuickRef from "./SlidingWindowQuickRef";
 
 interface Heading {
   id: string;
@@ -137,6 +141,63 @@ export default function BlogContent({
             }
             i = j;
           }
+        }
+        continue;
+      }
+
+      if (trimmed === "[PRACTICE-PROBLEMS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<PracticeProblemsLadder key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[QUICK-REF]") {
+        flushParagraph();
+        flushList();
+        elements.push(<SlidingWindowQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[CODE-TABS]") {
+        flushParagraph();
+        flushList();
+        const snippets: { language: string; code: string }[] = [];
+        let j = i + 1;
+        while (j < lines.length && lines[j].trim().startsWith("```")) {
+          const lang = lines[j].trim().substring(3).trim() || "javascript";
+          j++;
+          const codeLines: string[] = [];
+          while (j < lines.length && !lines[j].trim().startsWith("```")) {
+            codeLines.push(lines[j]);
+            j++;
+          }
+          if (codeLines.length > 0) {
+            snippets.push({
+              language: lang,
+              code: codeLines.join("\n").trim(),
+            });
+          }
+          if (j < lines.length && lines[j].trim().startsWith("```")) j++;
+        }
+        if (snippets.length > 0) {
+          elements.push(
+            <MultiLangCodeBlock key={keyCounter++} snippets={snippets} />
+          );
+        }
+        i = j - 1;
+        continue;
+      }
+
+      if (trimmed.startsWith("[SLIDING-WINDOW:")) {
+        flushParagraph();
+        flushList();
+        const swMatch = trimmed.match(/\[SLIDING-WINDOW:(.+?)\]/);
+        if (swMatch) {
+          const preset = swMatch[1].trim();
+          elements.push(
+            <SlidingWindowAnimation key={keyCounter++} preset={preset} />
+          );
         }
         continue;
       }
