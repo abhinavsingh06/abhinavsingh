@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { dispatchLikeSync, LIKE_SYNC_EVENT, type LikeSyncDetail } from "./LikeButton";
+import { useToast } from "./ToastProvider";
 
 interface HeartLikeProps {
   postId: string;
@@ -30,6 +31,7 @@ export default function HeartLike({
   const [loading, setLoading] = useState(true);
   const [joyful, setJoyful] = useState(false);
   const syncGen = useRef(0);
+  const { showToast } = useToast();
 
   useEffect(() => {
     let cancelled = false;
@@ -115,6 +117,9 @@ export default function HeartLike({
       } else {
         setLiked(prevLiked);
         setLikes(prevLikes);
+        if (res.status === 503) {
+          showToast("Likes are not saved yet — storage is not connected on the server.", "error");
+        }
       }
     } catch {
       setLiked(prevLiked);

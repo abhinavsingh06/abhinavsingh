@@ -1,7 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLikeState, toggleLike } from "@/lib/likes";
+import { getStorageHint, probeEngagementStorage } from "@/lib/engagement-storage";
 
 const noStore = { headers: { "Cache-Control": "no-store" } };
+
+async function storageUnavailableResponse() {
+  const probe = await probeEngagementStorage();
+  if (probe.writable) return null;
+
+  return NextResponse.json(
+    {
+      error: "Unable to save like",
+      hint: getStorageHint(),
+      storage: probe,
+    },
+    { status: 503, ...noStore }
+  );
+}
 
 export async function GET(
   request: NextRequest,
@@ -46,6 +61,9 @@ export async function POST(
     if (!userId || typeof userId !== "string") {
       return NextResponse.json({ error: "Missing userId" }, { status: 400 });
     }
+
+    const unavailable = await storageUnavailableResponse();
+    if (unavailable) return unavailable;
 
     const result = await toggleLike(slug, userId);
     return NextResponse.json({ slug, ...result }, noStore);

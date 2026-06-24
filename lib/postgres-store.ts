@@ -5,12 +5,45 @@ type Sql = ReturnType<typeof neon>;
 let sql: Sql | null = null;
 let schemaReady: Promise<void> | null = null;
 
+function env(...keys: string[]): string | undefined {
+  for (const key of keys) {
+    const value = process.env[key]?.trim();
+    if (value) return value;
+  }
+  return undefined;
+}
+
+function buildUrlFromParts(): string | undefined {
+  const host = env("POSTGRES_HOST", "blog_POSTGRES_HOST", "PGHOST", "blog_PGHOST");
+  const user = env("POSTGRES_USER", "blog_POSTGRES_USER", "PGUSER", "blog_PGUSER");
+  const password = env(
+    "POSTGRES_PASSWORD",
+    "blog_POSTGRES_PASSWORD",
+    "PGPASSWORD",
+    "blog_PGPASSWORD"
+  );
+  const database =
+    env("POSTGRES_DATABASE", "blog_POSTGRES_DATABASE", "PGDATABASE", "blog_PGDATABASE") ??
+    "neondb";
+  if (!host || !user || !password) return undefined;
+  return `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}/${database}?sslmode=require`;
+}
+
+export function getPostgresUrl(): string | undefined {
+  return (
+    env("DATABASE_URL", "blog_DATABASE_URL") ??
+    env("POSTGRES_URL", "blog_POSTGRES_URL") ??
+    env("POSTGRES_PRISMA_URL", "blog_POSTGRES_PRISMA_URL") ??
+    buildUrlFromParts()
+  );
+}
+
 export function isPostgresConfigured(): boolean {
-  return Boolean(process.env.DATABASE_URL ?? process.env.POSTGRES_URL);
+  return Boolean(getPostgresUrl());
 }
 
 function getSql(): Sql | null {
-  const url = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
+  const url = getPostgresUrl();
   if (!url) return null;
   if (!sql) sql = neon(url);
   return sql;
@@ -115,4 +148,11 @@ export async function postgresIncrementViewCount(slug: string): Promise<number> 
     RETURNING count
   `) as { count: number }[];
   return Number(rows[0]?.count) || 0;
+}
+
+export async function postgresPing(): Promise<boolean> {
+  const client = getSql();
+  if (!client) return false;
+  await client`SELECT 1 AS ok`;
+  return true;
 }

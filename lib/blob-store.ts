@@ -4,11 +4,11 @@ function isVercel(): boolean {
   return process.env.VERCEL === "1";
 }
 
+/** Blob is only available when credentials exist — not merely because we're on Vercel. */
 export function isBlobAvailable(): boolean {
   return Boolean(
-    process.env.BLOB_READ_WRITE_TOKEN ||
-      process.env.BLOB_STORE_ID ||
-      isVercel()
+    process.env.BLOB_READ_WRITE_TOKEN?.trim() ||
+      process.env.BLOB_STORE_ID?.trim()
   );
 }
 
@@ -48,6 +48,13 @@ export async function writeJsonBlob<T>(
     console.error(`[blob] write failed (${pathname}):`, error);
     return false;
   }
+}
+
+export async function probeBlobWrite(): Promise<boolean> {
+  if (!isBlobAvailable()) return false;
+  return writeJsonBlob("engagement/.health-check.json", {
+    ts: Date.now(),
+  });
 }
 
 export function isLocalFileStorage(): boolean {
