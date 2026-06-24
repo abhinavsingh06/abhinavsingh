@@ -1,23 +1,15 @@
 import fs from "fs";
 import path from "path";
+import { isLocalFileStorage } from "./blob-store";
+import { getBrevoListEmails } from "./email";
+import {
+  isPostgresConfigured,
+  postgresAddSubscriber,
+  postgresGetSubscribers,
+  type PostgresSubscriber,
+} from "./postgres-store";
 
 const subscribersFile = path.join(process.cwd(), "data", "subscribers.json");
-
-// Ensure data directory exists
-function ensureDataDirectory() {
-  const dataDir = path.join(process.cwd(), "data");
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-}
-
-// Initialize subscribers file if it doesn't exist
-function initializeSubscribersFile() {
-  ensureDataDirectory();
-  if (!fs.existsSync(subscribersFile)) {
-    fs.writeFileSync(subscribersFile, JSON.stringify([], null, 2));
-  }
-}
 
 export interface Subscriber {
   email: string;
@@ -25,66 +17,115 @@ export interface Subscriber {
   active: boolean;
 }
 
-// Get all subscribers
-export function getAllSubscribers(): Subscriber[] {
+function ensureDataDirectory() {
+  const dataDir = path.join(process.cwd(), "data");
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+}
+
+function readSubscribersFile(): Subscriber[] {
   try {
-    initializeSubscribersFile();
+    ensureDataDirectory();
+    if (!fs.existsSync(subscribersFile)) return [];
     const content = fs.readFileSync(subscribersFile, "utf8");
     const subscribers = JSON.parse(content) as Subscriber[];
     return subscribers.filter((sub) => sub.active !== false);
   } catch (error) {
-    console.error("Error reading subscribers:", error);
+    console.error("Error reading subscribers from file:", error);
     return [];
   }
 }
 
-// Add a new subscriber
-export function addSubscriber(email: string): boolean {
-  try {
-    initializeSubscribersFile();
-    const subscribers = getAllSubscribers();
+function writeSubscribersFile(subscribers: Subscriber[]) {
+  ensureDataDirectory();
+  fs.writeFileSync(subscribersFile, JSON.stringify(subscribers, null, 2));
+}
 
-    // Check if email already exists
-    if (
-      subscribers.some((sub) => sub.email.toLowerCase() === email.toLowerCase())
-    ) {
-      return false; // Already subscribed
+function addSubscriberFile(email: string): boolean {
+  const normalized = email.toLowerCase();
+  const subscribers = readSubscribersFile();
+  if (subscribers.some((sub) => sub.email.toLowerCase() === normalized)) {
+    return false;
+  }
+
+  subscribers.push({
+    email: normalized,
+    subscribedAt: new Date().toISOString(),
+    active: true,
+  });
+  writeSubscribersFile(subscribers);
+  return true;
+}
+
+function mergeSubscribers(...groups: Subscriber[][]): Subscriber[] {
+  const map = new Map<string, Subscriber>();
+  for (const group of groups) {
+    for (const subscriber of group) {
+      if (subscriber.active === false) continue;
+      map.set(subscriber.email.toLowerCase(), subscriber);
     }
-
-    const newSubscriber: Subscriber = {
-      email: email.toLowerCase(),
-      subscribedAt: new Date().toISOString(),
-      active: true,
-    };
-
-    subscribers.push(newSubscriber);
-    fs.writeFileSync(subscribersFile, JSON.stringify(subscribers, null, 2));
-    return true;
-  } catch (error) {
-    console.error("Error adding subscriber:", error);
-    return false;
   }
+  return [...map.values()];
 }
 
-// Remove a subscriber (unsubscribe)
-export function removeSubscriber(email: string): boolean {
+function brevoEmailsToSubscribers(emails: string[]): Subscriber[] {
+  return emails.map((email) => ({
+    email: email.toLowerCase(),
+    subscribedAt: "",
+    active: true,
+  }));
+}
+
+export async function getAllSubscribers(): Promise<Subscriber[]> {
+  let fromPostgres: PostgresSubscriber[] = [];
+  if (isPostgresConfigured()) {
+    try {
+      fromPostgres = await postgresGetSubscribers();
+    } catch (error) {
+      console.error("[subscribers] Postgres read failed:", error);
+    }
+  }
+
+  const fromFile = isLocalFileStorage() ? readSubscribersFile() : [];
+
+  let fromBrevo: Subscriber[] = [];
   try {
-    initializeSubscribersFile();
-    const subscribers = getAllSubscribers();
-    const updated = subscribers.map((sub) =>
-      sub.email.toLowerCase() === email.toLowerCase()
-        ? { ...sub, active: false }
-        : sub
-    );
-    fs.writeFileSync(subscribersFile, JSON.stringify(updated, null, 2));
-    return true;
+    const brevoEmails = await getBrevoListEmails();
+    fromBrevo = brevoEmailsToSubscribers(brevoEmails);
   } catch (error) {
-    console.error("Error removing subscriber:", error);
-    return false;
+    console.error("[subscribers] Brevo list read failed:", error);
   }
+
+  return mergeSubscribers(fromPostgres, fromFile, fromBrevo);
 }
 
-// Get subscriber count
-export function getSubscriberCount(): number {
-  return getAllSubscribers().length;
+export async function addSubscriber(email: string): Promise<boolean> {
+  const normalized = email.toLowerCase();
+
+  if (isPostgresConfigured()) {
+    try {
+      const added = await postgresAddSubscriber(normalized);
+      if (added) return true;
+
+      const existing = await getAllSubscribers();
+      if (existing.some((sub) => sub.email.toLowerCase() === normalized)) {
+        return false;
+      }
+    } catch (error) {
+      console.error("[subscribers] Postgres write failed:", error);
+    }
+  }
+
+  if (isLocalFileStorage()) {
+    return addSubscriberFile(normalized);
+  }
+
+  const existing = await getAllSubscribers();
+  return !existing.some((sub) => sub.email.toLowerCase() === normalized);
+}
+
+export async function getSubscriberCount(): Promise<number> {
+  const subscribers = await getAllSubscribers();
+  return subscribers.length;
 }

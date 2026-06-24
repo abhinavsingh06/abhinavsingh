@@ -1,5 +1,11 @@
 import fs from "fs";
 import path from "path";
+import { isLocalFileStorage } from "./blob-store";
+import {
+  isPostgresConfigured,
+  postgresGetSentNewsletterSlugs,
+  postgresMarkNewsletterSent,
+} from "./postgres-store";
 
 const sentNewslettersFile = path.join(
   process.cwd(),
@@ -7,7 +13,12 @@ const sentNewslettersFile = path.join(
   "sent-newsletters.json"
 );
 
-// Ensure data directory exists
+export interface SentNewsletter {
+  slug: string;
+  sentAt: string;
+  subscribersCount: number;
+}
+
 function ensureDataDirectory() {
   const dataDir = path.join(process.cwd(), "data");
   if (!fs.existsSync(dataDir)) {
@@ -15,67 +26,77 @@ function ensureDataDirectory() {
   }
 }
 
-// Initialize sent newsletters file if it doesn't exist
-function initializeSentNewslettersFile() {
-  ensureDataDirectory();
-  if (!fs.existsSync(sentNewslettersFile)) {
-    fs.writeFileSync(sentNewslettersFile, JSON.stringify([], null, 2));
-  }
-}
-
-export interface SentNewsletter {
-  slug: string;
-  sentAt: string;
-  subscribersCount: number;
-}
-
-// Get all sent newsletters
-export function getSentNewsletters(): SentNewsletter[] {
+function readSentNewslettersFile(): SentNewsletter[] {
   try {
-    initializeSentNewslettersFile();
+    ensureDataDirectory();
+    if (!fs.existsSync(sentNewslettersFile)) return [];
     const content = fs.readFileSync(sentNewslettersFile, "utf8");
     return JSON.parse(content) as SentNewsletter[];
   } catch (error) {
-    console.error("Error reading sent newsletters:", error);
+    console.error("Error reading sent newsletters from file:", error);
     return [];
   }
 }
 
-// Check if a newsletter for a post has been sent
-export function hasNewsletterBeenSent(slug: string): boolean {
-  const sentNewsletters = getSentNewsletters();
-  return sentNewsletters.some((newsletter) => newsletter.slug === slug);
+function writeSentNewslettersFile(newsletters: SentNewsletter[]) {
+  ensureDataDirectory();
+  fs.writeFileSync(sentNewslettersFile, JSON.stringify(newsletters, null, 2));
 }
 
-// Mark a newsletter as sent
-export function markNewsletterAsSent(
+async function getSentSlugs(): Promise<Set<string>> {
+  const slugs = new Set<string>();
+
+  if (isPostgresConfigured()) {
+    try {
+      for (const slug of await postgresGetSentNewsletterSlugs()) {
+        slugs.add(slug);
+      }
+    } catch (error) {
+      console.error("[newsletter-tracker] Postgres read failed:", error);
+    }
+  }
+
+  if (isLocalFileStorage()) {
+    for (const entry of readSentNewslettersFile()) {
+      slugs.add(entry.slug);
+    }
+  }
+
+  return slugs;
+}
+
+export async function hasNewsletterBeenSent(slug: string): Promise<boolean> {
+  const sentSlugs = await getSentSlugs();
+  return sentSlugs.has(slug);
+}
+
+export async function markNewsletterAsSent(
   slug: string,
   subscribersCount: number
-): void {
-  try {
-    initializeSentNewslettersFile();
-    const sentNewsletters = getSentNewsletters();
+): Promise<void> {
+  if (isPostgresConfigured()) {
+    try {
+      await postgresMarkNewsletterSent(slug, subscribersCount);
+      return;
+    } catch (error) {
+      console.error("[newsletter-tracker] Postgres write failed:", error);
+    }
+  }
 
-    // Remove any existing entry for this slug (in case of re-sending)
-    const filtered = sentNewsletters.filter((n) => n.slug !== slug);
-
-    // Add new entry
-    const newEntry: SentNewsletter = {
+  if (isLocalFileStorage()) {
+    const sentNewsletters = readSentNewslettersFile().filter((n) => n.slug !== slug);
+    sentNewsletters.push({
       slug,
       sentAt: new Date().toISOString(),
       subscribersCount,
-    };
-
-    filtered.push(newEntry);
-    fs.writeFileSync(sentNewslettersFile, JSON.stringify(filtered, null, 2));
-  } catch (error) {
-    console.error("Error marking newsletter as sent:", error);
+    });
+    writeSentNewslettersFile(sentNewsletters);
   }
 }
 
-// Get posts that haven't had newsletters sent yet
-export function getUnsentPostSlugs(allPostSlugs: string[]): string[] {
-  const sentNewsletters = getSentNewsletters();
-  const sentSlugs = new Set(sentNewsletters.map((n) => n.slug));
+export async function getUnsentPostSlugs(
+  allPostSlugs: string[]
+): Promise<string[]> {
+  const sentSlugs = await getSentSlugs();
   return allPostSlugs.filter((slug) => !sentSlugs.has(slug));
 }

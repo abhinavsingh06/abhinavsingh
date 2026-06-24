@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Add subscriber locally
-    const success = addSubscriber(email);
+    const success = await addSubscriber(email);
     if (!success) {
       return NextResponse.json(
         { message: "Email already subscribed" },

@@ -70,6 +70,20 @@ async function ensureSchema(): Promise<Sql> {
           count INTEGER NOT NULL DEFAULT 0
         )
       `;
+      await client`
+        CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+          email TEXT PRIMARY KEY,
+          subscribed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          active BOOLEAN NOT NULL DEFAULT TRUE
+        )
+      `;
+      await client`
+        CREATE TABLE IF NOT EXISTS sent_newsletters (
+          slug TEXT PRIMARY KEY,
+          sent_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          subscribers_count INTEGER NOT NULL DEFAULT 0
+        )
+      `;
     })();
   }
 
@@ -155,4 +169,72 @@ export async function postgresPing(): Promise<boolean> {
   if (!client) return false;
   await client`SELECT 1 AS ok`;
   return true;
+}
+
+export type PostgresSubscriber = {
+  email: string;
+  subscribedAt: string;
+  active: boolean;
+};
+
+export async function postgresGetSubscribers(): Promise<PostgresSubscriber[]> {
+  const client = await ensureSchema();
+  const rows = (await client`
+    SELECT email, subscribed_at, active
+    FROM newsletter_subscribers
+    WHERE active = TRUE
+    ORDER BY subscribed_at ASC
+  `) as { email: string; subscribed_at: string; active: boolean }[];
+
+  return rows.map((row) => ({
+    email: row.email,
+    subscribedAt: new Date(row.subscribed_at).toISOString(),
+    active: row.active,
+  }));
+}
+
+export async function postgresAddSubscriber(email: string): Promise<boolean> {
+  const client = await ensureSchema();
+  const normalized = email.toLowerCase();
+
+  const inserted = (await client`
+    INSERT INTO newsletter_subscribers (email, active)
+    VALUES (${normalized}, TRUE)
+    ON CONFLICT (email) DO NOTHING
+    RETURNING email
+  `) as { email: string }[];
+
+  if (inserted.length > 0) return true;
+
+  const reactivated = (await client`
+    UPDATE newsletter_subscribers
+    SET active = TRUE
+    WHERE email = ${normalized} AND active = FALSE
+    RETURNING email
+  `) as { email: string }[];
+
+  return reactivated.length > 0;
+}
+
+export async function postgresGetSentNewsletterSlugs(): Promise<string[]> {
+  const client = await ensureSchema();
+  const rows = (await client`
+    SELECT slug FROM sent_newsletters
+  `) as { slug: string }[];
+  return rows.map((row) => row.slug);
+}
+
+export async function postgresMarkNewsletterSent(
+  slug: string,
+  subscribersCount: number
+): Promise<void> {
+  const client = await ensureSchema();
+  await client`
+    INSERT INTO sent_newsletters (slug, subscribers_count)
+    VALUES (${slug}, ${subscribersCount})
+    ON CONFLICT (slug)
+    DO UPDATE SET
+      sent_at = NOW(),
+      subscribers_count = EXCLUDED.subscribers_count
+  `;
 }

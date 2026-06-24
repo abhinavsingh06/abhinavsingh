@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get all subscribers
-    const subscribers = getAllSubscribers();
+    const subscribers = await getAllSubscribers();
     if (subscribers.length === 0) {
       return NextResponse.json(
         { message: "No subscribers found", sent: 0 },

@@ -168,3 +168,51 @@ export async function addContactToBrevo(
 export function isBrevoConfigured(): boolean {
   return !!process.env.BREVO_API_KEY;
 }
+
+/**
+ * Fetch subscriber emails from a Brevo contact list (fallback for legacy subscribers).
+ */
+export async function getBrevoListEmails(): Promise<string[]> {
+  const brevoApiKey = process.env.BREVO_API_KEY;
+  const listId = process.env.BREVO_LIST_ID;
+  if (!brevoApiKey || !listId) return [];
+
+  const emails = new Set<string>();
+  let offset = 0;
+  const limit = 100;
+
+  while (true) {
+    const response = await fetch(
+      `https://api.brevo.com/v3/contacts/lists/${listId}/contacts?limit=${limit}&offset=${offset}`,
+      {
+        headers: {
+          "api-key": brevoApiKey,
+          accept: "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text();
+      console.error("[brevo] list contacts failed:", response.status, body);
+      break;
+    }
+
+    const data = (await response.json()) as {
+      contacts?: Array<{ email?: string }>;
+    };
+
+    const batch = data.contacts ?? [];
+    if (batch.length === 0) break;
+
+    for (const contact of batch) {
+      if (contact.email) emails.add(contact.email.toLowerCase());
+    }
+
+    if (batch.length < limit) break;
+    offset += limit;
+  }
+
+  return [...emails];
+}

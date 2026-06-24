@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAllPosts, BlogPost } from "@/lib/posts";
 import { getAllSubscribers } from "@/lib/subscribers";
 import {
-  hasNewsletterBeenSent,
   markNewsletterAsSent,
   getUnsentPostSlugs,
 } from "@/lib/newsletter-tracker";
 import { sendEmailViaBrevo } from "@/lib/email";
+import { isNewsletterAuthorized } from "@/lib/newsletter-auth";
 
 // Newsletter email HTML template for new blog posts
 const getNewsletterHTML = (post: BlogPost) => {
@@ -144,7 +144,7 @@ async function sendNewsletterForPost(post: BlogPost): Promise<{
   sent: number;
   failed: number;
 }> {
-  const subscribers = getAllSubscribers();
+  const subscribers = await getAllSubscribers();
   if (subscribers.length === 0) {
     return { sent: 0, failed: 0 };
   }
@@ -173,37 +173,46 @@ async function sendNewsletterForPost(post: BlogPost): Promise<{
   return { sent: sentCount, failed: failedCount };
 }
 
+/** Skip emailing the full archive on first run — only notify for the newest post. */
+async function bootstrapOlderPosts(allPosts: BlogPost[]): Promise<number> {
+  if (allPosts.length <= 1) return 0;
+
+  const unsentSlugs = await getUnsentPostSlugs(allPosts.map((post) => post.slug));
+  if (unsentSlugs.length !== allPosts.length) return 0;
+
+  const sorted = [...allPosts].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+  const olderPosts = sorted.slice(1);
+
+  for (const post of olderPosts) {
+    await markNewsletterAsSent(post.slug, 0);
+  }
+
+  return olderPosts.length;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // Optional: Add secret authentication
-    const authHeader = request.headers.get("authorization");
-    const expectedSecret = process.env.NEWSLETTER_SECRET || "your-secret-key";
-
-    // Check if secret is provided (optional - can be disabled by not setting NEWSLETTER_SECRET)
-    if (
-      expectedSecret !== "your-secret-key" &&
-      authHeader !== `Bearer ${expectedSecret}`
-    ) {
-      // Also check query parameter for webhook compatibility
-      const url = new URL(request.url);
-      const secretParam = url.searchParams.get("secret");
-      if (secretParam !== expectedSecret) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
+    if (!isNewsletterAuthorized(request)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get all posts
     const allPosts = getAllPosts();
     const allPostSlugs = allPosts.map((post) => post.slug);
 
+    const bootstrapped = await bootstrapOlderPosts(allPosts);
+
     // Find posts that haven't been sent newsletters yet
-    const unsentSlugs = getUnsentPostSlugs(allPostSlugs);
+    const unsentSlugs = await getUnsentPostSlugs(allPostSlugs);
 
     if (unsentSlugs.length === 0) {
       return NextResponse.json(
         {
           message: "No new posts to send newsletters for",
           checked: allPostSlugs.length,
+          bootstrapped,
           sent: 0,
         },
         { status: 200 }
@@ -211,7 +220,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get subscribers count
-    const subscribers = getAllSubscribers();
+    const subscribers = await getAllSubscribers();
     const subscriberCount = subscribers.length;
 
     if (subscriberCount === 0) {
@@ -242,7 +251,7 @@ export async function POST(request: NextRequest) {
 
       // Mark as sent only if at least one email was sent successfully
       if (sent > 0) {
-        markNewsletterAsSent(slug, sent);
+        await markNewsletterAsSent(slug, sent);
       }
 
       results.push({
@@ -263,6 +272,7 @@ export async function POST(request: NextRequest) {
       {
         message: "Automatic newsletter check completed",
         checked: allPostSlugs.length,
+        bootstrapped,
         sent: unsentSlugs.length,
         results,
         summary: {
@@ -285,15 +295,7 @@ export async function POST(request: NextRequest) {
 // Also support GET for easier webhook/testing
 export async function GET(request: NextRequest) {
   try {
-    // Optional: Add secret authentication
-    const url = new URL(request.url);
-    const secretParam = url.searchParams.get("secret");
-    const expectedSecret = process.env.NEWSLETTER_SECRET || "your-secret-key";
-
-    if (
-      expectedSecret !== "your-secret-key" &&
-      secretParam !== expectedSecret
-    ) {
+    if (!isNewsletterAuthorized(request)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -302,9 +304,9 @@ export async function GET(request: NextRequest) {
     const allPostSlugs = allPosts.map((post) => post.slug);
 
     // Find posts that haven't been sent newsletters yet
-    const unsentSlugs = getUnsentPostSlugs(allPostSlugs);
+    const unsentSlugs = await getUnsentPostSlugs(allPostSlugs);
 
-    const subscribers = getAllSubscribers();
+    const subscribers = await getAllSubscribers();
 
     return NextResponse.json(
       {
