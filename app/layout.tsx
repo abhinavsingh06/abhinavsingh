@@ -19,6 +19,10 @@ export const metadata: Metadata = {
   title: "Abhinav Singh / Software Engineer",
   description:
     "Personal site of Abhinav Singh — software engineer, writer. Field notes, essays, and experiments on the web.",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({
