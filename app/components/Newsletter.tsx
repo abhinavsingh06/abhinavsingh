@@ -17,57 +17,37 @@ export default function Newsletter() {
     setMessage("");
 
     try {
-      const accessKey = "50d76527-8aaa-4be3-9610-af0ea18a4abe";
-      const successUrl = "https://abhinavsingh.online/subscribe";
-
-      const formData = new URLSearchParams();
-      formData.append("access_key", accessKey);
-      formData.append("email", email);
-      formData.append("subject", "New Newsletter Subscription");
-      formData.append("from_name", "Blog Newsletter");
-      formData.append("message", `New newsletter subscription from: ${email}`);
-      formData.append("success_url", successUrl);
-
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const response = await fetch("/api/subscribe", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: formData.toString(),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
 
-      const responseText = await response.text();
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch {
-        throw new Error("Invalid response from server");
+      const data = (await response.json()) as {
+        message?: string;
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(data.error || "Subscription failed");
       }
 
-      if (data.success === true) {
-        try {
-          await fetch("/api/subscribe", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          });
-        } catch (error) {
-          console.error("Subscribe API error:", error);
-        }
-
-        setStatus("success");
-        setMessage("You're in. Check your inbox.");
-        setEmail("");
-        toast.showToast("Successfully subscribed", "success");
-      } else {
-        setStatus("error");
-        const errorMsg =
-          data.message || "Something went wrong. Please try again.";
-        setMessage(errorMsg);
-        toast.showToast(errorMsg, "error");
-      }
+      setStatus("success");
+      setMessage(
+        data.message === "Email already subscribed"
+          ? "You're already subscribed."
+          : "You're in. Check your inbox for a welcome email."
+      );
+      setEmail("");
+      toast.showToast("Successfully subscribed", "success");
     } catch (error) {
       setStatus("error");
-      setMessage("Something went wrong. Please try again.");
-      toast.showToast("Something went wrong. Please try again.", "error");
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.";
+      setMessage(errorMsg);
+      toast.showToast(errorMsg, "error");
       console.error("Newsletter subscription error:", error);
     }
   };

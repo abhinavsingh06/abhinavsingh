@@ -122,22 +122,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Add subscriber locally
     const success = await addSubscriber(email);
-    if (!success) {
-      return NextResponse.json(
-        { message: "Email already subscribed" },
-        { status: 200 }
-      );
-    }
+    const normalizedEmail = email.toLowerCase();
 
     // Track results for response
     const results = {
-      subscriberAdded: true,
+      subscriberAdded: success,
       brevoContactAdded: false,
       welcomeEmailSent: false,
       errors: [] as string[],
     };
+
+    if (!success) {
+      // Still ensure Brevo has the contact if they re-subscribe
+      if (emailLib.isBrevoConfigured()) {
+        const contactResult = await emailLib.addContactToBrevo(
+          normalizedEmail,
+          process.env.BREVO_LIST_ID
+            ? [parseInt(process.env.BREVO_LIST_ID)]
+            : []
+        );
+        results.brevoContactAdded = contactResult.success;
+      }
+
+      return NextResponse.json(
+        {
+          message: "Email already subscribed",
+          ...results,
+        },
+        { status: 200 }
+      );
+    }
 
     // Add contact to Brevo and send welcome email
     if (emailLib.isBrevoConfigured()) {
@@ -223,7 +238,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         message: "Subscriber added successfully",
-        ...(process.env.NODE_ENV === "development" && { details: results }),
+        ...results,
       },
       { status: 200 }
     );
