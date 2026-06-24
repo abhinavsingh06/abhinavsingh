@@ -1,7 +1,9 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
+import { siteName, siteUrl } from "@/lib/site";
 import { getViewCountSync } from "@/lib/views";
 import { getLikeCountSync } from "@/lib/likes";
 import Newsletter from "../../components/Newsletter";
@@ -17,6 +19,38 @@ import SpotlightCard from "../../components/SpotlightCard";
 export async function generateStaticParams() {
   const posts = getAllPosts();
   return posts.map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
+  if (!post) return {};
+
+  const url = `${siteUrl}/blog/${slug}`;
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      type: "article",
+      url,
+      title: post.title,
+      description: post.excerpt,
+      publishedTime: post.date,
+      authors: [siteName],
+      siteName,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+    },
+    alternates: { canonical: url },
+  };
 }
 
 export default function BlogPostPage({

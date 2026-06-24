@@ -1,14 +1,22 @@
 import { BlobNotFoundError, head, put } from "@vercel/blob";
 
-export function isBlobConfigured(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+function isVercel(): boolean {
+  return process.env.VERCEL === "1";
+}
+
+export function isBlobAvailable(): boolean {
+  return Boolean(
+    process.env.BLOB_READ_WRITE_TOKEN ||
+      process.env.BLOB_STORE_ID ||
+      isVercel()
+  );
 }
 
 export async function readJsonBlob<T>(
   pathname: string,
   fallback: T
-): Promise<T> {
-  if (!isBlobConfigured()) return fallback;
+): Promise<T | null> {
+  if (!isBlobAvailable()) return null;
 
   try {
     const meta = await head(pathname);
@@ -18,7 +26,7 @@ export async function readJsonBlob<T>(
   } catch (error) {
     if (error instanceof BlobNotFoundError) return fallback;
     console.error(`[blob] read failed (${pathname}):`, error);
-    return fallback;
+    return null;
   }
 }
 
@@ -26,7 +34,7 @@ export async function writeJsonBlob<T>(
   pathname: string,
   data: T
 ): Promise<boolean> {
-  if (!isBlobConfigured()) return false;
+  if (!isBlobAvailable()) return false;
 
   try {
     await put(pathname, JSON.stringify(data), {
@@ -40,4 +48,8 @@ export async function writeJsonBlob<T>(
     console.error(`[blob] write failed (${pathname}):`, error);
     return false;
   }
+}
+
+export function isLocalFileStorage(): boolean {
+  return !isVercel();
 }

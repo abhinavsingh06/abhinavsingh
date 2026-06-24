@@ -1,7 +1,17 @@
 import fs from "fs";
 import path from "path";
-import { readJsonBlob, writeJsonBlob } from "./blob-store";
-import { getKv } from "./kv";
+import {
+  isBlobAvailable,
+  isLocalFileStorage,
+  readJsonBlob,
+  writeJsonBlob,
+} from "./blob-store";
+import { getKv, warnIfNoPersistentStorage } from "./kv";
+import {
+  isPostgresConfigured,
+  postgresGetViewCount,
+  postgresIncrementViewCount,
+} from "./postgres-store";
 
 const viewsFile = path.join(process.cwd(), "data", "post-views.json");
 const viewsBlobPath = "engagement/post-views.json";
@@ -16,9 +26,7 @@ function ensureDataDirectory() {
 function readViewsFile(): Record<string, number> {
   try {
     ensureDataDirectory();
-    if (!fs.existsSync(viewsFile)) {
-      fs.writeFileSync(viewsFile, JSON.stringify({}, null, 2));
-    }
+    if (!fs.existsSync(viewsFile)) return {};
     const content = fs.readFileSync(viewsFile, "utf8");
     return JSON.parse(content) as Record<string, number>;
   } catch (error) {
@@ -33,21 +41,30 @@ function writeViewsFile(views: Record<string, number>) {
 }
 
 async function readViewsDocument(): Promise<Record<string, number>> {
-  const fromBlob = await readJsonBlob<Record<string, number>>(viewsBlobPath, {});
-  if (Object.keys(fromBlob).length > 0) return fromBlob;
-  return readViewsFile();
+  if (isBlobAvailable()) {
+    const fromBlob = await readJsonBlob<Record<string, number>>(
+      viewsBlobPath,
+      {}
+    );
+    if (fromBlob !== null) return fromBlob;
+  }
+  if (isLocalFileStorage()) return readViewsFile();
+  return {};
 }
 
-async function writeViewsDocument(views: Record<string, number>): Promise<void> {
-  const wroteBlob = await writeJsonBlob(viewsBlobPath, views);
-  if (wroteBlob) return;
-
-  try {
-    writeViewsFile(views);
-  } catch (error) {
-    console.error("Error writing view counts to file:", error);
-    throw new Error("Unable to persist views");
+async function writeViewsDocument(
+  views: Record<string, number>
+): Promise<void> {
+  warnIfNoPersistentStorage();
+  if (isBlobAvailable()) {
+    const wroteBlob = await writeJsonBlob(viewsBlobPath, views);
+    if (wroteBlob) return;
   }
+  if (isLocalFileStorage()) {
+    writeViewsFile(views);
+    return;
+  }
+  throw new Error("No persistent storage available");
 }
 
 function viewsKey(slug: string) {
@@ -55,13 +72,21 @@ function viewsKey(slug: string) {
 }
 
 export async function getViewCount(slug: string): Promise<number> {
+  if (isPostgresConfigured()) {
+    try {
+      return await postgresGetViewCount(slug);
+    } catch (error) {
+      console.error("[views] Postgres read failed:", error);
+    }
+  }
+
   const kv = getKv();
   if (kv) {
     try {
       const count = await kv.get<number>(viewsKey(slug));
       return Number(count) || 0;
     } catch (error) {
-      console.error("[views] KV read failed, using document store:", error);
+      console.error("[views] KV read failed:", error);
     }
   }
 
@@ -70,12 +95,20 @@ export async function getViewCount(slug: string): Promise<number> {
 }
 
 export async function incrementViewCount(slug: string): Promise<number> {
+  if (isPostgresConfigured()) {
+    try {
+      return await postgresIncrementViewCount(slug);
+    } catch (error) {
+      console.error("[views] Postgres write failed:", error);
+    }
+  }
+
   const kv = getKv();
   if (kv) {
     try {
       return Number(await kv.incr(viewsKey(slug)));
     } catch (error) {
-      console.error("[views] KV write failed, using document store:", error);
+      console.error("[views] KV write failed:", error);
     }
   }
 
@@ -87,6 +120,6 @@ export async function incrementViewCount(slug: string): Promise<number> {
 }
 
 export function getViewCountSync(slug: string): number {
-  const views = readViewsFile();
-  return views[slug] ?? 0;
+  if (!isLocalFileStorage()) return 0;
+  return readViewsFile()[slug] ?? 0;
 }

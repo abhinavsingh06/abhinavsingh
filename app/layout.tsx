@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import ToastProvider from "./components/ToastProvider";
 import MouseSpotlight from "./components/MouseSpotlight";
+import { siteDescription, siteName, siteUrl } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,12 +21,28 @@ const gtmId = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-M7SHGMX8";
 const isProduction = process.env.NODE_ENV === "production";
 
 export const metadata: Metadata = {
-  title: "Abhinav Singh / Software Engineer",
-  description:
-    "Personal site of Abhinav Singh — software engineer, writer. Field notes, essays, and experiments on the web.",
-  icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: `${siteName} / Software Engineer`,
+    template: `%s · ${siteName}`,
+  },
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName,
+    title: siteName,
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteName,
+    description: siteDescription,
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
