@@ -13,6 +13,12 @@ import GitWorkflowAnimation from "./GitWorkflowAnimation";
 import GitBranchingAnimation from "./GitBranchingAnimation";
 import GitBranchingGuide from "./GitBranchingGuide";
 import GitBranchingStrategies from "./GitBranchingStrategies";
+import TwoPointersAnimation from "./TwoPointersAnimation";
+import TwoPointersQuickRef from "./TwoPointersQuickRef";
+import TwoPointersPracticeLadder from "./TwoPointersPracticeLadder";
+import TwoPointersComplexitySheet from "./TwoPointersComplexitySheet";
+import TwoPointersPatternOverview from "./TwoPointersPatternOverview";
+import TwoPointersVsSlidingWindow from "./TwoPointersVsSlidingWindow";
 
 interface Heading {
   id: string;
@@ -194,10 +200,45 @@ export default function BlogContent({
         continue;
       }
 
+      if (trimmed === "[TWO-POINTERS-PRACTICE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<TwoPointersPracticeLadder key={keyCounter++} />);
+        continue;
+      }
+
       if (trimmed === "[QUICK-REF]") {
         flushParagraph();
         flushList();
         elements.push(<SlidingWindowQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[TWO-POINTERS-QUICK-REF]") {
+        flushParagraph();
+        flushList();
+        elements.push(<TwoPointersQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[TWO-POINTERS-PATTERNS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<TwoPointersPatternOverview key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[TWO-POINTERS-VS-SW]") {
+        flushParagraph();
+        flushList();
+        elements.push(<TwoPointersVsSlidingWindow key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[TWO-POINTERS-COMPLEXITY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<TwoPointersComplexitySheet key={keyCounter++} />);
         continue;
       }
 
@@ -239,6 +280,19 @@ export default function BlogContent({
           const preset = swMatch[1].trim();
           elements.push(
             <SlidingWindowAnimation key={keyCounter++} preset={preset} />
+          );
+        }
+        continue;
+      }
+
+      if (trimmed.startsWith("[TWO-POINTERS:")) {
+        flushParagraph();
+        flushList();
+        const tpMatch = trimmed.match(/\[TWO-POINTERS:(.+?)\]/);
+        if (tpMatch) {
+          const preset = tpMatch[1].trim();
+          elements.push(
+            <TwoPointersAnimation key={keyCounter++} preset={preset} />
           );
         }
         continue;
