@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackNewsletterSignup } from "@/lib/analytics";
 import { useToast } from "./ToastProvider";
 
 export default function Newsletter() {
@@ -26,10 +27,15 @@ export default function Newsletter() {
       const data = (await response.json()) as {
         message?: string;
         error?: string;
+        subscriberAdded?: boolean;
       };
 
       if (!response.ok) {
         throw new Error(data.error || "Subscription failed");
+      }
+
+      if (data.subscriberAdded) {
+        trackNewsletterSignup();
       }
 
       setStatus("success");

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleTagManager } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import ToastProvider from "./components/ToastProvider";
@@ -63,6 +64,7 @@ export default function RootLayout({
           </ToastProvider>
         </ThemeProvider>
         {isProduction && gtmId ? <GoogleTagManager gtmId={gtmId} /> : null}
+        {isProduction ? <Analytics /> : null}
       </body>
     </html>
   );
