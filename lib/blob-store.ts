@@ -57,6 +57,10 @@ export async function probeBlobWrite(): Promise<boolean> {
   });
 }
 
+/** Writable local `data/` — local dev and vercel dev, not serverless production. */
 export function isLocalFileStorage(): boolean {
-  return !isVercel();
+  if (!isVercel()) return true;
+  if (process.env.NODE_ENV === "development") return true;
+  if (process.env.VERCEL_ENV === "development") return true;
+  return false;
 }
