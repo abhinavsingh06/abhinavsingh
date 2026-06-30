@@ -19,6 +19,12 @@ import TwoPointersPracticeLadder from "./TwoPointersPracticeLadder";
 import TwoPointersComplexitySheet from "./TwoPointersComplexitySheet";
 import TwoPointersPatternOverview from "./TwoPointersPatternOverview";
 import TwoPointersVsSlidingWindow from "./TwoPointersVsSlidingWindow";
+import PrefixSumAnimation from "./PrefixSumAnimation";
+import PrefixSumQuickRef from "./PrefixSumQuickRef";
+import PrefixSumPracticeLadder from "./PrefixSumPracticeLadder";
+import PrefixSumComplexitySheet from "./PrefixSumComplexitySheet";
+import PrefixSumPatternOverview from "./PrefixSumPatternOverview";
+import PrefixSumVsOthers from "./PrefixSumVsOthers";
 
 interface Heading {
   id: string;
@@ -293,6 +299,54 @@ export default function BlogContent({
           const preset = tpMatch[1].trim();
           elements.push(
             <TwoPointersAnimation key={keyCounter++} preset={preset} />
+          );
+        }
+        continue;
+      }
+
+      if (trimmed === "[PREFIX-SUM-PATTERNS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<PrefixSumPatternOverview key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[PREFIX-SUM-PRACTICE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<PrefixSumPracticeLadder key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[PREFIX-SUM-QUICK-REF]") {
+        flushParagraph();
+        flushList();
+        elements.push(<PrefixSumQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[PREFIX-SUM-COMPLEXITY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<PrefixSumComplexitySheet key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[PREFIX-SUM-VS-OTHERS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<PrefixSumVsOthers key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed.startsWith("[PREFIX-SUM:")) {
+        flushParagraph();
+        flushList();
+        const psMatch = trimmed.match(/\[PREFIX-SUM:(.+?)\]/);
+        if (psMatch) {
+          const preset = psMatch[1].trim();
+          elements.push(
+            <PrefixSumAnimation key={keyCounter++} preset={preset} />
           );
         }
         continue;
