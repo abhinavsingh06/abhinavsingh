@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Trigger Newsletter API
         env:
-          WEBHOOK_URL: ${{ secrets.NEWSLETTER_WEBHOOK_URL || 'https://abhinavsingh.online/api/auto-newsletter' }}
+          WEBHOOK_URL: ${{ secrets.NEWSLETTER_WEBHOOK_URL || 'https://www.abhinavsingh.online/api/auto-newsletter' }}
           SECRET: ${{ secrets.NEWSLETTER_SECRET }}
         run: |
           if [ -z "$SECRET" ]; then
@@ -32,7 +32,7 @@ jobs:
           fi
 
           echo "Triggering newsletter API..."
-          response=$(curl -s -w "\n%{http_code}" -X POST "${WEBHOOK_URL}?secret=${SECRET}")
+          response=$(curl -s -L -w "\n%{http_code}" -X POST "${WEBHOOK_URL}?secret=${SECRET}")
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | sed '$d')
 

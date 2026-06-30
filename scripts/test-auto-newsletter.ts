@@ -17,7 +17,10 @@ import path from "path";
 dotenv.config({ path: path.join(process.cwd(), ".env.local") });
 
 const command = process.argv[2] || "check";
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://www.abhinavsingh.online";
 const secret = process.env.NEWSLETTER_SECRET || "your-secret-key";
 
 async function checkStatus() {
