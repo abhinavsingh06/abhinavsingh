@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getAllPosts, getCategories } from "@/lib/posts";
+import { use } from "react";
+import { getAllPosts, getCategories, getPostsByCategory } from "@/lib/posts";
 import { getViewCountSync } from "@/lib/views";
 import Newsletter from "../components/Newsletter";
 import SiteHeader from "../components/SiteHeader";
@@ -7,8 +8,13 @@ import SiteFooter from "../components/SiteFooter";
 import SpotlightCard from "../components/SpotlightCard";
 import ViewCount from "../components/ViewCount";
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+export default function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = use(searchParams);
+  const posts = category ? getPostsByCategory(category) : getAllPosts();
   const categories = getCategories();
 
   return (
@@ -48,15 +54,17 @@ export default function BlogPage() {
       <section className="mx-auto max-w-[1400px] px-5 sm:px-8">
         <div className="flex flex-wrap items-center gap-2 border-y border-[var(--line)] py-5">
           <p className="font-mono-xs mr-4 text-[var(--muted)]">FILTER /</p>
-          <Link href="/blog" className="chip chip-accent">
+          <Link
+            href="/blog"
+            className={!category ? "chip chip-accent" : "chip"}>
             All
           </Link>
-          {categories.map((category) => (
+          {categories.map((cat) => (
             <Link
-              key={category}
-              href={`/blog?category=${encodeURIComponent(category)}`}
-              className="chip">
-              {category}
+              key={cat}
+              href={`/blog?category=${encodeURIComponent(cat)}`}
+              className={cat === category ? "chip chip-accent" : "chip"}>
+              {cat}
             </Link>
           ))}
         </div>

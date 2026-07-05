@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
+import { getSeriesInfo } from "@/lib/algorithm-series";
 import { siteName, siteUrl } from "@/lib/site";
 import { getViewCountSync } from "@/lib/views";
 import { getLikeCountSync } from "@/lib/likes";
@@ -15,6 +16,8 @@ import PostHeartLikeDock from "../../components/PostHeartLikeDock";
 import ReadingProgress from "../../components/ReadingProgress";
 import ViewCount from "../../components/ViewCount";
 import SpotlightCard from "../../components/SpotlightCard";
+import AlgorithmSeriesBanner from "../../components/AlgorithmSeriesBanner";
+import AlgorithmSeriesReadNext from "../../components/AlgorithmSeriesReadNext";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -64,9 +67,17 @@ export default function BlogPostPage({
   if (!post) notFound();
 
   const allPosts = getAllPosts();
+  const series = getSeriesInfo(post.slug);
   const idx = allPosts.findIndex((p) => p.slug === post.slug);
   const prev = idx > 0 ? allPosts[idx - 1] : null;
   const next = idx < allPosts.length - 1 ? allPosts[idx + 1] : null;
+
+  const seriesPrevPost = series?.prev
+    ? getPostBySlug(series.prev.slug)
+    : null;
+  const seriesNextPost = series?.next
+    ? getPostBySlug(series.next.slug)
+    : null;
 
   const likeCount = getLikeCountSync(post.slug);
   const viewCount = getViewCountSync(post.slug);
@@ -112,6 +123,8 @@ export default function BlogPostPage({
 
           <p className="blog-post-excerpt reveal reveal-2">{post.excerpt}</p>
 
+          <AlgorithmSeriesBanner slug={post.slug} />
+
           <div className="reveal reveal-3 mt-8 hidden md:block">
             <HeartLike postId={post.slug} initialLikes={likeCount} variant="inline" />
           </div>
@@ -122,42 +135,71 @@ export default function BlogPostPage({
         </article>
       </div>
 
-      {(prev || next) && (
-        <section className="blog-post-page-inner border-t border-[var(--line)] py-12">
-          <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
-            {prev ? (
-              <SpotlightCard as="a" href={`/blog/${prev.slug}`} className="group p-6">
-                <div className="relative z-10">
-                  <p className="font-mono-xs mb-3 text-[var(--muted)]">
-                    ← Previous
-                  </p>
-                  <p className="font-display text-2xl leading-tight transition-colors group-hover:text-[var(--accent)] sm:text-3xl">
-                    {prev.title}
-                  </p>
-                </div>
-              </SpotlightCard>
-            ) : (
-              <div />
-            )}
-            {next ? (
-              <SpotlightCard
-                as="a"
-                href={`/blog/${next.slug}`}
-                className="group p-6 md:text-right">
-                <div className="relative z-10">
-                  <p className="font-mono-xs mb-3 text-[var(--muted)]">
-                    Next →
-                  </p>
-                  <p className="font-display text-2xl leading-tight transition-colors group-hover:text-[var(--accent)] sm:text-3xl">
-                    {next.title}
-                  </p>
-                </div>
-              </SpotlightCard>
-            ) : (
-              <div />
-            )}
-          </div>
-        </section>
+      {series ? (
+        <AlgorithmSeriesReadNext
+          currentSlug={post.slug}
+          seriesTitle={series.title}
+          part={series.part}
+          total={series.total}
+          nextPost={
+            seriesNextPost
+              ? {
+                  slug: seriesNextPost.slug,
+                  title: seriesNextPost.title,
+                  excerpt: seriesNextPost.excerpt,
+                  readTime: seriesNextPost.readTime,
+                }
+              : null
+          }
+          prevPost={
+            seriesPrevPost
+              ? {
+                  slug: seriesPrevPost.slug,
+                  title: seriesPrevPost.title,
+                  excerpt: seriesPrevPost.excerpt,
+                  readTime: seriesPrevPost.readTime,
+                }
+              : null
+          }
+        />
+      ) : (
+        (prev || next) && (
+          <section className="blog-post-page-inner border-t border-[var(--line)] py-12">
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
+              {prev ? (
+                <SpotlightCard as="a" href={`/blog/${prev.slug}`} className="group p-6">
+                  <div className="relative z-10">
+                    <p className="font-mono-xs mb-3 text-[var(--muted)]">
+                      ← Previous
+                    </p>
+                    <p className="font-display text-2xl leading-tight transition-colors group-hover:text-[var(--accent)] sm:text-3xl">
+                      {prev.title}
+                    </p>
+                  </div>
+                </SpotlightCard>
+              ) : (
+                <div />
+              )}
+              {next ? (
+                <SpotlightCard
+                  as="a"
+                  href={`/blog/${next.slug}`}
+                  className="group p-6 md:text-right">
+                  <div className="relative z-10">
+                    <p className="font-mono-xs mb-3 text-[var(--muted)]">
+                      Next →
+                    </p>
+                    <p className="font-display text-2xl leading-tight transition-colors group-hover:text-[var(--accent)] sm:text-3xl">
+                      {next.title}
+                    </p>
+                  </div>
+                </SpotlightCard>
+              ) : (
+                <div />
+              )}
+            </div>
+          </section>
+        )
       )}
 
       <section className="blog-post-page-inner pt-16 pb-8 sm:pt-24">

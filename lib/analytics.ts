@@ -24,3 +24,21 @@ export function trackNewsletterSignup(source = "newsletter_form") {
     track("newsletter_signup", { source });
   }
 }
+
+/** Fire when a reader continues an algorithm series. */
+export function trackSeriesContinue(
+  fromSlug: string,
+  toSlug: string,
+  placement: "read_next" | "series_prev" | "series_complete" | "review_prev"
+) {
+  pushDataLayerEvent({
+    event: "series_continue",
+    series_from: fromSlug,
+    series_to: toSlug,
+    series_placement: placement,
+  });
+
+  if (process.env.NODE_ENV === "production") {
+    track("series_continue", { from: fromSlug, to: toSlug, placement });
+  }
+}
