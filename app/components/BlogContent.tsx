@@ -25,6 +25,12 @@ import PrefixSumPracticeLadder from "./PrefixSumPracticeLadder";
 import PrefixSumComplexitySheet from "./PrefixSumComplexitySheet";
 import PrefixSumPatternOverview from "./PrefixSumPatternOverview";
 import PrefixSumVsOthers from "./PrefixSumVsOthers";
+import HashingAnimation from "./HashingAnimation";
+import HashingQuickRef from "./HashingQuickRef";
+import HashingPracticeLadder from "./HashingPracticeLadder";
+import HashingComplexitySheet from "./HashingComplexitySheet";
+import HashingPatternOverview from "./HashingPatternOverview";
+import HashingVsArrays from "./HashingVsArrays";
 
 interface Heading {
   id: string;
@@ -64,12 +70,73 @@ export default function BlogContent({
         .replace(/^-+|-+$/g, "");
     };
 
+    const processInline = (text: string) =>
+      text
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/`(.+?)`/g, "<code>$1</code>");
+
+    const isTableRow = (text: string) =>
+      text.startsWith("|") && text.endsWith("|") && text.split("|").length > 2;
+
+    const isTableSeparator = (text: string) =>
+      /^\|[\s:|\-]+\|$/.test(text);
+
+    const parseTableCells = (text: string) =>
+      text.slice(1, -1).split("|").map((c) => c.trim());
+
+    const renderMarkdownTable = (tableLines: string[]) => {
+      if (tableLines.length < 2 || !isTableSeparator(tableLines[1])) return null;
+
+      const headers = parseTableCells(tableLines[0]);
+      const rows = tableLines.slice(2).map(parseTableCells);
+
+      return (
+        <div
+          key={keyCounter++}
+          className="my-6 overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--bg-2)]">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[320px] border-collapse text-left">
+              <thead>
+                <tr className="border-b border-[var(--line)] bg-[var(--bg)]">
+                  {headers.map((header, idx) => (
+                    <th
+                      key={idx}
+                      scope="col"
+                      className="px-4 py-3 font-mono-xs font-semibold uppercase tracking-wide text-[var(--muted)] sm:px-5"
+                      dangerouslySetInnerHTML={{ __html: processInline(header) }}
+                    />
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((cells, rowIdx) => (
+                  <tr
+                    key={rowIdx}
+                    className={`border-b border-[var(--line)] last:border-b-0 ${
+                      rowIdx % 2 === 0 ? "bg-transparent" : "bg-[var(--bg)]/40"
+                    } hover:bg-[var(--accent-soft)]/20`}>
+                    {headers.map((_, colIdx) => (
+                      <td
+                        key={colIdx}
+                        className="px-4 py-3.5 text-sm text-[var(--fg-2)] sm:px-5"
+                        dangerouslySetInnerHTML={{
+                          __html: processInline(cells[colIdx] ?? ""),
+                        }}
+                      />
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    };
+
     const flushParagraph = () => {
       if (paragraphContent.length > 0) {
         const text = paragraphContent.join(" ");
-        const processed = text
-          .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-          .replace(/`(.+?)`/g, "<code>$1</code>");
+        const processed = processInline(text);
         elements.push(
           <p
             key={keyCounter++}
@@ -352,6 +419,54 @@ export default function BlogContent({
         continue;
       }
 
+      if (trimmed === "[HASHING-PATTERNS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<HashingPatternOverview key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[HASHING-PRACTICE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<HashingPracticeLadder key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[HASHING-QUICK-REF]") {
+        flushParagraph();
+        flushList();
+        elements.push(<HashingQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[HASHING-COMPLEXITY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<HashingComplexitySheet key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[HASHING-VS-ARRAYS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<HashingVsArrays key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed.startsWith("[HASHING:")) {
+        flushParagraph();
+        flushList();
+        const hashMatch = trimmed.match(/\[HASHING:(.+?)\]/);
+        if (hashMatch) {
+          const preset = hashMatch[1].trim();
+          elements.push(
+            <HashingAnimation key={keyCounter++} preset={preset} />
+          );
+        }
+        continue;
+      }
+
       if (trimmed.startsWith("[DIAGRAM:")) {
         flushParagraph();
         flushList();
@@ -421,6 +536,25 @@ export default function BlogContent({
 
       if (inCodeBlock) {
         codeBlockContent.push(line);
+        continue;
+      }
+
+      if (isTableRow(trimmed)) {
+        flushParagraph();
+        flushList();
+        const tableLines: string[] = [trimmed];
+        let j = i + 1;
+        while (j < lines.length && isTableRow(lines[j].trim())) {
+          tableLines.push(lines[j].trim());
+          j++;
+        }
+        const table = renderMarkdownTable(tableLines);
+        if (table) {
+          elements.push(table);
+        } else {
+          paragraphContent.push(...tableLines);
+        }
+        i = j - 1;
         continue;
       }
 
