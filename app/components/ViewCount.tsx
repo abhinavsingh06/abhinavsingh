@@ -6,12 +6,14 @@ interface ViewCountProps {
   postId: string;
   initialViews?: number;
   trackView?: boolean;
+  className?: string;
 }
 
 export default function ViewCount({
   postId,
   initialViews = 0,
   trackView = false,
+  className,
 }: ViewCountProps) {
   const [views, setViews] = useState<number | null>(initialViews);
 
@@ -52,16 +54,7 @@ export default function ViewCount({
   }, [postId, trackView, initialViews]);
 
   return (
-    <span className="font-mono-xs inline-flex items-center gap-1.5 tabular-nums text-[var(--muted)]">
-      <svg
-        className="h-3 w-3"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8">
-        <path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7z" />
-        <circle cx="12" cy="12" r="3" />
-      </svg>
+    <span className={className ?? "tabular-nums text-inherit"}>
       {views === null ? "—" : views.toLocaleString()}
     </span>
   );

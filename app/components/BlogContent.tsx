@@ -31,6 +31,12 @@ import HashingPracticeLadder from "./HashingPracticeLadder";
 import HashingComplexitySheet from "./HashingComplexitySheet";
 import HashingPatternOverview from "./HashingPatternOverview";
 import HashingVsArrays from "./HashingVsArrays";
+import BinarySearchAnimation from "./BinarySearchAnimation";
+import BinarySearchQuickRef from "./BinarySearchQuickRef";
+import BinarySearchPracticeLadder from "./BinarySearchPracticeLadder";
+import BinarySearchComplexitySheet from "./BinarySearchComplexitySheet";
+import BinarySearchPatternOverview from "./BinarySearchPatternOverview";
+import BinarySearchVsLinear from "./BinarySearchVsLinear";
 
 interface Heading {
   id: string;
@@ -462,6 +468,54 @@ export default function BlogContent({
           const preset = hashMatch[1].trim();
           elements.push(
             <HashingAnimation key={keyCounter++} preset={preset} />
+          );
+        }
+        continue;
+      }
+
+      if (trimmed === "[BINARY-SEARCH-PATTERNS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinarySearchPatternOverview key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[BINARY-SEARCH-PRACTICE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinarySearchPracticeLadder key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[BINARY-SEARCH-QUICK-REF]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinarySearchQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[BINARY-SEARCH-COMPLEXITY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinarySearchComplexitySheet key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[BINARY-SEARCH-VS-LINEAR]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinarySearchVsLinear key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed.startsWith("[BINARY-SEARCH:")) {
+        flushParagraph();
+        flushList();
+        const bsMatch = trimmed.match(/\[BINARY-SEARCH:(.+?)\]/);
+        if (bsMatch) {
+          const preset = bsMatch[1].trim();
+          elements.push(
+            <BinarySearchAnimation key={keyCounter++} preset={preset} />
           );
         }
         continue;

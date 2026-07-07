@@ -11,12 +11,10 @@ import Newsletter from "../../components/Newsletter";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import BlogPostShell from "../../components/BlogPostShell";
-import HeartLike from "../../components/HeartLike";
 import PostHeartLikeDock from "../../components/PostHeartLikeDock";
 import ReadingProgress from "../../components/ReadingProgress";
 import ViewCount from "../../components/ViewCount";
 import SpotlightCard from "../../components/SpotlightCard";
-import AlgorithmSeriesBanner from "../../components/AlgorithmSeriesBanner";
 import AlgorithmSeriesReadNext from "../../components/AlgorithmSeriesReadNext";
 
 export async function generateStaticParams() {
@@ -72,13 +70,6 @@ export default function BlogPostPage({
   const prev = idx > 0 ? allPosts[idx - 1] : null;
   const next = idx < allPosts.length - 1 ? allPosts[idx + 1] : null;
 
-  const seriesPrevPost = series?.prev
-    ? getPostBySlug(series.prev.slug)
-    : null;
-  const seriesNextPost = series?.next
-    ? getPostBySlug(series.next.slug)
-    : null;
-
   const likeCount = getLikeCountSync(post.slug);
   const viewCount = getViewCountSync(post.slug);
 
@@ -92,45 +83,44 @@ export default function BlogPostPage({
         <header className="blog-post-header">
           <Link
             href="/blog"
-            className="link-arrow font-mono-sm inline-flex text-[var(--muted)]">
-            <span className="arrow rotate-180 inline-block">→</span> All writing
+            className="text-sm text-[var(--muted)] transition-colors hover:text-[var(--fg)]">
+            ← Writing
           </Link>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span className="chip chip-accent">{post.category}</span>
-            <span className="font-mono-xs text-[var(--muted)]">
+          <div className="mt-6 text-sm text-[var(--muted)]">
+            {series ? (
+              <span>
+                {series.part}/{series.total}
+              </span>
+            ) : (
+              <span>{post.category}</span>
+            )}
+            <span className="mx-2">·</span>
+            <span>
               {new Date(post.date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
+                month: "short",
                 day: "numeric",
+                year: "numeric",
               })}
             </span>
-            <span className="font-mono-xs text-[var(--muted)]">·</span>
-            <span className="font-mono-xs text-[var(--muted)]">
-              {post.readTime}
-            </span>
-            <span className="font-mono-xs text-[var(--muted)]">·</span>
-            <ViewCount
-              postId={post.slug}
-              initialViews={viewCount}
-              trackView
-            />
+            <span className="mx-2">·</span>
+            <span>{post.readTime}</span>
           </div>
 
-          <h1 className="blog-post-title font-display reveal reveal-1 mt-8">
+          <h1 className="blog-post-title font-display reveal reveal-1 mt-6">
             {post.title}
           </h1>
 
           <p className="blog-post-excerpt reveal reveal-2">{post.excerpt}</p>
-
-          <AlgorithmSeriesBanner slug={post.slug} />
-
-          <div className="reveal reveal-3 mt-8 hidden md:block">
-            <HeartLike postId={post.slug} initialLikes={likeCount} variant="inline" />
-          </div>
         </header>
 
         <article className="blog-post-body">
+          <ViewCount
+            postId={post.slug}
+            initialViews={viewCount}
+            trackView
+            className="sr-only"
+          />
           <BlogPostShell content={post.content} />
         </article>
       </div>
@@ -138,29 +128,17 @@ export default function BlogPostPage({
       {series ? (
         <AlgorithmSeriesReadNext
           currentSlug={post.slug}
-          seriesTitle={series.title}
-          part={series.part}
-          total={series.total}
           nextPost={
-            seriesNextPost
-              ? {
-                  slug: seriesNextPost.slug,
-                  title: seriesNextPost.title,
-                  excerpt: seriesNextPost.excerpt,
-                  readTime: seriesNextPost.readTime,
-                }
+            series.next
+              ? { slug: series.next.slug, label: series.next.shortTitle }
               : null
           }
           prevPost={
-            seriesPrevPost
-              ? {
-                  slug: seriesPrevPost.slug,
-                  title: seriesPrevPost.title,
-                  excerpt: seriesPrevPost.excerpt,
-                  readTime: seriesPrevPost.readTime,
-                }
+            series.prev
+              ? { slug: series.prev.slug, label: series.prev.shortTitle }
               : null
           }
+          showArchiveLink={!series.next}
         />
       ) : (
         (prev || next) && (

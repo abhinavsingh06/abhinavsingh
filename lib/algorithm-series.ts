@@ -31,6 +31,11 @@ export const ALGORITHM_SERIES = {
       shortTitle: "Hashing",
       topic: "Arrays & Strings",
     },
+    {
+      slug: "binary-search-technique",
+      shortTitle: "Binary Search",
+      topic: "Search",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 
