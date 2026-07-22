@@ -138,8 +138,7 @@ Naming convention: `UPPERCASE-TECHNIQUE-NAME` with hyphens, matching the prefix 
 
 No changes needed if slug is in `algorithm-series.ts`:
 
-- `AlgorithmSeriesBanner` — top banner: `Series · Algorithms · Guide X of Y · {topic}`
-- `AlgorithmSeriesReadNext` — bottom card with next/prev links
+- `AlgorithmSeriesReadNext` — bottom prev/next links
 - `app/blog/[slug]/page.tsx` — detects series via `getSeriesInfo()`
 
 Analytics: read-next clicks fire `trackSeriesContinue()` from `lib/analytics.ts`.

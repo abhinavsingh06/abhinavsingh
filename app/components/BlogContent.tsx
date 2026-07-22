@@ -37,6 +37,12 @@ import BinarySearchPracticeLadder from "./BinarySearchPracticeLadder";
 import BinarySearchComplexitySheet from "./BinarySearchComplexitySheet";
 import BinarySearchPatternOverview from "./BinarySearchPatternOverview";
 import BinarySearchVsLinear from "./BinarySearchVsLinear";
+import LinkedListAnimation from "./LinkedListAnimation";
+import LinkedListQuickRef from "./LinkedListQuickRef";
+import LinkedListPracticeLadder from "./LinkedListPracticeLadder";
+import LinkedListComplexitySheet from "./LinkedListComplexitySheet";
+import LinkedListPatternOverview from "./LinkedListPatternOverview";
+import LinkedListVsArrays from "./LinkedListVsArrays";
 
 interface Heading {
   id: string;
@@ -516,6 +522,54 @@ export default function BlogContent({
           const preset = bsMatch[1].trim();
           elements.push(
             <BinarySearchAnimation key={keyCounter++} preset={preset} />
+          );
+        }
+        continue;
+      }
+
+      if (trimmed === "[LINKED-LIST-PATTERNS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<LinkedListPatternOverview key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[LINKED-LIST-PRACTICE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<LinkedListPracticeLadder key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[LINKED-LIST-QUICK-REF]") {
+        flushParagraph();
+        flushList();
+        elements.push(<LinkedListQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[LINKED-LIST-COMPLEXITY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<LinkedListComplexitySheet key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[LINKED-LIST-VS-ARRAYS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<LinkedListVsArrays key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed.startsWith("[LINKED-LIST:")) {
+        flushParagraph();
+        flushList();
+        const llMatch = trimmed.match(/\[LINKED-LIST:(.+?)\]/);
+        if (llMatch) {
+          const preset = llMatch[1].trim();
+          elements.push(
+            <LinkedListAnimation key={keyCounter++} preset={preset} />
           );
         }
         continue;

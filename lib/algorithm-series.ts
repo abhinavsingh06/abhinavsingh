@@ -36,6 +36,11 @@ export const ALGORITHM_SERIES = {
       shortTitle: "Binary Search",
       topic: "Search",
     },
+    {
+      slug: "linked-list-technique",
+      shortTitle: "Linked Lists",
+      topic: "Linked Lists",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 
