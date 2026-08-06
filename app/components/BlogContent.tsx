@@ -53,6 +53,9 @@ import GoOriginTimeline from "./GoOriginTimeline";
 import GoOmittedFeatures from "./GoOmittedFeatures";
 import GoVsCppSheet from "./GoVsCppSheet";
 import GoWhenToUse from "./GoWhenToUse";
+import GoPhilosophyPillars from "./GoPhilosophyPillars";
+import GoCleverVsSimple from "./GoCleverVsSimple";
+import GoBoringCodeDebate from "./GoBoringCodeDebate";
 
 interface Heading {
   id: string;
@@ -658,6 +661,27 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         elements.push(<GoWhenToUse key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-PHILOSOPHY-PILLARS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoPhilosophyPillars key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-CLEVER-VS-SIMPLE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoCleverVsSimple key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-BORING-CODE-DEBATE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoBoringCodeDebate key={keyCounter++} />);
         continue;
       }
 
