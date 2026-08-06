@@ -43,6 +43,12 @@ import LinkedListPracticeLadder from "./LinkedListPracticeLadder";
 import LinkedListComplexitySheet from "./LinkedListComplexitySheet";
 import LinkedListPatternOverview from "./LinkedListPatternOverview";
 import LinkedListVsArrays from "./LinkedListVsArrays";
+import StackQueueAnimation from "./StackQueueAnimation";
+import StackQueueQuickRef from "./StackQueueQuickRef";
+import StackQueuePracticeLadder from "./StackQueuePracticeLadder";
+import StackQueueComplexitySheet from "./StackQueueComplexitySheet";
+import StackQueuePatternOverview from "./StackQueuePatternOverview";
+import StackQueueVsComparison from "./StackQueueVsComparison";
 
 interface Heading {
   id: string;
@@ -570,6 +576,54 @@ export default function BlogContent({
           const preset = llMatch[1].trim();
           elements.push(
             <LinkedListAnimation key={keyCounter++} preset={preset} />
+          );
+        }
+        continue;
+      }
+
+      if (trimmed === "[STACK-QUEUE-PATTERNS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<StackQueuePatternOverview key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[STACK-QUEUE-PRACTICE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<StackQueuePracticeLadder key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[STACK-QUEUE-QUICK-REF]") {
+        flushParagraph();
+        flushList();
+        elements.push(<StackQueueQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[STACK-QUEUE-COMPLEXITY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<StackQueueComplexitySheet key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[STACK-QUEUE-VS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<StackQueueVsComparison key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed.startsWith("[STACK-QUEUE:")) {
+        flushParagraph();
+        flushList();
+        const sqMatch = trimmed.match(/\[STACK-QUEUE:(.+?)\]/);
+        if (sqMatch) {
+          const preset = sqMatch[1].trim();
+          elements.push(
+            <StackQueueAnimation key={keyCounter++} preset={preset} />
           );
         }
         continue;

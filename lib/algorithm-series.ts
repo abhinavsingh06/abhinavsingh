@@ -41,6 +41,11 @@ export const ALGORITHM_SERIES = {
       shortTitle: "Linked Lists",
       topic: "Linked Lists",
     },
+    {
+      slug: "stacks-queues-technique",
+      shortTitle: "Stacks & Queues",
+      topic: "Stacks & Queues",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 
