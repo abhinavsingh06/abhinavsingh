@@ -49,6 +49,10 @@ import StackQueuePracticeLadder from "./StackQueuePracticeLadder";
 import StackQueueComplexitySheet from "./StackQueueComplexitySheet";
 import StackQueuePatternOverview from "./StackQueuePatternOverview";
 import StackQueueVsComparison from "./StackQueueVsComparison";
+import GoOriginTimeline from "./GoOriginTimeline";
+import GoOmittedFeatures from "./GoOmittedFeatures";
+import GoVsCppSheet from "./GoVsCppSheet";
+import GoWhenToUse from "./GoWhenToUse";
 
 interface Heading {
   id: string;
@@ -626,6 +630,34 @@ export default function BlogContent({
             <StackQueueAnimation key={keyCounter++} preset={preset} />
           );
         }
+        continue;
+      }
+
+      if (trimmed === "[GO-ORIGIN-TIMELINE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoOriginTimeline key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-OMITTED-FEATURES]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoOmittedFeatures key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-VS-CPP]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoVsCppSheet key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-WHEN-TO-USE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoWhenToUse key={keyCounter++} />);
         continue;
       }
 
