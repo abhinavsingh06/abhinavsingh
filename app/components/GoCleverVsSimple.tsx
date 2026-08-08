@@ -55,7 +55,7 @@ export default function GoCleverVsSimple() {
   const active = PAIRS.find((p) => p.id === activeId) ?? PAIRS[0];
 
   return (
-    <div className="my-10 border-t border-[var(--line)] pt-10">
+    <div className="my-10 min-w-0 max-w-full border-t border-[var(--line)] pt-10">
       <p className="text-sm text-[var(--muted)]">Side by side</p>
       <div className="mt-4 flex flex-wrap gap-2">
         {PAIRS.map((p) => (
@@ -74,16 +74,16 @@ export default function GoCleverVsSimple() {
         ))}
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border border-[var(--line)] bg-[var(--bg-2)] p-4">
+      <div className="mt-6 grid min-w-0 max-w-full gap-4 lg:grid-cols-2">
+        <div className="min-w-0 max-w-full rounded-lg border border-[var(--line)] bg-[var(--bg-2)] p-4">
           <p className="text-sm text-[var(--muted)]">Clever</p>
-          <pre className="mt-3 overflow-x-auto font-mono text-xs leading-relaxed text-[var(--fg-2)] sm:text-sm">
+          <pre className="mt-3 max-w-full overflow-x-auto font-mono text-xs leading-relaxed text-[var(--fg-2)] sm:text-sm">
             {active.clever}
           </pre>
         </div>
-        <div className="rounded-lg border border-[var(--line)] bg-[var(--bg-2)] p-4">
+        <div className="min-w-0 max-w-full rounded-lg border border-[var(--line)] bg-[var(--bg-2)] p-4">
           <p className="text-sm text-[var(--muted)]">Simple</p>
-          <pre className="mt-3 overflow-x-auto font-mono text-xs leading-relaxed text-[var(--fg)] sm:text-sm">
+          <pre className="mt-3 max-w-full overflow-x-auto font-mono text-xs leading-relaxed text-[var(--fg)] sm:text-sm">
             {active.simple}
           </pre>
         </div>

@@ -90,17 +90,19 @@ export default function GoOmittedFeatures() {
   const index = FEATURES.findIndex((f) => f.id === activeId);
 
   return (
-    <div className="my-10 border-t border-[var(--line)] pt-10">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] lg:gap-14">
+    <div className="my-10 min-w-0 max-w-full border-t border-[var(--line)] pt-10">
+      <div className="grid min-w-0 max-w-full gap-10 lg:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] lg:gap-14">
         <nav
           aria-label="Features Go omitted"
-          className="lg:sticky lg:top-28 lg:self-start">
+          className="min-w-0 max-w-full lg:sticky lg:top-28 lg:self-start">
           <p className="mb-4 text-sm text-[var(--muted)]">Topics</p>
-          <ul className="flex flex-row gap-1 overflow-x-auto pb-1 lg:flex-col lg:gap-0 lg:overflow-visible lg:pb-0">
+          <ul className="!m-0 flex w-full min-w-0 max-w-full list-none flex-row flex-wrap gap-1 !p-0 lg:flex-col lg:flex-nowrap lg:gap-0">
             {FEATURES.map((f, i) => {
               const isActive = f.id === activeId;
               return (
-                <li key={f.id} className="shrink-0 lg:shrink">
+                <li
+                  key={f.id}
+                  className="!m-0 shrink-0 before:!hidden lg:shrink">
                   <button
                     type="button"
                     onClick={() => setActiveId(f.id)}

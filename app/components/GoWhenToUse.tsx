@@ -80,7 +80,7 @@ export default function GoWhenToUse() {
   const active = SCENARIOS.find((s) => s.id === activeId) ?? SCENARIOS[0];
 
   return (
-    <div className="my-8 overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--bg-2)]">
+    <div className="my-8 min-w-0 max-w-full overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--bg-2)]">
       <div className="border-b border-[var(--line)] px-5 py-4 sm:px-6">
         <h3 className="font-display text-lg text-[var(--fg)]">
           Scenario lab · When Go fits
@@ -91,8 +91,8 @@ export default function GoWhenToUse() {
         </p>
       </div>
 
-      <div className="grid gap-0 lg:grid-cols-[240px_1fr]">
-        <div className="flex flex-row gap-2 overflow-x-auto border-b border-[var(--line)] p-4 lg:flex-col lg:border-b-0 lg:border-r">
+      <div className="grid min-w-0 max-w-full gap-0 lg:grid-cols-[240px_1fr]">
+        <div className="flex min-w-0 max-w-full flex-row gap-2 overflow-x-auto border-b border-[var(--line)] p-4 lg:flex-col lg:border-b-0 lg:border-r">
           {SCENARIOS.map((s) => (
             <button
               key={s.id}
