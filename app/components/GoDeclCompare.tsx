@@ -5,52 +5,56 @@ import { useState } from "react";
 interface Pair {
   id: string;
   title: string;
-  clever: string;
-  simple: string;
+  leftLabel: string;
+  rightLabel: string;
+  left: string;
+  right: string;
   note: string;
 }
 
 const PAIRS: Pair[] = [
   {
-    id: "errors",
-    title: "Handling failure",
-    clever: `result := must(loadConfig())
-// panics somewhere upstream if anything fails`,
-    simple: `cfg, err := loadConfig()
-if err != nil {
-    return fmt.Errorf("load config: %w", err)
-}`,
-    note: "The simple version makes the failure path local and searchable.",
+    id: "var-vs-short",
+    title: "var vs :=",
+    leftLabel: "var — clear and steady",
+    rightLabel: ":= — quick and local",
+    left: `var total int
+total = sum(items)
+
+var name string = "Ada"`,
+    right: `total := sum(items)
+name := "Ada"`,
+    note: "Have a value ready inside a function? Use :=. Want the zero first, or a package-level name? Use var.",
   },
   {
-    id: "interfaces",
-    title: "Depending on behavior",
-    clever: `// Huge interface “for flexibility”
-type Store interface {
-    Get, Put, Delete, List, Watch, Migrate, ...
+    id: "zero-vs-nil",
+    title: "Empty vs missing",
+    leftLabel: "Fuzzy",
+    rightLabel: "Clear",
+    left: `var retries int
+// is 0 “unset” or “zero retries”?`,
+    right: `retries, ok := cfg["retries"]
+if !ok {
+    retries = 3 // real default
 }`,
-    simple: `type UserRepo interface {
-    ByID(ctx context.Context, id string) (User, error)
-}`,
-    note: "Small interfaces are easier to fake in tests and easier to satisfy in production.",
+    note: "If zero is a real answer in your app, don’t also use it for “I never set this.” Ask the map (or use a pointer) so missing has its own voice.",
   },
   {
-    id: "flow",
-    title: "Transforming data",
-    clever: `return Map(Filter(Reduce(items, ...), pred), fn)`,
-    simple: `var out []Item
-for _, item := range items {
-    if !pred(item) {
-        continue
-    }
-    out = append(out, fn(item))
-}
-return out`,
-    note: "The loop is longer. It is also obvious to every Go reader without a tour of helpers.",
+    id: "const-vs-var",
+    title: "const vs var",
+    leftLabel: "const — frozen",
+    rightLabel: "var — can change",
+    left: `const MaxWorkers = 8
+// fixed when you build
+// cannot change, no &`,
+    right: `var maxWorkers = 8
+// can change later
+// can take the address`,
+    note: "Never changes? Prefer const. Might change or need a pointer? That’s a variable.",
   },
 ];
 
-export default function GoCleverVsSimple() {
+export default function GoDeclCompare() {
   const [activeId, setActiveId] = useState(PAIRS[0].id);
   const active = PAIRS.find((p) => p.id === activeId) ?? PAIRS[0];
 
@@ -76,15 +80,15 @@ export default function GoCleverVsSimple() {
 
       <div className="mt-6 grid min-w-0 max-w-full gap-4 lg:grid-cols-2">
         <div className="min-w-0 max-w-full rounded-lg border border-[var(--line)] bg-[var(--bg-2)] p-4">
-          <p className="text-sm text-[var(--muted)]">Clever</p>
+          <p className="text-sm text-[var(--muted)]">{active.leftLabel}</p>
           <pre className="mt-3 max-w-full overflow-x-auto font-mono text-xs leading-relaxed text-[var(--fg-2)] sm:text-sm">
-            {active.clever}
+            {active.left}
           </pre>
         </div>
         <div className="min-w-0 max-w-full rounded-lg border border-[var(--line)] bg-[var(--bg-2)] p-4">
-          <p className="text-sm text-[var(--muted)]">Simple</p>
+          <p className="text-sm text-[var(--muted)]">{active.rightLabel}</p>
           <pre className="mt-3 max-w-full overflow-x-auto font-mono text-xs leading-relaxed text-[var(--fg)] sm:text-sm">
-            {active.simple}
+            {active.right}
           </pre>
         </div>
       </div>

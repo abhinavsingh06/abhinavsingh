@@ -28,15 +28,13 @@ Everything else — gofmt, small syntax, `if err != nil`, tiny interfaces — is
 
 ---
 
-## Five pillars (explore)
-
-Work through each topic. For every pillar: the claim, the clever trap, the boring move, and why it matters when teams grow.
+## Variables, types, and the Go philosophy
 
 [GO-PHILOSOPHY-PILLARS]
 
 ---
 
-## Clever vs simple (side by side)
+## Clever vs simple
 
 “Simple” here does not mean naive. It means **local, explicit, and familiar** — the shape every Go programmer already knows how to read.
 
@@ -44,9 +42,7 @@ Work through each topic. For every pillar: the claim, the clever trap, the borin
 
 ---
 
-## Critical thought
-
-These are not exam questions. They are design pressures. Open each one and sit with the tradeoff.
+## Why boring code wins
 
 [GO-BORING-CODE-DEBATE]
 

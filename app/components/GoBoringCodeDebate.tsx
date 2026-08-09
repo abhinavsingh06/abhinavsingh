@@ -44,7 +44,7 @@ export default function GoBoringCodeDebate() {
 
   return (
     <div className="my-10 border-t border-[var(--line)] pt-10">
-      <p className="text-sm text-[var(--muted)]">Two questions worth sitting with</p>
+      <p className="text-sm text-[var(--muted)]">Two questions</p>
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-3">
         {DEBATES.map((d) => (
           <button

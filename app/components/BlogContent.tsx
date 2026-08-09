@@ -56,6 +56,10 @@ import GoWhenToUse from "./GoWhenToUse";
 import GoPhilosophyPillars from "./GoPhilosophyPillars";
 import GoCleverVsSimple from "./GoCleverVsSimple";
 import GoBoringCodeDebate from "./GoBoringCodeDebate";
+import GoVarBasics from "./GoVarBasics";
+import GoZeroValueLab from "./GoZeroValueLab";
+import GoDeclCompare from "./GoDeclCompare";
+import GoUninitDebate from "./GoUninitDebate";
 
 interface Heading {
   id: string;
@@ -95,10 +99,37 @@ export default function BlogContent({
         .replace(/^-+|-+$/g, "");
     };
 
-    const processInline = (text: string) =>
-      text
-        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-        .replace(/`(.+?)`/g, "<code>$1</code>");
+    const processInline = (text: string) => {
+      const slots: string[] = [];
+      const park = (html: string) => {
+        slots.push(html);
+        return `\u0000${slots.length - 1}\u0000`;
+      };
+
+      let out = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label: string, href: string) => {
+        const safeHref = href.trim();
+        const allowed =
+          safeHref.startsWith("/") ||
+          safeHref.startsWith("https://") ||
+          safeHref.startsWith("http://") ||
+          safeHref.startsWith("#") ||
+          safeHref.startsWith("mailto:");
+        if (!allowed) return label;
+        const isExternal = /^https?:\/\//.test(safeHref);
+        const attrs = isExternal
+          ? ` href="${safeHref}" target="_blank" rel="noopener noreferrer"`
+          : ` href="${safeHref}"`;
+        return park(`<a${attrs}>${label}</a>`);
+      });
+
+      out = out.replace(/`([^`]+)`/g, (_match, code: string) =>
+        park(`<code>${code}</code>`)
+      );
+      out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      out = out.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, "<em>$1</em>");
+      out = out.replace(/\u0000(\d+)\u0000/g, (_match, idx: string) => slots[Number(idx)] ?? "");
+      return out;
+    };
 
     const isTableRow = (text: string) =>
       text.startsWith("|") && text.endsWith("|") && text.split("|").length > 2;
@@ -175,9 +206,7 @@ export default function BlogContent({
     const flushList = () => {
       if (listItems.length > 0) {
         const items = listItems.map((item, idx) => {
-          const processed = item
-            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-            .replace(/`(.+?)`/g, "<code>$1</code>");
+          const processed = processInline(item);
           return (
             <li
               key={idx}
@@ -685,6 +714,34 @@ export default function BlogContent({
         continue;
       }
 
+      if (trimmed === "[GO-VAR-BASICS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoVarBasics key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-ZERO-VALUE-LAB]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoZeroValueLab key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-DECL-COMPARE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoDeclCompare key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-UNINIT-DEBATE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoUninitDebate key={keyCounter++} />);
+        continue;
+      }
+
       if (trimmed.startsWith("[DIAGRAM:")) {
         flushParagraph();
         flushList();
@@ -776,16 +833,45 @@ export default function BlogContent({
         continue;
       }
 
+      if (trimmed.startsWith(">")) {
+        flushParagraph();
+        flushList();
+        const quoteLines: string[] = [];
+        let j = i;
+        while (j < lines.length) {
+          const quoteTrimmed = lines[j].trim();
+          if (!quoteTrimmed.startsWith(">")) break;
+          // Ignore git conflict markers accidentally starting with >
+          if (/^>{7}/.test(quoteTrimmed)) break;
+          quoteLines.push(quoteTrimmed.replace(/^>\s?/, ""));
+          j++;
+        }
+        if (quoteLines.length > 0) {
+          const quoteHtml = processInline(quoteLines.join(" "));
+          elements.push(
+            <blockquote
+              key={keyCounter++}
+              dangerouslySetInnerHTML={{ __html: quoteHtml }}
+            />
+          );
+          i = j - 1;
+          continue;
+        }
+      }
+
       if (trimmed.startsWith("# ")) {
         flushParagraph();
         flushList();
         const text = trimmed.substring(2);
-        const id = generateId(text);
-        headings.push({ id, text, level: 1 });
+        const id = generateId(text.replace(/[*`[\]]/g, ""));
+        headings.push({ id, text: text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1"), level: 1 });
         elements.push(
-          <h1 key={keyCounter++} id={id} className="scroll-mt-24">
-            {text}
-          </h1>
+          <h1
+            key={keyCounter++}
+            id={id}
+            className="scroll-mt-24"
+            dangerouslySetInnerHTML={{ __html: processInline(text) }}
+          />
         );
         continue;
       }
@@ -793,12 +879,15 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         const text = trimmed.substring(3);
-        const id = generateId(text);
-        headings.push({ id, text, level: 2 });
+        const id = generateId(text.replace(/[*`[\]]/g, ""));
+        headings.push({ id, text: text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1"), level: 2 });
         elements.push(
-          <h2 key={keyCounter++} id={id} className="scroll-mt-24">
-            {text}
-          </h2>
+          <h2
+            key={keyCounter++}
+            id={id}
+            className="scroll-mt-24"
+            dangerouslySetInnerHTML={{ __html: processInline(text) }}
+          />
         );
         continue;
       }
@@ -806,12 +895,15 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         const text = trimmed.substring(4);
-        const id = generateId(text);
-        headings.push({ id, text, level: 3 });
+        const id = generateId(text.replace(/[*`[\]]/g, ""));
+        headings.push({ id, text: text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1"), level: 3 });
         elements.push(
-          <h3 key={keyCounter++} id={id} className="scroll-mt-24">
-            {text}
-          </h3>
+          <h3
+            key={keyCounter++}
+            id={id}
+            className="scroll-mt-24"
+            dangerouslySetInnerHTML={{ __html: processInline(text) }}
+          />
         );
         continue;
       }

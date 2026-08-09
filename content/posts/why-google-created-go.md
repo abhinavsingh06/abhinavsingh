@@ -1,6 +1,6 @@
 ---
 title: Why Google Invented Go Instead of Improving C++
-excerpt: A case study of the problems that created Go — compile time, dependency hell, memory safety, concurrency, and why Go intentionally left features out. Interactive timeline and scenario lab.
+excerpt: A case study of the problems that created Go — compile time, dependency hell, memory safety, concurrency, and why Go intentionally left features out.
 date: 2026-08-07
 category: Languages
 featured: true
@@ -12,13 +12,13 @@ In 2007, Robert Griesemer, Rob Pike, and Ken Thompson started designing a langua
 
 > **What language would we invent if we optimized for Google-scale engineering — compile speed, dependency clarity, and code that thousands of people can read?**
 
-This post is a **case study**, not a feature checklist. Work through the timeline, open the “intentionally omitted” explorer, and pressure-test when Go actually fits.
+This post is a **case study**, not a feature checklist: the pressures that created Go, the features it refused, and when it actually fits.
 
 [POLL:Have you written production Go?|Yes, regularly|Tried tutorials / side projects|Mostly C++/Java/JS — curious why Go exists]
 
 ---
 
-## Start here · The case study timeline
+## The case study timeline
 
 Google wasn't failing because engineers were “bad at C++.” They were hitting **organizational physics**: huge codebases, slow builds, complex deps, and concurrency that punished mistakes.
 
@@ -26,7 +26,7 @@ Google wasn't failing because engineers were “bad at C++.” They were hitting
 
 ---
 
-## The five pressures (map)
+## The five pressures
 
 | Pressure | Symptom at scale | Go's bet |
 |----------|------------------|----------|
@@ -105,7 +105,7 @@ Readable concurrency was a design goal — not an add-on library.
 
 ---
 
-## Scenario lab · Should you use Go?
+## Should you use Go?
 
 Go isn't a religion. Match constraints.
 

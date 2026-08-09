@@ -83,7 +83,7 @@ export default function GoWhenToUse() {
     <div className="my-8 min-w-0 max-w-full overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--bg-2)]">
       <div className="border-b border-[var(--line)] px-5 py-4 sm:px-6">
         <h3 className="font-display text-lg text-[var(--fg)]">
-          Scenario lab · When Go fits
+          When Go fits
         </h3>
         <p className="mt-1 text-sm text-[var(--fg-2)]">
           Pick a situation. The point isn&apos;t hype — it&apos;s matching
