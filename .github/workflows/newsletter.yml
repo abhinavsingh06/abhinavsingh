@@ -1,47 +1,115 @@
 name: Auto Newsletter
 
 on:
-  # Run on a schedule (daily at 10 AM UTC)
   schedule:
     - cron: "0 10 * * *"
 
-  # Also run on push to main when posts are added/modified
-  # NOTE: Only triggers if files in content/posts/ are changed
-  # Random fixes to other files won't trigger this workflow
   push:
     branches:
       - main
     paths:
       - "content/posts/**"
 
-  # Allow manual triggering from GitHub UI
   workflow_dispatch:
 
 jobs:
   send-newsletter:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
       - name: Trigger Newsletter API
         env:
+          SITE_URL: https://www.abhinavsingh.online
           WEBHOOK_URL: ${{ secrets.NEWSLETTER_WEBHOOK_URL || 'https://www.abhinavsingh.online/api/auto-newsletter' }}
           SECRET: ${{ secrets.NEWSLETTER_SECRET }}
         run: |
+          set -euo pipefail
+
           if [ -z "$SECRET" ]; then
             echo "Error: NEWSLETTER_SECRET secret is not set"
             exit 1
           fi
 
-          echo "Triggering newsletter API..."
-          response=$(curl -s -L -w "\n%{http_code}" -X POST "${WEBHOOK_URL}?secret=${SECRET}")
-          http_code=$(echo "$response" | tail -n1)
-          body=$(echo "$response" | sed '$d')
+          slugs=""
+          if [ "${{ github.event_name }}" = "push" ]; then
+            before="${{ github.event.before }}"
+            if [ -n "$before" ] && [ "$before" != "0000000000000000000000000000000000000000" ]; then
+              files=$(git diff --name-only --diff-filter=AM "$before" "${{ github.sha }}" -- 'content/posts/*.md' || true)
+            else
+              files=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- 'content/posts/*.md' || true)
+            fi
 
-          echo "HTTP Status: $http_code"
-          echo "Response: $body"
+            slugs=$(printf '%s\n' "$files" | sed -n 's|^content/posts/\(.*\)\.md$|\1|p' | grep -v '^README$' || true)
+            echo "New/updated posts: ${slugs:-none}"
+          fi
 
-          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
-            echo "✅ Newsletter triggered successfully"
+          wait_for_post() {
+            slug="$1"
+            url="${SITE_URL}/blog/${slug}"
+            echo "Waiting for ${url} to go live..."
+            for i in $(seq 1 24); do
+              code=$(curl -s -o /dev/null -w "%{http_code}" -L "$url" || true)
+              if [ "$code" = "200" ]; then
+                echo "Live: ${slug}"
+                return 0
+              fi
+              echo "Attempt ${i}/24 — HTTP ${code}, sleeping 15s"
+              sleep 15
+            done
+            echo "Timed out waiting for ${slug}"
+            return 1
+          }
+
+          trigger() {
+            extra="${1:-}"
+            echo "Triggering newsletter API ${extra}"
+            response=$(curl -s -L -w "\n%{http_code}" -X POST "${WEBHOOK_URL}?secret=${SECRET}${extra}")
+            http_code=$(echo "$response" | tail -n1)
+            body=$(echo "$response" | sed '$d')
+            echo "HTTP Status: $http_code"
+            echo "Response: $body"
+
+            if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
+              echo "Newsletter triggered successfully"
+              return 0
+            fi
+            if [ "$http_code" -eq 409 ]; then
+              echo "Post not deployed yet"
+              return 2
+            fi
+            echo "Newsletter trigger failed with status $http_code"
+            return 1
+          }
+
+          if [ -n "$slugs" ]; then
+            failed=0
+            for slug in $slugs; do
+              wait_for_post "$slug" || { failed=1; continue; }
+              sent_ok=0
+              for i in $(seq 1 8); do
+                if trigger "&slug=${slug}"; then
+                  sent_ok=1
+                  break
+                fi
+                status=$?
+                if [ "$status" -eq 2 ]; then
+                  echo "Retry ${i}/8 after deploy lag"
+                  sleep 15
+                  continue
+                fi
+                break
+              done
+              if [ "$sent_ok" -ne 1 ]; then
+                failed=1
+              fi
+            done
+            if [ "$failed" -ne 0 ]; then
+              exit 1
+            fi
           else
-            echo "❌ Newsletter trigger failed with status $http_code"
-            exit 1
+            trigger
           fi

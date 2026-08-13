@@ -12,9 +12,6 @@ import {
   getNewsletterPostSubject,
 } from "@/lib/email-templates";
 
-// Newsletter email HTML template for new blog posts — see lib/email-templates.ts
-
-// Send email via Brevo
 async function sendEmailViaBrevoWrapper(
   toEmail: string,
   subject: string,
@@ -42,7 +39,6 @@ async function sendEmailViaBrevoWrapper(
   };
 }
 
-// Send newsletter for a specific post
 async function sendNewsletterForPost(post: BlogPost): Promise<{
   sent: number;
   failed: number;
@@ -74,30 +70,33 @@ async function sendNewsletterForPost(post: BlogPost): Promise<{
         errors.push(`${subscriber.email}: ${result.error}`);
       }
     }
-    // Small delay to avoid rate limiting (Brevo allows 300 emails/day free)
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   return { sent: sentCount, failed: failedCount, errors };
 }
 
-/** Skip emailing the full archive on first run — only notify for the newest post. */
-async function bootstrapOlderPosts(allPosts: BlogPost[]): Promise<number> {
-  if (allPosts.length <= 1) return 0;
-
-  const unsentSlugs = await getUnsentPostSlugs(allPosts.map((post) => post.slug));
-  if (unsentSlugs.length !== allPosts.length) return 0;
-
-  const sorted = [...allPosts].sort(
+function newestFirst(posts: BlogPost[]): BlogPost[] {
+  return [...posts].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
-  const olderPosts = sorted.slice(1);
+}
 
-  for (const post of olderPosts) {
-    await markNewsletterAsSent(post.slug, 0);
+/** Mark leftover unsent posts as handled so the backlog never emails. */
+async function hushUnsentExcept(
+  allPosts: BlogPost[],
+  keepSlug: string | null
+): Promise<string[]> {
+  const unsent = await getUnsentPostSlugs(allPosts.map((post) => post.slug));
+  const hushed: string[] = [];
+
+  for (const slug of unsent) {
+    if (keepSlug && slug === keepSlug) continue;
+    await markNewsletterAsSent(slug, 0);
+    hushed.push(slug);
   }
 
-  return olderPosts.length;
+  return hushed;
 }
 
 export async function POST(request: NextRequest) {
@@ -106,93 +105,107 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get all posts
-    const allPosts = getAllPosts();
-    const allPostSlugs = allPosts.map((post) => post.slug);
+    const allPosts = newestFirst(getAllPosts());
+    const requestedSlug = new URL(request.url).searchParams.get("slug")?.trim();
 
-    const bootstrapped = await bootstrapOlderPosts(allPosts);
-
-    // Find posts that haven't been sent newsletters yet
-    const unsentSlugs = await getUnsentPostSlugs(allPostSlugs);
-
-    if (unsentSlugs.length === 0) {
-      return NextResponse.json(
-        {
-          message: "No new posts to send newsletters for",
-          checked: allPostSlugs.length,
-          bootstrapped,
-          sent: 0,
-        },
-        { status: 200 }
-      );
-    }
-
-    // Get subscribers count
-    const subscribers = await getAllSubscribers();
-    const subscriberCount = subscribers.length;
-
-    if (subscriberCount === 0) {
-      return NextResponse.json(
-        {
-          message: "No subscribers found",
-          checked: allPostSlugs.length,
-          unsent: unsentSlugs.length,
-        },
-        { status: 200 }
-      );
-    }
-
-    // Send newsletters for all unsent posts
-    const results: Array<{
-      slug: string;
-      title: string;
-      sent: number;
-      failed: number;
-      errors?: string[];
-    }> = [];
-
-    for (const slug of unsentSlugs) {
-      const post = allPosts.find((p) => p.slug === slug);
-      if (!post) continue;
-
-      console.log(`Sending newsletter for post: ${post.title} (${slug})`);
-      const { sent, failed, errors } = await sendNewsletterForPost(post);
-
-      // Mark as sent only if at least one email was sent successfully
-      if (sent > 0) {
-        await markNewsletterAsSent(slug, sent);
+    if (requestedSlug) {
+      const post = allPosts.find((p) => p.slug === requestedSlug);
+      if (!post) {
+        return NextResponse.json(
+          {
+            error: "Post not deployed yet",
+            slug: requestedSlug,
+          },
+          { status: 409 }
+        );
       }
 
-      results.push({
-        slug,
+      const unsent = await getUnsentPostSlugs(allPosts.map((p) => p.slug));
+      const alreadySent = !unsent.includes(requestedSlug);
+      const hushed = await hushUnsentExcept(allPosts, requestedSlug);
+
+      if (alreadySent) {
+        return NextResponse.json({
+          message: "Requested post already had a newsletter",
+          slug: requestedSlug,
+          sent: 0,
+          hushed,
+        });
+      }
+
+      const subscribers = await getAllSubscribers();
+      if (subscribers.length === 0) {
+        return NextResponse.json({
+          message: "No subscribers found",
+          slug: requestedSlug,
+          sent: 0,
+          hushed,
+        });
+      }
+
+      const { sent, failed, errors } = await sendNewsletterForPost(post);
+      if (sent > 0) {
+        await markNewsletterAsSent(requestedSlug, sent);
+      }
+
+      return NextResponse.json({
+        message: "Newsletter sent for requested post",
+        slug: requestedSlug,
         title: post.title,
         sent,
         failed,
+        hushed,
         ...(errors.length > 0 ? { errors } : {}),
       });
-
-      // Small delay between posts to avoid overwhelming the email service
-      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
-    const totalSent = results.reduce((sum, r) => sum + r.sent, 0);
-    const totalFailed = results.reduce((sum, r) => sum + r.failed, 0);
+    const newest = allPosts[0];
+    if (!newest) {
+      return NextResponse.json({ message: "No posts found", sent: 0 });
+    }
 
-    return NextResponse.json(
-      {
-        message: "Automatic newsletter check completed",
-        checked: allPostSlugs.length,
-        bootstrapped,
-        sent: unsentSlugs.length,
-        results,
-        summary: {
-          totalSent,
-          totalFailed,
-          subscribersCount: subscriberCount,
-        },
-      },
-      { status: 200 }
+    const unsent = await getUnsentPostSlugs(allPosts.map((p) => p.slug));
+    const newestUnsent = unsent.includes(newest.slug);
+    const hushed = await hushUnsentExcept(
+      allPosts,
+      newestUnsent ? newest.slug : null
     );
+
+    if (!newestUnsent) {
+      return NextResponse.json({
+        message: "Newest post already sent; backlog cleared",
+        newest: newest.slug,
+        checked: allPosts.length,
+        hushed,
+        sent: 0,
+      });
+    }
+
+    const subscribers = await getAllSubscribers();
+    if (subscribers.length === 0) {
+      return NextResponse.json({
+        message: "No subscribers found",
+        newest: newest.slug,
+        hushed,
+        sent: 0,
+      });
+    }
+
+    const { sent, failed, errors } = await sendNewsletterForPost(newest);
+    if (sent > 0) {
+      await markNewsletterAsSent(newest.slug, sent);
+    }
+
+    return NextResponse.json({
+      message: "Newsletter sent for newest post only",
+      slug: newest.slug,
+      title: newest.title,
+      checked: allPosts.length,
+      hushed,
+      sent,
+      failed,
+      ...(errors.length > 0 ? { errors } : {}),
+    });
   } catch (error) {
     console.error("Auto newsletter error:", error);
     return NextResponse.json(
@@ -202,32 +215,28 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Also support GET for easier webhook/testing
 export async function GET(request: NextRequest) {
   try {
     if (!isNewsletterAuthorized(request)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get all posts
-    const allPosts = getAllPosts();
+    const allPosts = newestFirst(getAllPosts());
     const allPostSlugs = allPosts.map((post) => post.slug);
-
-    // Find posts that haven't been sent newsletters yet
     const unsentSlugs = await getUnsentPostSlugs(allPostSlugs);
-
     const subscribers = await getAllSubscribers();
 
-    return NextResponse.json(
-      {
-        message: "Newsletter status",
-        totalPosts: allPostSlugs.length,
-        unsentPosts: unsentSlugs.length,
-        unsentSlugs,
-        subscribersCount: subscribers.length,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({
+      message: "Newsletter status",
+      totalPosts: allPostSlugs.length,
+      newest: allPosts[0]?.slug ?? null,
+      unsentPosts: unsentSlugs.length,
+      unsentSlugs,
+      wouldSend: unsentSlugs.includes(allPosts[0]?.slug ?? "")
+        ? allPosts[0]?.slug
+        : null,
+      subscribersCount: subscribers.length,
+    });
   } catch (error) {
     console.error("Auto newsletter GET error:", error);
     return NextResponse.json(
