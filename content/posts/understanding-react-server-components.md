@@ -6,7 +6,6 @@ category: React
 featured: true
 ---
 
-# Understanding React Server Components
 
 React Server Components represent a fundamental shift in how we think about React applications. Let's explore what they are and why they matter.
 

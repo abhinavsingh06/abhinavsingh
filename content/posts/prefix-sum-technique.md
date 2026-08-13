@@ -6,13 +6,11 @@ category: Algorithms
 featured: true
 ---
 
-# Prefix Sum — Complete Guide with Interactive Walkthroughs
 
 **Prefix sum** is a preprocessing technique for arrays of numbers. You build an auxiliary array once in **O(n)**, then answer **any subarray sum query in O(1)**. That single trick turns naive **O(n)** per query into **O(n + m)** when you have **m** queries — and collapses **O(n²)** brute-force splits into **O(n)**.
 
 This guide follows the same format as the [Two Pointers](/blog/two-pointers-technique) and [Sliding Window](/blog/sliding-window-technique) references: we introduce the idea, walk through classic examples **with interactive animations**, and close with a pattern picker and practice ladder. The walkthrough problems are for learning — you don't need to solve them cold on first read.
 
----
 
 ## What Is a Prefix Sum?
 
@@ -32,7 +30,6 @@ There are four main families you'll use in interviews:
 
 [PREFIX-SUM-PATTERNS]
 
----
 
 ## Pattern 1 — Build the Prefix Array
 
@@ -112,7 +109,6 @@ rangeSum(prefix, 2, 4) // 10
 
 **Tip:** Many solutions pad with `prefix[0] = 0` and define `prefix[i+1] = prefix[i] + nums[i]`. Then `sum(i, j) = prefix[j+1] - prefix[i]` with no special case for `i = 0`. Either convention works — pick one and stay consistent.
 
----
 
 ## Pattern 2 — Range Sum in O(1)
 
@@ -132,7 +128,6 @@ Think of it as a **green line** (sum through `j`) minus a **red line** (sum befo
 
 Every code example below has **JavaScript**, **TypeScript**, and **Go** tabs — switch between them to see the same logic in your language.
 
----
 
 ## Preprocessing — Pay Once, Query Fast
 
@@ -145,7 +140,6 @@ Building a prefix sum is **preprocessing**: you invest **O(n)** upfront so the m
 
 Whenever a problem involves **many subarray sum questions** on a **static array**, prefix sums are the first technique to consider.
 
----
 
 ## Example 1 — Range Queries Under a Limit
 
@@ -226,7 +220,6 @@ func answerQueries(nums []int, queries [][]int, limit int) []bool {
 
 Without prefix sums, each query costs **O(n)** → **O(n × m)** total. The preprocessing investment pays off as soon as you have more than a handful of queries.
 
----
 
 ## Example 2 — Number of Ways to Split Array
 
@@ -316,7 +309,6 @@ func waysToSplitArray(nums []int) int {
 
 **Complexity:** **O(n)** time, **O(n)** space.
 
----
 
 ## Pattern 3 — Running Sum (O(1) Space)
 
@@ -391,7 +383,6 @@ func waysToSplitArrayOptimized(nums []int) int {
 
 **When to keep the full array:** You need arbitrary range queries (`sum(i, j)` for any `i`, `j`) or you revisit earlier prefix values out of order.
 
----
 
 ## Pattern 4 — Prefix Sum + Hash Map
 
@@ -455,7 +446,6 @@ func subarraySum(nums []int, k int) int {
 
 Same pattern powers [Subarray Sums Divisible by K](https://leetcode.com/problems/subarray-sums-divisible-by-k/) — store prefix `% K` counts instead.
 
----
 
 ## Prefix Sum vs Sliding Window vs Two Pointers
 
@@ -465,7 +455,6 @@ All three can touch subarray problems — but they shine in different situations
 
 Many problems blur the line — that's fine. The label matters less than recognizing **when you need fast range sums** vs **when you need to optimize window length**.
 
----
 
 ## 2D Prefix Sums (Bonus)
 
@@ -473,13 +462,11 @@ The same idea extends to matrices. `prefix[r][c]` stores the sum of all cells in
 
 Useful for [Range Sum Query 2D](https://leetcode.com/problems/range-sum-query-2d-immutable/) and grid-based DP.
 
----
 
 ## Complexity Cheat Sheet
 
 [PREFIX-SUM-COMPLEXITY]
 
----
 
 ## Common Mistakes
 
@@ -495,19 +482,16 @@ Useful for [Range Sum Query 2D](https://leetcode.com/problems/range-sum-query-2d
 
 **Assuming sliding window works with negative numbers.** `[-1, 2, -3, 4]` with target 2 will break a naive sum-based window. Use prefix sums (often + hash map) instead.
 
----
 
 ## Practice Problems (Easiest → Hardest)
 
 [PREFIX-SUM-PRACTICE]
 
----
 
 ## Quick Reference — Pattern Picker
 
 [PREFIX-SUM-QUICK-REF]
 
----
 
 ## Key Takeaways
 

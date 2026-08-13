@@ -6,7 +6,6 @@ category: JavaScript
 featured: true
 ---
 
-# JavaScript Variables and Data Types Bundle
 
 Every programming language requires something to store information. Information which is required to handle and manipulate data. JavaScript is no new to this style.
 

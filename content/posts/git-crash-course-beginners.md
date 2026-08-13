@@ -6,11 +6,9 @@ category: Git
 featured: true
 ---
 
-# Is Git Confusing? A Git Crash Course to Get You Started!
 
 Git might seem confusing at first — branches, merges, rebases, conflicts. But underneath it all, Git is just a **time machine for your code**. This guide is interactive: step through the animations, play through branching strategies, and use the scenario picker when you're stuck.
 
----
 
 ## What is Git?
 
@@ -18,7 +16,6 @@ Git tracks every snapshot (commit) of your code. Don't like the latest version? 
 
 [POLL:Have you used Git before?|Yes, daily|A few times|Never — this is new]
 
----
 
 ## Git's 5 Staging Areas
 
@@ -36,7 +33,6 @@ Git tracks every snapshot (commit) of your code. Don't like the latest version? 
 
 [GIT-WORKFLOW:stash]
 
----
 
 ## Daily Git Commands
 
@@ -55,7 +51,6 @@ git stash / git stash pop     # park & restore work
 git log --oneline --graph     # visual history
 ```
 
----
 
 ## Branching — Your Superpower
 
@@ -71,7 +66,6 @@ git checkout -b feature/login # create + switch
 git push -u origin feature/login
 ```
 
----
 
 ## Branching Strategies — Interactive Walkthrough
 
@@ -93,7 +87,6 @@ Different teams organize branches differently. **Step through each strategy** be
 - **Scheduled releases (v1.0, v2.0)** → Git Flow
 - **Large team, continuous deploy + feature flags** → Trunk-based
 
----
 
 ## Merging — Combining Branches
 
@@ -122,7 +115,6 @@ Hello World
 
 Fix: edit file → remove markers → `git add` → `git commit`.
 
----
 
 ## Rebasing — Sync With Main
 
@@ -157,7 +149,6 @@ Combines all PR commits into one clean commit on main. Great for messy WIP histo
 git rebase -i HEAD~3   # locally: squash before pushing
 ```
 
----
 
 ## Daily Scenario Picker
 
@@ -165,7 +156,6 @@ Pick your situation — get the commands you need right now.
 
 [GIT-GUIDE]
 
----
 
 ## Your Typical Day With Git
 
@@ -189,7 +179,6 @@ git checkout main && git pull
 git branch -d feature/my-feature
 ```
 
----
 
 ## Complete Feature Workflow
 
@@ -207,7 +196,6 @@ git checkout main && git pull
 git branch -d add-user-profile
 ```
 
----
 
 ## Undo Cheat Sheet (daily)
 
@@ -219,7 +207,6 @@ git branch -d add-user-profile
 | Undo last commit (discard code) | `git reset --hard HEAD~1` |
 | Undo a pushed commit on main | `git revert <sha>` then push |
 
----
 
 ## Tips That Save You Daily
 
@@ -232,7 +219,6 @@ git branch -d add-user-profile
 
 [POLL:What do you find hardest about Git?|Branching|Merge conflicts|Rebasing|Remembering commands|Nothing — I'm ready!]
 
----
 
 ## Key Takeaways
 

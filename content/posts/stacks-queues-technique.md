@@ -6,7 +6,6 @@ category: Algorithms
 featured: true
 ---
 
-# Stacks & Queues — Complete Guide with Interactive Walkthroughs
 
 A **stack** is an ordered collection where you only add and remove from the **same end** — **LIFO** (last in, first out). Think of a stack of plates, or browser history: visit A → B → C, then back removes C first.
 
@@ -16,13 +15,11 @@ Both are **abstract interfaces**, not a single implementation. Arrays make great
 
 This guide continues the series after [Linked Lists](/blog/linked-list-technique) and pairs with [Sliding Window](/blog/sliding-window-technique) and [Hashing](/blog/hashing-technique).
 
----
 
 ## Core Patterns
 
 [STACK-QUEUE-PATTERNS]
 
----
 
 ## Stacks — LIFO
 
@@ -41,7 +38,6 @@ Stacks and **recursion** are close cousins — call frames are pushed and popped
 | Go | slice append + truncate |
 | Java | `Deque` / `ArrayDeque` as stack |
 
----
 
 ## String Problems with Stacks
 
@@ -215,7 +211,6 @@ func backspaceCompare(s string, t string) bool {
 }
 ```
 
----
 
 ## Queues — FIFO
 
@@ -278,7 +273,6 @@ func (this *RecentCounter) Ping(t int) int {
 
 With an efficient front removal, each call is amortized **O(1)**.
 
----
 
 ## Monotonic Stacks & Queues
 
@@ -444,13 +438,11 @@ Longest subarray where `max − min ≤ limit`. Classic [sliding window](/blog/s
 
 Window length = `right − left + 1`. Overall **O(n)**.
 
----
 
 ## Complexity Cheat Sheet
 
 [STACK-QUEUE-COMPLEXITY]
 
----
 
 ## Common Mistakes
 
@@ -466,19 +458,16 @@ Window length = `right − left + 1`. Overall **O(n)**.
 
 **Skipping the LIFO recognition step** — if “most recent unmatched X” matters, try a stack first.
 
----
 
 ## Practice Problems (Easiest → Hardest)
 
 [STACK-QUEUE-PRACTICE]
 
----
 
 ## Quick Reference — Pattern Picker
 
 [STACK-QUEUE-QUICK-REF]
 
----
 
 ## Key Takeaways
 

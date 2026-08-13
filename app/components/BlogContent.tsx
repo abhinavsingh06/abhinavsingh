@@ -60,6 +60,9 @@ import GoVarBasics from "./GoVarBasics";
 import GoZeroValueLab from "./GoZeroValueLab";
 import GoDeclCompare from "./GoDeclCompare";
 import GoUninitDebate from "./GoUninitDebate";
+import GoControlFlowTopics from "./GoControlFlowTopics";
+import GoForShapes from "./GoForShapes";
+import GoWhileDebate from "./GoWhileDebate";
 
 interface Heading {
   id: string;
@@ -91,6 +94,7 @@ export default function BlogContent({
     let listItems: string[] = [];
     let paragraphContent: string[] = [];
     let keyCounter = 0;
+    let skippedDuplicateTitle = false;
 
     const generateId = (text: string): string => {
       return text
@@ -742,6 +746,27 @@ export default function BlogContent({
         continue;
       }
 
+      if (trimmed === "[GO-CONTROL-FLOW]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoControlFlowTopics key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-FOR-SHAPES]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoForShapes key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GO-WHILE-DEBATE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GoWhileDebate key={keyCounter++} />);
+        continue;
+      }
+
       if (trimmed.startsWith("[DIAGRAM:")) {
         flushParagraph();
         flushList();
@@ -862,6 +887,11 @@ export default function BlogContent({
       if (trimmed.startsWith("# ")) {
         flushParagraph();
         flushList();
+        // Page template already renders the post title — skip the duplicate markdown H1
+        if (!skippedDuplicateTitle) {
+          skippedDuplicateTitle = true;
+          continue;
+        }
         const text = trimmed.substring(2);
         const id = generateId(text.replace(/[*`[\]]/g, ""));
         headings.push({ id, text: text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1"), level: 1 });
@@ -932,6 +962,13 @@ export default function BlogContent({
       }
 
       if (inList && trimmed === "") {
+        flushList();
+        continue;
+      }
+
+      // Markdown `---` / `***` / `___` — never print as text; headings already separate sections
+      if (/^([-*_])\1{2,}$/.test(trimmed)) {
+        flushParagraph();
         flushList();
         continue;
       }

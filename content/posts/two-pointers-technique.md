@@ -6,13 +6,11 @@ category: Algorithms
 featured: true
 ---
 
-# Two Pointers — Complete Guide with Interactive Walkthroughs
 
 **Two pointers** is one of the most common patterns in coding interviews. You keep two integer indices moving along an array or string — usually called `left`/`right` or `i`/`j` — and make **O(1)** work per step. Done right, the whole algorithm stays **linear**.
 
 This guide follows the same format as a structured algorithms course: we introduce the idea, then walk through classic examples **with interactive animations**. The walkthrough problems are for learning — you don't need to solve them cold on first read.
 
----
 
 ## What Is Two Pointers?
 
@@ -22,7 +20,6 @@ There are two main families:
 
 [TWO-POINTERS-PATTERNS]
 
----
 
 ## Pattern 1 — Opposite Ends (Move Inward)
 
@@ -40,7 +37,6 @@ function fn(arr):
 
 **Why it's O(n):** the pointers start `n` apart and move closer every iteration — at most **O(n)** loop iterations. If inner work is **O(1)**, total time is **O(n)** and space is **O(1)**.
 
----
 
 ## Example 1 — Valid Palindrome
 
@@ -98,7 +94,6 @@ func isPalindrome(s string) bool {
 
 **Complexity:** **O(n)** time, **O(1)** space — only two integers no matter how long the string.
 
----
 
 ## Example 2 — Two Sum on a Sorted Array
 
@@ -167,7 +162,6 @@ func twoSumSorted(nums []int, target int) bool {
 
 **Complexity:** **O(n)** time, **O(1)** space.
 
----
 
 ## Pattern 2 — Parallel Scan (Two Inputs)
 
@@ -185,7 +179,6 @@ function fn(arr1, arr2):
 
 At most **n + m** pointer moves → **O(n + m)** when inner work is **O(1)**.
 
----
 
 ## Example 3 — Merge Two Sorted Arrays
 
@@ -257,7 +250,6 @@ func mergeSorted(arr1, arr2 []int) []int {
 }
 ```
 
----
 
 ## Example 4 — Is Subsequence
 
@@ -314,7 +306,6 @@ func isSubsequence(s, t string) bool {
 
 **Complexity:** **O(|s| + |t|)** time, **O(1)** space.
 
----
 
 ## Two Pointers vs Sliding Window
 
@@ -324,7 +315,6 @@ Both use two indices, but the **intent** differs:
 
 Many problems blur the line — that's fine. The label matters less than recognizing **linear movement with O(1) per step**.
 
----
 
 ## When the Template Shifts
 
@@ -336,25 +326,21 @@ The patterns above are **guidelines**, not laws:
 
 Stay flexible — if the iterable structure suggests pairing ends or scanning two sequences in parallel, try two pointers first.
 
----
 
 ## Complexity Cheat Sheet
 
 [TWO-POINTERS-COMPLEXITY]
 
----
 
 ## Practice Problems (Easiest → Hardest)
 
 [TWO-POINTERS-PRACTICE]
 
----
 
 ## Quick Reference — Pattern Picker
 
 [TWO-POINTERS-QUICK-REF]
 
----
 
 ## Key Takeaways
 

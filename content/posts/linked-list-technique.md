@@ -6,7 +6,6 @@ category: Algorithms
 featured: true
 ---
 
-# Linked Lists — Complete Guide with Interactive Walkthroughs
 
 A **linked list** stores an ordered sequence like an array — but as **node objects** connected by pointers, not contiguous memory. Each node holds a value and a `next` reference to the following node. That single idea unlocks **O(1)** insert/delete when you already hold the right pointer, plus elegant **O(1)-space** algorithms that interviewers love.
 
@@ -14,7 +13,6 @@ This guide follows the same format as [Two Pointers](/blog/two-pointers-techniqu
 
 You should know basic OOP (classes, objects, fields) before continuing.
 
----
 
 ## Nodes vs Array Elements
 
@@ -31,13 +29,11 @@ Each node is an object: `val` plus `next`. There is **no** `list[150000]` — fi
 
 Keep a reference to the **head**. It is the only node from which you can reach every element. Lose the head and you lose the list.
 
----
 
 ## Core Patterns
 
 [LINKED-LIST-PATTERNS]
 
----
 
 ## Building a List
 
@@ -82,7 +78,6 @@ head.Next = &ListNode{Val: 2}
 head.Next.Next = &ListNode{Val: 3}
 ```
 
----
 
 ## Linked List vs Array
 
@@ -97,7 +92,6 @@ head.Next.Next = &ListNode{Val: 3}
 
 For interviews: the list is usually **given as input**. You rarely choose list vs array — you choose **how to move pointers** without dumping into an array (that almost always fails the interview).
 
----
 
 ## Mechanics — Assignment, Traversal, `.next`
 
@@ -118,7 +112,6 @@ When `curr` is the last node, `curr.next` is `null` and the loop ends.
 
 Use a **dummy pointer** for traversal so you never overwrite your only reference to `head`.
 
----
 
 ## Insert and Delete (Singly Linked)
 
@@ -179,7 +172,6 @@ Each node also has `prev`. You only need a reference to the node at `i` (not `i 
 
 Sentinel **head** / **tail** nodes sit outside the real list. Real head is `sentinel.next`. They simplify edge cases (empty list, delete last node) and give **O(1)** operations at both ends when you keep a sentinel tail.
 
----
 
 ## Fast and Slow Pointers
 
@@ -347,7 +339,6 @@ func kthFromEnd(head *ListNode, k int) *ListNode {
 }
 ```
 
----
 
 ## Reversing a Linked List
 
@@ -477,13 +468,11 @@ func swapPairs(head *ListNode) *ListNode {
 
 [LC 2130. Maximum Twin Sum](https://leetcode.com/problems/maximum-twin-sum-of-a-linked-list/): find middle (fast/slow) → reverse second half → walk both halves for pair sums. Patterns **compose**.
 
----
 
 ## Complexity Cheat Sheet
 
 [LINKED-LIST-COMPLEXITY]
 
----
 
 ## Common Mistakes
 
@@ -499,19 +488,16 @@ func swapPairs(head *ListNode) *ListNode {
 
 **Updating only one link in a doubly list.** Both `next` and `prev` must stay consistent.
 
----
 
 ## Practice Problems (Easiest → Hardest)
 
 [LINKED-LIST-PRACTICE]
 
----
 
 ## Quick Reference — Pattern Picker
 
 [LINKED-LIST-QUICK-REF]
 
----
 
 ## Key Takeaways
 

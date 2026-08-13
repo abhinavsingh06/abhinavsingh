@@ -6,13 +6,11 @@ category: Algorithms
 featured: true
 ---
 
-# Hashing — Complete Guide with Interactive Walkthroughs
 
 If you could only master **one** data structure for coding interviews, make it the **hash map**. Hash maps (and their sibling **sets**) give you **O(1)** average-time add, remove, and lookup — turning nested **O(n²)** loops into single-pass **O(n)** algorithms over and over again.
 
 This guide follows the same format as [Two Pointers](/blog/two-pointers-technique), [Sliding Window](/blog/sliding-window-technique), and [Prefix Sum](/blog/prefix-sum-technique): core concepts, interactive walkthroughs, code in three languages, and a practice ladder. Focus on the **interface** — how to use built-in maps and sets — not implementing hash tables from scratch.
 
----
 
 ## Interface vs Implementation
 
@@ -32,7 +30,6 @@ In interviews you use the **built-in** hash map of your language. You won't be a
 
 **Keys must be immutable** (or hashable). Arrays are mutable — convert to a tuple, sorted string, or delimited string before using as a key.
 
----
 
 ## What Is Hashing?
 
@@ -52,7 +49,6 @@ Five patterns cover most interview problems:
 
 [HASHING-PATTERNS]
 
----
 
 ## Hash Map vs Array
 
@@ -68,7 +64,6 @@ Five patterns cover most interview problems:
 
 **Note:** "O(1) hash map operations" are O(1) relative to map **size n**. Hashing a string of length **m** costs **O(m)**.
 
----
 
 ## Pattern 1 — Checking for Existence
 
@@ -128,7 +123,6 @@ func twoSum(nums []int, target int) []int {
 
 **Complexity:** **O(n)** time, **O(n)** space.
 
----
 
 ### Example 2 — First Letter to Appear Twice
 
@@ -180,7 +174,6 @@ func repeatedCharacter(s string) byte {
 
 **Space:** **O(m)** where **m** is the number of possible characters (26 for lowercase English — often called **O(1)** in interviews).
 
----
 
 ### Example 3 — Isolated Numbers
 
@@ -238,7 +231,6 @@ func findIsolated(nums []int) []int {
 
 **Rule of thumb:** `if (... in ...)` inside a loop → try a hash set or map.
 
----
 
 ## Pattern 2 — Counting Frequencies
 
@@ -325,7 +317,6 @@ func longestKDistinct(s string, k int) int {
 
 **Complexity:** **O(n)** time, **O(k)** space for the map.
 
----
 
 ### Example 5 — Intersection of Multiple Arrays
 
@@ -392,7 +383,6 @@ func intersection(nums [][]int) []int {
 
 **Why not an array?** If max element is `1000`, you'd need a size-1001 array mostly empty. A hash map handles sparse keys efficiently.
 
----
 
 ### Example 6 — Equal Character Frequencies
 
@@ -434,7 +424,6 @@ func areOccurrencesEqual(s string) bool {
 }
 ```
 
----
 
 ## Pattern 3 — Prefix Sum + Frequency Map
 
@@ -505,7 +494,6 @@ func subarraySum(nums []int, k int) int {
 
 **Complexity:** **O(n)** time and space.
 
----
 
 ### Example 8 — Count Nice Subarrays (Exactly K Odds)
 
@@ -520,7 +508,6 @@ ans += counts.get(curr - k) ?? 0;
 
 The code differs by literally `% 2` from the sum version.
 
----
 
 ## Pattern 4 — Grouping by Signature
 
@@ -583,7 +570,6 @@ func groupAnagrams(strs []string) [][]string {
 
 **Alternative key:** length-26 frequency tuple — **O(n·m)** vs **O(n·m log m)** for sorting.
 
----
 
 ### Example 10 — Shortest Subarray With Duplicate
 
@@ -643,7 +629,6 @@ func minimumCardPickup(cards []int) int {
 }
 ```
 
----
 
 ### Example 11 — Equal Row and Column Pairs
 
@@ -653,13 +638,11 @@ Count pairs `(R, C)` where row `R` equals column `C` as 1D arrays. Convert rows/
 
 **Complexity:** **O(n²)** for an n×n grid.
 
----
 
 ## Complexity Cheat Sheet
 
 [HASHING-COMPLEXITY]
 
----
 
 ## Common Mistakes
 
@@ -675,19 +658,16 @@ Count pairs `(R, C)` where row `R` equals column `C` as 1D arrays. Convert rows/
 
 **Ignoring O(m) string hashing.** Hashing a string of length m is not O(1).
 
----
 
 ## Practice Problems (Easiest → Hardest)
 
 [HASHING-PRACTICE]
 
----
 
 ## Quick Reference — Pattern Picker
 
 [HASHING-QUICK-REF]
 
----
 
 ## Key Takeaways
 

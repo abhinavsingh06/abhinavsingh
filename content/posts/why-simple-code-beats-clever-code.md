@@ -6,7 +6,6 @@ category: Languages
 featured: true
 ---
 
-# Why Simple Code Beats Clever Code
 
 Go's designers did not set out to invent the cleverest language. They set out to invent a language where **average code stays readable** when hundreds of people touch it.
 
@@ -18,7 +17,6 @@ If you want the origin story (compile time, C++, what Go refused), start with [W
 
 [POLL:Do you prefer “clever” or “boring” code in review?|Boring — easier to ship|Depends on the problem|Clever — if it is correct]
 
----
 
 ## The philosophy in one line
 
@@ -26,13 +24,11 @@ If you want the origin story (compile time, C++, what Go refused), start with [W
 
 Everything else — gofmt, small syntax, `if err != nil`, tiny interfaces — is downstream of that.
 
----
 
 ## Variables, types, and the Go philosophy
 
 [GO-PHILOSOPHY-PILLARS]
 
----
 
 ## Clever vs simple
 
@@ -40,13 +36,11 @@ Everything else — gofmt, small syntax, `if err != nil`, tiny interfaces — is
 
 [GO-CLEVER-VS-SIMPLE]
 
----
 
 ## Why boring code wins
 
 [GO-BORING-CODE-DEBATE]
 
----
 
 ## What this looks like in a real change
 
@@ -79,7 +73,6 @@ Need logging? Accept a `Logger`. Need HTTP? Embed or hold a mux. Keep the “is-
 
 Define small interfaces where *you* consume them. Don't force every concrete type to announce which interfaces it implements. Satisfaction by methods keeps packages loosely coupled.
 
----
 
 ## Things worth trying
 
@@ -89,7 +82,6 @@ Define small interfaces where *you* consume them. Don't force every concrete typ
 4. In your next PR description, explain the boring choice you made on purpose.
 5. Read a package you don't own for fifteen minutes. Note what slowed you down — density, indirection, or missing explicit errors.
 
----
 
 ## Key takeaways
 
@@ -99,6 +91,5 @@ Define small interfaces where *you* consume them. Don't force every concrete typ
 4. Boring code often **scales people and change** better than smart code — even when smart code wins a microbenchmark.
 5. Earn complexity. Hide clever kernels behind boring boundaries when you must.
 
----
 
 Clever code impresses the writer. Boring code protects the team. Go's bet is that the second cost is the one that compounds — and that a language can nudge an entire industry toward paying it less often.

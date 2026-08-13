@@ -6,7 +6,6 @@ category: Languages
 featured: true
 ---
 
-# Why Go Doesn't Let Variables Stay Uninitialized
 
 In many languages, a new variable can be empty in a dangerous way: “I exist, but nobody put anything in me yet.” Read that variable and you might get random junk from memory.
 
@@ -22,7 +21,6 @@ Also read: [Why Simple Code Beats Clever Code](/blog/why-simple-code-beats-cleve
 
 [POLL:Have you been bitten by an uninitialized variable in another language?|Yes — C/C++/others|Not sure / never noticed|Mostly high-level languages]
 
----
 
 ## Remember this one line
 
@@ -32,13 +30,11 @@ No ghosts. No “maybe garbage.” No surprise crashes from unread memory.
 
 `var`, types, `const`, and `:=` all live under that rule.
 
----
 
 ## Variables, types, constants, zeros, and `:=`
 
 [GO-VAR-BASICS]
 
----
 
 ## What each zero value really means
 
@@ -46,7 +42,6 @@ No ghosts. No “maybe garbage.” No surprise crashes from unread memory.
 
 [GO-ZERO-VALUE-LAB]
 
----
 
 ## `var`, `:=`, and `const`
 
@@ -54,13 +49,11 @@ Same job, different tools.
 
 [GO-DECL-COMPARE]
 
----
 
 ## Why this design choice exists
 
 [GO-UNINIT-DEBATE]
 
----
 
 ## In real code
 
@@ -123,7 +116,6 @@ if err != nil {
 
 **Sticky idea:** Always glance at the left side of `:=`.
 
----
 
 ## Try this
 
@@ -133,7 +125,6 @@ if err != nil {
 4. Search for `:=` inside `if`. Check you didn’t hide `err` by accident.
 5. Print a nil slice and an empty slice as JSON. Notice `null` vs `[]`.
 
----
 
 ## Take these home
 
@@ -144,7 +135,6 @@ if err != nil {
 5. **Zero stops random bugs** — it does not stop “I used 0 to mean missing.”
 6. **Design for the default** — make `var t T` safe when you can.
 
----
 
 Picture a blank form that somehow still has random scribbles in the boxes. That’s uninitialized memory.
 

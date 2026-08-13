@@ -6,7 +6,6 @@ category: Algorithms
 featured: true
 ---
 
-# Sliding Window Technique — Complete Reference with Animations
 
 Imagine you're looking through a train window at a row of houses. You don't jump from house 1 to house 50 — you slide forward, one house entering view as another leaves. The **sliding window** technique does exactly that with arrays and strings.
 
@@ -14,7 +13,6 @@ Instead of checking every possible subarray from scratch (slow), you keep a "win
 
 This guide starts from zero and builds up to advanced patterns. Use the animations to step through each move — they'll make the logic click whether you're solving your first window problem or designing a production pipeline.
 
----
 
 ## The Problem It Solves
 
@@ -33,7 +31,6 @@ That works, but for an array of 1 million elements, you're doing a lot of repeat
 
 The fast way: compute the first group, then **slide** — subtract the element that left, add the element that entered. Each number is touched at most twice. That's **O(n)** instead of **O(n²)**.
 
----
 
 ## The Core Idea — Two Pointers
 
@@ -59,7 +56,6 @@ You only ever do three things:
 
 Both pointers only move forward, never backward. That's why the whole thing stays fast.
 
----
 
 ## Pattern 1 — Fixed-Size Window
 
@@ -142,7 +138,6 @@ func maxSumSubarray(arr []int, k int) int {
 
 **When to use:** "Max sum of size k", "average of every k elements", "find all anagrams of a pattern" (window size = pattern length).
 
----
 
 ## Pattern 2 — Variable-Size Window (Grow & Shrink)
 
@@ -290,7 +285,6 @@ func lengthOfLongestSubstring(s string) int {
 
 **Why jump instead of shrinking one step at a time?** If `'a'` was last seen at index 2, any window starting before index 3 will always contain that duplicate `'a'`. Jumping `left` to 3 skips useless work.
 
----
 
 ## How to Recognize a Sliding Window Problem
 
@@ -307,7 +301,6 @@ Common phrases that point to sliding window:
 - "Subarray with at most k distinct elements"
 - "Longest substring without repeating characters"
 
----
 
 ## The Reusable Template
 
@@ -400,7 +393,6 @@ func slidingWindow(arr []int) int {
 - Shrink when the window **isn't** valid
 - Record the answer **after** shrinking
 
----
 
 ## Going Deeper — Loop Invariants
 
@@ -422,7 +414,6 @@ Simple: you build a window of size `k`, then each slide removes one and adds one
 
 Stating the invariant before you code helps you catch off-by-one errors and pick Shape A vs Shape B correctly.
 
----
 
 ## Going Deeper — Why Is It O(n)?
 
@@ -459,7 +450,6 @@ No — it's still O(n). Here's why in plain terms:
 
 So each element enters the window once and leaves once. Two passes over the data = **O(n)**.
 
----
 
 ## Advanced — Minimum Window Substring
 
@@ -580,7 +570,6 @@ func minWindow(s, t string) string {
 
 **Performance tip:** Track `formed` (how many unique characters are satisfied) instead of comparing the entire frequency map on every step.
 
----
 
 ## Advanced — Monotonic Deque (Max in a Window)
 
@@ -661,7 +650,6 @@ func maxSlidingWindow(nums []int, k int) []int {
 
 **Where you'll see this in real life:** rolling peak latency in monitoring, max throughput in a time bucket, any "highest value in the last N minutes" dashboard.
 
----
 
 ## Advanced — The "At Most K" Trick
 
@@ -754,7 +742,6 @@ func atMost(nums []int, k int) int {
 
 **Why `count += right - left + 1`?** For a fixed `right`, every starting position from `left` to `right` gives a valid subarray ending at `right`. That's `right - left + 1` subarrays in one step.
 
----
 
 ## Which Technique Should I Use?
 
@@ -776,7 +763,6 @@ Is it about a contiguous subarray or substring?
         → Shape B + add (right − left + 1) each step
 ```
 
----
 
 ## When Sliding Window Won't Work
 
@@ -790,7 +776,6 @@ Knowing the limits is just as important as knowing the pattern.
 
 **Out-of-order event streams** — Pointers assume ordered input. Use watermarking or buffering.
 
----
 
 ## Real-World Uses (Beyond Interviews)
 
@@ -870,7 +855,6 @@ func (r *RateLimiter) Allow() bool {
 
 **Session tracking** — Group user events into sessions separated by 30+ minutes of inactivity. Expand the window until the gap is too large, then close the session.
 
----
 
 ## Complexity at a Glance
 
@@ -882,7 +866,6 @@ func (r *RateLimiter) Allow() bool {
 
 *Σ = alphabet size or number of distinct values you track.*
 
----
 
 ## Common Mistakes
 
@@ -898,19 +881,16 @@ func (r *RateLimiter) Allow() bool {
 
 **Comparing full frequency maps every step.** In minimum window substring, track a `formed` counter instead.
 
----
 
 ## Practice Problems (Easiest → Hardest)
 
 [PRACTICE-PROBLEMS]
 
----
 
 ## Quick Reference — Pattern Picker
 
 [QUICK-REF]
 
----
 
 ## Key Takeaways
 

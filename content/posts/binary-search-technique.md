@@ -6,13 +6,11 @@ category: Algorithms
 featured: true
 ---
 
-# Binary Search — Complete Guide with Interactive Walkthroughs
 
 **Binary search** runs in **O(log n)** on a search space of size **n**. It needs **sorted order** (or a **monotonic** yes/no predicate). Each step halves the space — that is why logarithmic time feels almost instant compared to linear scans.
 
 This guide follows the same format as [Two Pointers](/blog/two-pointers-technique), [Sliding Window](/blog/sliding-window-technique), [Prefix Sum](/blog/prefix-sum-technique), and [Hashing](/blog/hashing-technique): core concepts, interactive walkthroughs, code in three languages, and a practice ladder.
 
----
 
 ## What Binary Search Does
 
@@ -32,13 +30,11 @@ Step 2: mid = 4, arr[4] = 9 = 9  → found ✓
 
 You have used this in real life — opening a dictionary near the middle and flipping left or right based on the first letter.
 
----
 
 ## Core Patterns
 
 [BINARY-SEARCH-PATTERNS]
 
----
 
 ## Classic Template (No Duplicates)
 
@@ -107,7 +103,6 @@ func binarySearch(nums []int, target int) int {
 
 **Overflow note:** In Java/C++, use `left + (right - left) / 2` instead of `(left + right) / 2`. JavaScript and Python integers do not overflow in practice.
 
----
 
 ## Duplicate Elements — Lower & Upper Bound
 
@@ -171,7 +166,6 @@ func lowerBound(nums []int, target int) int {
 
 **First and last position of target:** run lower bound for `target` and upper bound for `target + 1` (or lower bound for `target` and `target + 1`).
 
----
 
 ## Binary Search vs Linear Scan
 
@@ -184,7 +178,6 @@ func lowerBound(nums []int, target int) int {
 
 **Rule of thumb:** Anytime the problem gives you **sorted** input or asks for **min/max** with a feasibility check — think binary search.
 
----
 
 ## On Arrays
 
@@ -350,7 +343,6 @@ func successfulPairs(spells []int, potions []int, success int64) []int {
 }
 ```
 
----
 
 ## On Solution Spaces
 
@@ -471,7 +463,6 @@ If `dist.length > floor(hour)`, impossible even at infinite speed → return `-1
 
 When the problem gives a max answer (e.g. `10^7`), that hints at binary search. If not, use a large `right` like `10^10` — log is still tiny.
 
----
 
 ## Min vs Max — Return `left` or `right`?
 
@@ -484,13 +475,11 @@ When searching for a **minimum**, a successful `check(mid)` moves `right = mid -
 
 When searching for a **maximum**, a successful `check(mid)` moves `left = mid + 1` — the answer ends up at **`right`**.
 
----
 
 ## Complexity Cheat Sheet
 
 [BINARY-SEARCH-COMPLEXITY]
 
----
 
 ## Common Mistakes
 
@@ -506,19 +495,16 @@ When searching for a **maximum**, a successful `check(mid)` moves `left = mid + 
 
 **Max-answer problems returning `left`.** If you need the **maximum** feasible value, return **`right`**, not `left`.
 
----
 
 ## Practice Problems (Easiest → Hardest)
 
 [BINARY-SEARCH-PRACTICE]
 
----
 
 ## Quick Reference — Pattern Picker
 
 [BINARY-SEARCH-QUICK-REF]
 
----
 
 ## Key Takeaways
 

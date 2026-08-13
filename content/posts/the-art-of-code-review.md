@@ -6,7 +6,6 @@ category: Engineering
 featured: false
 ---
 
-# The Art of Code Review
 
 Code review is one of the most important practices in software development. It's not just about finding bugs—it's about sharing knowledge and maintaining code quality.
 
