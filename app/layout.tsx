@@ -36,6 +36,11 @@ export const metadata: Metadata = {
     title: siteName,
     description: siteDescription,
   },
+  alternates: {
+    types: {
+      "application/rss+xml": `${siteUrl}/feed.xml`,
+    },
+  },
   twitter: {
     card: "summary_large_image",
     title: siteName,

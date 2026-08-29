@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { use } from "react";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
 import { getSeriesInfo } from "@/lib/series";
-import { siteName, siteUrl } from "@/lib/site";
+import { getPostOgImageUrl, getPostUrl } from "@/lib/post-seo";
+import { siteName } from "@/lib/site";
 import { getViewCountSync } from "@/lib/views";
 import { getLikeCountSync } from "@/lib/likes";
 import Newsletter from "../../components/Newsletter";
@@ -16,6 +17,8 @@ import ReadingProgress from "../../components/ReadingProgress";
 import ViewCount from "../../components/ViewCount";
 import SpotlightCard from "../../components/SpotlightCard";
 import AlgorithmSeriesReadNext from "../../components/AlgorithmSeriesReadNext";
+import PostJsonLd from "../../components/PostJsonLd";
+import PostShare from "../../components/PostShare";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -31,7 +34,8 @@ export async function generateMetadata({
   const post = getPostBySlug(slug);
   if (!post) return {};
 
-  const url = `${siteUrl}/blog/${slug}`;
+  const url = getPostUrl(slug);
+  const image = getPostOgImageUrl(slug);
 
   return {
     title: post.title,
@@ -44,11 +48,20 @@ export async function generateMetadata({
       publishedTime: post.date,
       authors: [siteName],
       siteName,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
+      images: [image],
     },
     alternates: { canonical: url },
   };
@@ -75,6 +88,7 @@ export default function BlogPostPage({
 
   return (
     <div className="blog-post-page relative min-h-screen bg-[var(--bg)] text-[var(--fg)]">
+      <PostJsonLd post={post} />
       <ReadingProgress />
       <PostHeartLikeDock postId={post.slug} initialLikes={likeCount} />
       <SiteHeader />
@@ -122,6 +136,11 @@ export default function BlogPostPage({
             className="sr-only"
           />
           <BlogPostShell content={post.content} />
+          <PostShare
+            slug={post.slug}
+            title={post.title}
+            url={getPostUrl(post.slug)}
+          />
         </article>
       </div>
 

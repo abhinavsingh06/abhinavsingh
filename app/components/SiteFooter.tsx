@@ -84,6 +84,13 @@ export default function SiteFooter() {
                       Newsletter <span className="arrow">→</span>
                     </Link>
                   </li>
+                  <li>
+                    <a
+                      href="/feed.xml"
+                      className="link-arrow font-mono-sm">
+                      RSS <span className="arrow">→</span>
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>

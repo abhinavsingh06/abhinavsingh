@@ -7,6 +7,7 @@ import SpotlightCard from "./components/SpotlightCard";
 import NumberTicker from "./components/NumberTicker";
 import LiveClock from "./components/LiveClock";
 import ScrambleText from "./components/ScrambleText";
+import PostOgThumbnail from "./components/PostOgThumbnail";
 
 export default function Home() {
   const posts = getAllPosts();
@@ -226,6 +227,13 @@ export default function Home() {
                 i === 0 ? "sm:col-span-2 sm:row-span-1" : ""
               }`}>
               <div className="relative z-10 flex h-full flex-col gap-6">
+                <PostOgThumbnail
+                  slug={post.slug}
+                  title={post.title}
+                  priority={i === 0}
+                  className={i === 0 ? "" : ""}
+                />
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="chip chip-accent">{post.category}</span>

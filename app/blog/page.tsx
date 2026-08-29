@@ -7,6 +7,7 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import SpotlightCard from "../components/SpotlightCard";
 import ViewCount from "../components/ViewCount";
+import PostOgThumbnail from "../components/PostOgThumbnail";
 
 export default function BlogPage({
   searchParams,
@@ -80,6 +81,8 @@ export default function BlogPage({
               href={`/blog/${post.slug}`}
               className="group block p-6">
               <div className="relative z-10 flex h-full flex-col gap-5">
+                <PostOgThumbnail slug={post.slug} title={post.title} />
+
                 <div className="flex items-center justify-between">
                   <span className="chip chip-accent">{post.category}</span>
                   <span className="font-mono-xs text-[var(--muted)]">

@@ -25,6 +25,22 @@ export function trackNewsletterSignup(source = "newsletter_form") {
   }
 }
 
+/** Fire when a reader shares a post. */
+export function trackPostShare(
+  slug: string,
+  platform: "linkedin" | "x" | "copy"
+) {
+  pushDataLayerEvent({
+    event: "post_share",
+    post_slug: slug,
+    share_platform: platform,
+  });
+
+  if (process.env.NODE_ENV === "production") {
+    track("post_share", { slug, platform });
+  }
+}
+
 /** Fire when a reader continues an algorithm series. */
 export function trackSeriesContinue(
   fromSlug: string,

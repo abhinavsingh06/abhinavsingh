@@ -5,8 +5,10 @@
 
 import type { BlogPost } from "./posts";
 import { DEFAULT_CONTACT_EMAIL } from "./email";
+import { getPostOgImageUrl, getPostUrl } from "./post-seo";
+import { siteUrl } from "./site";
 
-const SITE_URL = "https://abhinavsingh.online";
+const SITE_URL = siteUrl;
 
 const C = {
   bg: "#0a0a0a",
@@ -218,7 +220,8 @@ export function getWelcomeEmailHTML(): string {
 }
 
 export function getNewsletterPostEmailHTML(post: BlogPost): string {
-  const postUrl = `${SITE_URL}/blog/${post.slug}`;
+  const postUrl = getPostUrl(post.slug);
+  const imageUrl = getPostOgImageUrl(post.slug);
   const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -229,6 +232,10 @@ export function getNewsletterPostEmailHTML(post: BlogPost): string {
     `<span style="display:inline-block;margin:0 8px 8px 0;padding:5px 10px;background:${C.bgElev2};border:1px solid ${C.line};border-radius:6px;font-family:${FONT_MONO};font-size:11px;color:${C.muted};letter-spacing:0.04em;">${escapeHtml(label)}</span>`;
 
   const bodyHtml = `
+    <a href="${postUrl}" style="display:block;margin-bottom:24px;text-decoration:none;">
+      <img src="${imageUrl}" alt="${escapeHtml(post.title)}" width="600" style="display:block;width:100%;max-width:600px;height:auto;border-radius:10px;border:1px solid ${C.line};" />
+    </a>
+
     <h2 style="margin:0 0 16px;color:${C.fg};font-size:22px;font-weight:700;line-height:1.3;letter-spacing:-0.02em;">
       ${escapeHtml(post.title)}
     </h2>
