@@ -19,7 +19,7 @@ const TOPICS: Topic[] = [
     claim:
       "A variable is a labeled box. In Go, the box is never empty when you create it — it always starts with something real.",
     surface:
-      "Write var count int, or var name = \"Ada\". If you give a value, Go can often guess the type for you.",
+      'Write var count int, or var name = "Ada". If you give a value, Go can often guess the type for you.',
     deeper:
       "In C, a new local can hold leftover junk from memory. In Go, that never happens. Forget to set a number? You still get 0 — not a random crash later.",
     gotcha:
@@ -68,7 +68,7 @@ const Greeting = "hello"`,
     claim:
       "Create a variable without setting it, and Go still fills it in. That starter value is the zero value.",
     surface:
-      "Numbers → 0. bool → false. string → \"\". Pointers, slices, maps → nil. Structs → each field gets its own zero.",
+      'Numbers → 0. bool → false. string → "". Pointers, slices, maps → nil. Structs → each field gets its own zero.',
     deeper:
       "Zeros aren’t lazy — they’re a feature. A Mutex and a Buffer are usable the moment you declare them. Great APIs ask: does var t T already work?",
     gotcha:

@@ -6,7 +6,6 @@ category: Languages
 featured: true
 ---
 
-
 In 2007, Robert Griesemer, Rob Pike, and Ken Thompson started designing a language at Google. The question wasn't “how do we make C++ cooler?” It was:
 
 > **What language would we invent if we optimized for Google-scale engineering — compile speed, dependency clarity, and code that thousands of people can read?**
@@ -15,41 +14,37 @@ This post is a **case study**, not a feature checklist: the pressures that creat
 
 [POLL:Have you written production Go?|Yes, regularly|Tried tutorials / side projects|Mostly C++/Java/JS — curious why Go exists]
 
-
 ## The case study timeline
 
 Google wasn't failing because engineers were “bad at C++.” They were hitting **organizational physics**: huge codebases, slow builds, complex deps, and concurrency that punished mistakes.
 
 [GO-ORIGIN-TIMELINE]
 
-
 ## The five pressures
 
-| Pressure | Symptom at scale | Go's bet |
-|----------|------------------|----------|
-| **Compile speed** | Minutes–hours of waiting | Fast package builds |
+| Pressure            | Symptom at scale                      | Go's bet                         |
+| ------------------- | ------------------------------------- | -------------------------------- |
+| **Compile speed**   | Minutes–hours of waiting              | Fast package builds              |
 | **Dependency hell** | Cascading rebuilds, unclear ownership | Explicit imports, boring modules |
-| **Memory safety** | Costly bugs in C++ | GC + simple rules |
-| **Concurrency** | Threads/locks or callback spaghetti | Goroutines + channels |
-| **Cleverness** | Dialects, hero code | Small language, uniform style |
+| **Memory safety**   | Costly bugs in C++                    | GC + simple rules                |
+| **Concurrency**     | Threads/locks or callback spaghetti   | Goroutines + channels            |
+| **Cleverness**      | Dialects, hero code                   | Small language, uniform style    |
 
 [GO-VS-CPP]
 
 Go can feel like it is “missing features” at first. That is often the point. Language design is also **governance**: fewer knobs means fewer incompatible dialects across teams.
 
-
 ## The features Go refused
 
 Most language tours start with a feature list. That is the wrong entrance for Go.
 
-Go is easier to understand if you ask what it *refused* to include — inheritance, exceptions, operator overloading, macros, and (at first) generics — and sit with the reason for each refusal. The common thread is not austerity for its own sake. It is optimizing for **reading strangers' code under a deadline**, not for writing the cleverest expression.
+Go is easier to understand if you ask what it _refused_ to include — inheritance, exceptions, operator overloading, macros, and (at first) generics — and sit with the reason for each refusal. The common thread is not austerity for its own sake. It is optimizing for **reading strangers' code under a deadline**, not for writing the cleverest expression.
 
 Explore each choice below. Pick one topic at a time; read it like a short design memo.
 
 [GO-OMITTED-FEATURES]
 
 You can steal this habit even if you never ship Go: when you evaluate a tool, ask what it left out on purpose, and what that buys a team at scale.
-
 
 ## Mini case studies
 
@@ -98,13 +93,11 @@ Readable concurrency was a design goal — not an add-on library.
 
 **Go's answer:** Fewer ways to say the same thing. `gofmt` ends style debates. The language refuses some power to protect the median engineer.
 
-
 ## Should you use Go?
 
 Go isn't a religion. Match constraints.
 
 [GO-WHEN-TO-USE]
-
 
 ## Things worth trying
 
@@ -115,7 +108,6 @@ Go isn't a religion. Match constraints.
 5. In your next design doc, start from the scale problem: compile latency, dialect sprawl, or concurrency model — not from a feature wishlist.
 6. Prefer strangler extraction over “rewrite in Go because it is simpler.”
 
-
 ## Key takeaways
 
 1. Go was invented because **improving C++ wouldn't fix Google's compile, dependency, and uniformity problems**.
@@ -124,6 +116,5 @@ Go isn't a religion. Match constraints.
 4. Generics arriving later proves the point: **sequence the complexity**; don't ship the whole kitchen on day one.
 5. Go wins for many **services, CLIs, and I/O-heavy** systems — not every domain.
 6. The transferable skill: evaluate tools by **scale pressures**, not feature bingo.
-
 
 Go did not win by being the most powerful language on paper. It won by making the expensive parts of large-team engineering — waiting on builds, decoding strangers' code, and coordinating concurrency — a little less expensive. Whether you adopt Go or not, that design lesson travels: optimize for the cost your organization actually pays.

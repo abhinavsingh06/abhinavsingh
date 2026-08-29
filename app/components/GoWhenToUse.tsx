@@ -16,7 +16,8 @@ const SCENARIOS: Scenario[] = [
   {
     id: "apis",
     title: "HTTP APIs & microservices",
-    context: "Many small services, lots of networking, mixed experience on the team.",
+    context:
+      "Many small services, lots of networking, mixed experience on the team.",
     verdict: "go",
     verdictLabel: "Strong Go fit",
     why: "Fast builds, simple deployment (static binary), solid stdlib net/http, easy concurrency for I/O.",
@@ -61,7 +62,8 @@ const SCENARIOS: Scenario[] = [
   {
     id: "concurrency",
     title: "High-fanout I/O concurrency",
-    context: "Thousands of connections, fan-in fan-out jobs, not hard realtime.",
+    context:
+      "Thousands of connections, fan-in fan-out jobs, not hard realtime.",
     verdict: "go",
     verdictLabel: "Strong Go fit",
     why: "Goroutines make concurrent I/O models approachable without reactive framework ceremony.",
@@ -82,9 +84,7 @@ export default function GoWhenToUse() {
   return (
     <div className="my-8 min-w-0 max-w-full overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--bg-2)]">
       <div className="border-b border-[var(--line)] px-5 py-4 sm:px-6">
-        <h3 className="font-display text-lg text-[var(--fg)]">
-          When Go fits
-        </h3>
+        <h3 className="font-display text-lg text-[var(--fg)]">When Go fits</h3>
         <p className="mt-1 text-sm text-[var(--fg-2)]">
           Pick a situation. The point isn&apos;t hype — it&apos;s matching
           constraints.
@@ -115,7 +115,9 @@ export default function GoWhenToUse() {
             className={`inline-flex rounded-full border px-3 py-1 font-mono-xs font-semibold ${VERDICT_STYLE[active.verdict]}`}>
             {active.verdictLabel}
           </span>
-          <p className="text-sm leading-relaxed text-[var(--fg)]">{active.why}</p>
+          <p className="text-sm leading-relaxed text-[var(--fg)]">
+            {active.why}
+          </p>
           <p className="text-sm leading-relaxed text-[var(--fg-2)]">
             {active.note}
           </p>

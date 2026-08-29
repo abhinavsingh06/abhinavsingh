@@ -25,7 +25,8 @@ const ROWS: ZeroRow[] = [
     type: "bool",
     zero: "false",
     meaning: "The light starts off. Something must turn it on.",
-    safeUse: "Feature flags, “done yet?”, anything that should stay off by default.",
+    safeUse:
+      "Feature flags, “done yet?”, anything that should stay off by default.",
     trap: "false is not “I don’t know.” Need yes / no / unknown? Use a pointer or a small custom type.",
   },
   {
@@ -34,7 +35,7 @@ const ROWS: ZeroRow[] = [
     zero: `""`,
     meaning: "An empty string — still a real string. Not null. Not broken.",
     safeUse: "You can len it, add to it, loop it. No warm-up needed.",
-    trap: "\"\" can mean empty name or “no name provided.” Those are different stories — tell them apart in code.",
+    trap: '"" can mean empty name or “no name provided.” Those are different stories — tell them apart in code.',
   },
   {
     id: "pointer",
@@ -56,16 +57,20 @@ const ROWS: ZeroRow[] = [
     id: "map",
     type: "map",
     zero: "nil",
-    meaning: "Like a closed notebook: you can try to read a page, but you can’t write yet.",
-    safeUse: "Lookups are fine. Missing keys just give the zero of the value type.",
+    meaning:
+      "Like a closed notebook: you can try to read a page, but you can’t write yet.",
+    safeUse:
+      "Lookups are fine. Missing keys just give the zero of the value type.",
     trap: "Write to a nil map → panic. Open it first: make(map[string]int) or a map literal.",
   },
   {
     id: "struct",
     type: "struct",
     zero: "field zeros",
-    meaning: "Every field gets its own starter value. The whole struct is defined.",
-    safeUse: "Aim for types that work with var t T — Mutex and Buffer do this well.",
+    meaning:
+      "Every field gets its own starter value. The whole struct is defined.",
+    safeUse:
+      "Aim for types that work with var t T — Mutex and Buffer do this well.",
     trap: "Pointer fields inside are still nil. “All zeros” is not the same as “fully set up for business logic.”",
   },
 ];

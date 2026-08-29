@@ -37,7 +37,7 @@ type Store interface {
   {
     id: "flow",
     title: "Transforming data",
-    clever: `return Map(Filter(Reduce(items, ...), pred), fn)`,
+    clever: `return Map(Filter(items, pred), fn)`,
     simple: `var out []Item
 for _, item := range items {
     if !pred(item) {

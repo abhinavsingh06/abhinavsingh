@@ -6,7 +6,6 @@ category: Languages
 featured: true
 ---
 
-
 In many languages, a new variable can be empty in a dangerous way: “I exist, but nobody put anything in me yet.” Read that variable and you might get random junk from memory.
 
 Go says no to that.
@@ -21,7 +20,6 @@ Also read: [Why Simple Code Beats Clever Code](/blog/why-simple-code-beats-cleve
 
 [POLL:Have you been bitten by an uninitialized variable in another language?|Yes — C/C++/others|Not sure / never noticed|Mostly high-level languages]
 
-
 ## Remember this one line
 
 **If a variable exists in Go, it already has a value.**
@@ -30,11 +28,9 @@ No ghosts. No “maybe garbage.” No surprise crashes from unread memory.
 
 `var`, types, `const`, and `:=` all live under that rule.
 
-
 ## Variables, types, constants, zeros, and `:=`
 
 [GO-VAR-BASICS]
-
 
 ## What each zero value really means
 
@@ -42,46 +38,43 @@ No ghosts. No “maybe garbage.” No surprise crashes from unread memory.
 
 [GO-ZERO-VALUE-LAB]
 
-
 ## `var`, `:=`, and `const`
 
 Same job, different tools.
 
 [GO-DECL-COMPARE]
 
-
 ## Why this design choice exists
 
 [GO-UNINIT-DEBATE]
 
-
 ## In real code
 
-### Counting is free
+### Counting items
 
 ```go
-var sum int
-for _, n := range values {
-    sum += n
+var total int
+for _, item := range items {
+    total += item.Qty
 }
 ```
 
-You don’t write `sum = 0`. Zero is already the right place to start adding.
+You don’t write `total = 0`. Zero is already the right place to start adding.
 
 **Sticky idea:** Go’s default often matches the math you wanted.
 
 ### Zero is not the same as “missing”
 
 ```go
-func port(cfg map[string]int) int {
-    if p, ok := cfg["port"]; ok {
-        return p
+func minStock(cfg map[string]int) int {
+    if s, ok := cfg["min_stock"]; ok {
+        return s
     }
-    return 8080
+    return 1
 }
 ```
 
-Is `0` a real port, or did someone forget to set one? If both are possible, **don’t make `0` mean “I forgot.”** Ask the map: “was this key there?”
+Is `0` a real minimum, or did someone forget to set one? If both are possible, **don’t make `0` mean “I forgot.”** Ask the map: “was this key there?”
 
 **Sticky idea:** Empty ≠ missing. Say missing out loud in code.
 
@@ -93,7 +86,7 @@ mu.Lock()
 defer mu.Unlock()
 ```
 
-No `NewMutex()`. It just works. When you invent a type, ask: *can someone write `var t T` and use it safely?*
+No `NewMutex()`. It just works. When you invent a type, ask: _can someone write `var t T` and use it safely?_
 
 **Sticky idea:** The best Go types are ready before you “set them up.”
 
@@ -112,10 +105,9 @@ if err != nil {
 }
 ```
 
-`:=` creates what’s new and reuses what’s old. Handy. Also easy to accidentally create a *second* `err` inside an `if` and wonder why the outer one never updates.
+`:=` creates what’s new and reuses what’s old. Handy. Also easy to accidentally create a _second_ `err` inside an `if` and wonder why the outer one never updates.
 
 **Sticky idea:** Always glance at the left side of `:=`.
-
 
 ## Try this
 
@@ -125,7 +117,6 @@ if err != nil {
 4. Search for `:=` inside `if`. Check you didn’t hide `err` by accident.
 5. Print a nil slice and an empty slice as JSON. Notice `null` vs `[]`.
 
-
 ## Take these home
 
 1. **No empty ghosts** — every variable starts with a value.
@@ -134,7 +125,6 @@ if err != nil {
 4. **`:=` for quick locals** · **`var` when you want the zero (or package scope).**
 5. **Zero stops random bugs** — it does not stop “I used 0 to mean missing.”
 6. **Design for the default** — make `var t T` safe when you can.
-
 
 Picture a blank form that somehow still has random scribbles in the boxes. That’s uninitialized memory.
 

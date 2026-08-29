@@ -6,10 +6,9 @@ category: Languages
 featured: true
 ---
 
-
 Open a Go file looking for `while`. You won’t find it.
 
-That’s not an accident. C, Java, and JavaScript give you *while*, *do-while*, *for*, and often *foreach*. Go kept one loop: **`for`**. Leave pieces out and it becomes “while.” Leave them all out and it runs forever. Add `range` and it walks a collection.
+That’s not an accident. C, Java, and JavaScript give you _while_, _do-while_, _for_, and often _foreach_. Go kept one loop: **`for`**. Leave pieces out and it becomes “while.” Leave them all out and it runs forever. Add `range` and it walks a collection.
 
 > **Fewer loop words. Same jobs. One shape to remember.**
 
@@ -19,28 +18,23 @@ Also read: [Why Go Doesn't Let Variables Stay Uninitialized](/blog/why-go-variab
 
 [POLL:Did you miss while when you first wrote Go?|Yes — felt wrong|Quickly got used to for|Never thought about it]
 
-
 ## Remember this one line
 
 **`for` is the only loop.** Condition-only `for` is while. Empty `for` is forever. `range` is foreach.
 
 `if`, `switch`, `break`, `continue`, labels, and `defer` are the rest of the steering wheel.
 
-
 ## if, switch, for, break, labels, defer
 
 [GO-CONTROL-FLOW]
-
 
 ## How other loops map onto `for`
 
 [GO-FOR-SHAPES]
 
-
 ## Why this design choice exists
 
 [GO-WHILE-DEBATE]
-
 
 ## In real code
 
@@ -56,7 +50,7 @@ defer f.Close()
 return parse(f)
 ```
 
-No `else` wrapping the whole function. Check, return, continue. `defer` promises the close even if `parse` fails.
+No `else` wrapping the whole function. Check, return, continue. `defer` promises the close even if `parseManifest` fails.
 
 **Sticky idea:** Setup and cleanup share a zip code. The rest of the function can forget about the file.
 
@@ -122,10 +116,9 @@ for _, path := range paths {
 }
 ```
 
-`defer` is tied to the **function**, not the block. Close in the loop, or wrap each file in a small helper so defer runs when *that* helper returns.
+`defer` is tied to the **function**, not the block. Close in the loop, or wrap each file in a small helper so defer runs when _that_ helper returns.
 
 **Sticky idea:** defer means “when this function exits,” not “when this `}` is hit.”
-
 
 ## Try this
 
@@ -135,7 +128,6 @@ for _, path := range paths {
 4. Find `defer` in a loop. If the function is long-lived, that’s a leak — fix it.
 5. Walk a slice with `for _, v := range` and try mutating `v`. Notice the slice doesn’t change.
 
-
 ## Take these home
 
 1. **No `while`** — condition-only `for` is the same idea.
@@ -144,6 +136,5 @@ for _, path := range paths {
 4. **`break` / `continue` target the inner loop or switch** — labels when nested loops would lie.
 5. **`defer` runs at function return, LIFO** — keep it next to setup, out of hot loops.
 6. **One loop keyword** is governance: fewer dialects, same power.
-
 
 Other languages hang extra loop words on the wall like spare keys. Go leaves one key on the hook: `for`. You still get while, foreach, and forever — you just stop arguing about which key to pick.

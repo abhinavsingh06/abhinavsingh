@@ -6,13 +6,13 @@ category: Distributed Systems
 featured: true
 ---
 
-Imagine checkout: place order → charge card → send email → reserve stock.
+Imagine placing an order: reserve stock → send confirmation → book shipping.
 
-The naive version chains HTTP calls. Order API calls Payment. Payment calls Email. Payment calls Inventory. One slow service stalls the whole request. One service down and checkout fails — even if email could wait.
+The naive version chains HTTP calls. The Order API calls Inventory. Inventory calls Notifications. Inventory calls Shipping. One slow service stalls the whole response. One service down and checkout fails — even when the email could wait.
 
 > **Kafka exists so services can react to what happened without standing in each other's way.**
 
-This is the first post in the Kafka series. We start with *why* before brokers, partitions, or consumer groups.
+This is the first post in the Kafka series. We start with _why_ before brokers, partitions, or consumer groups.
 
 [POLL:Have you used Kafka in production?|Yes, regularly|Tried locally / tutorials|Heard of it, never used]
 
@@ -27,24 +27,24 @@ Not “a faster queue.” Not “free microservices.” A **log** — append eve
 Three problems show up again and again in growing systems:
 
 1. **Tight coupling in time** — Service A cannot finish until B, C, and D respond.
-2. **Tight coupling in shape** — Every new downstream feature means editing the producer.
+2. **Tight coupling in shape** — Every new downstream step means editing the producer.
 3. **No memory** — If a new team needs yesterday’s events, there is nothing to replay.
 
 Sync HTTP is fine for “I need an answer now.” It gets expensive when ten teams need to hear that something happened.
 
 [KAFKA-FLOW-COMPARE]
 
-**Sticky idea:** Events decouple *when* work happens. The order API can return fast while email catches up later.
+**Sticky idea:** Events decouple _when_ work happens. The Order API can return fast while email catches up later.
 
 ## What Kafka actually gives you
 
-| Idea | Plain English |
-|------|----------------|
-| **Producer** | Writes an event to a topic (“order-123 placed”) |
-| **Topic** | Named stream of events — like a folder of logs |
-| **Consumer** | Reads events and does work (send email, update warehouse) |
-| **Durability** | Events sit on disk; they survive restarts |
-| **Replay** | A new consumer can read from the beginning (within retention) |
+| Idea           | Plain English                                              |
+| -------------- | ---------------------------------------------------------- |
+| **Producer**   | Writes an event to a topic (“order-8841 placed”)           |
+| **Topic**      | Named stream of events — like a folder of logs             |
+| **Consumer**   | Reads events and does work (reserve stock, send email)     |
+| **Durability** | Events sit on disk; they survive restarts                 |
+| **Replay**     | A new consumer can read from the beginning (within retention) |
 
 You do not need every detail yet. Hold one picture: **write once, read many, later if needed.**
 
@@ -52,7 +52,7 @@ You do not need every detail yet. Hold one picture: **write once, read many, lat
 
 Classic queues often **delete** a message after one consumer acks it. That is great for job distribution — one worker takes the task.
 
-Kafka’s default mental model is different: **keep the log**. Multiple consumer groups can each read the same events. New services can catch up. Analytics can lag behind real time without blocking checkout.
+Kafka’s default mental model is different: **keep the log**. Multiple consumer groups can each read the same events. New services can catch up. Reporting can lag behind real time without blocking new orders.
 
 **Sticky idea:** Queues distribute work. Kafka **remembers** what happened.
 
@@ -62,7 +62,7 @@ Kafka is not free complexity. Brokers, partitions, consumer lag, and rebalances 
 
 Skip Kafka (for now) when:
 
-- The user is **waiting** on the result (login, search, payment authorization UI)
+- The user is **waiting on screen** for the answer (login, live stock check)
 - You have **two services** and low traffic — Postgres + HTTP is enough
 - You need **one global order** for all events everywhere — Kafka orders per partition, not magically worldwide
 - Payloads are tiny and latency must be **sub-millisecond** between two boxes
@@ -74,11 +74,11 @@ Skip Kafka (for now) when:
 Think of Kafka as the **company bulletin board**:
 
 - Someone pins a note: “Order #9912 placed.”
-- Finance reads it when they can.
-- Warehouse reads it when they can.
-- A new analytics team can read **old notes** still on the board (retention permitting).
+- Billing reads it when they can.
+- Packing reads it when they can.
+- A new reporting team can read **old notes** still on the board (retention permitting).
 
-Nobody has to call everyone by phone during checkout.
+Nobody has to call everyone by phone while the customer waits.
 
 ## For experienced readers
 
@@ -96,7 +96,7 @@ The durable-log model shines when **producers stay dumb** (append facts) and **c
 
 ## Try this
 
-1. Draw your last feature as boxes and arrows. Circle every synchronous HTTP call on the user’s critical path.
+1. Draw your last feature as boxes and arrows. Circle every synchronous HTTP call on the critical path.
 2. For each arrow, ask: “Does the user need to wait for this?” If no, it might be an event.
 3. List who else might care about the same fact in six months. That is your consumer list.
 4. Run Kafka locally (`docker compose` with Apache Kafka) and send one message with the console producer — next post we build on that.

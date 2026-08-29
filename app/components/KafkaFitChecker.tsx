@@ -18,19 +18,21 @@ const SCENARIOS: Scenario[] = [
     id: "analytics",
     title: "Many services need the same event",
     context:
-      "Order placed → billing, email, warehouse, fraud, and analytics all need to react.",
+      "Order placed → billing, email, inventory, fraud checks, and analytics all need to react.",
     verdict: "good",
     why: "Publish once, many independent consumers. Add a new subscriber without touching the producer.",
-    alternative: "HTTP fan-out from one service creates a god-service and brittle coupling.",
+    alternative:
+      "HTTP fan-out from one service creates a god-service and brittle coupling.",
   },
   {
     id: "replay",
     title: "New service needs yesterday's data",
     context:
-      "You launch a recommendations service and need to reprocess the last 30 days of orders.",
+      "You launch a reporting service and need to reprocess the last 30 days of orders.",
     verdict: "good",
     why: "Kafka keeps a durable log. Consumers can rewind and replay — if retention allows.",
-    alternative: "Replaying from DB exports or rebuilding from scratch is painful at scale.",
+    alternative:
+      "Replaying from DB exports or rebuilding from scratch is painful at scale.",
   },
   {
     id: "rpc",
@@ -39,7 +41,8 @@ const SCENARIOS: Scenario[] = [
       "Login must return yes/no in under 200ms. The browser is blocked on the response.",
     verdict: "skip",
     why: "Request/response belongs on HTTP or gRPC. Kafka is async — great for side effects, not for the critical path answer.",
-    alternative: "Use sync API for the question; publish events for audit or analytics after.",
+    alternative:
+      "Use sync API for the question; publish events for audit or analytics after.",
   },
   {
     id: "tiny",
@@ -54,7 +57,7 @@ const SCENARIOS: Scenario[] = [
     id: "burst",
     title: "Spiky writes, steady processing",
     context:
-      "IoT devices flood events at midnight; reports run all morning.",
+      "Orders flood in when a sale opens at midnight; reports run all morning.",
     verdict: "good",
     why: "Kafka absorbs bursts. Producers stay fast; consumers drain the backlog at their pace.",
     alternative: "Sync chains force every service to peak together.",
@@ -66,7 +69,8 @@ const SCENARIOS: Scenario[] = [
       "Every event in the company must be processed in one worldwide sequence.",
     verdict: "maybe",
     why: "Kafka orders per partition, not globally. One partition = one pipe. Global order is expensive and often wrong.",
-    alternative: "Partition by key (user id, order id) when order matters locally.",
+    alternative:
+      "Partition by key (order id, user id) when order matters locally.",
   },
 ];
 

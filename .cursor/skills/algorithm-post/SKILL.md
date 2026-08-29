@@ -23,6 +23,8 @@ Follow this checklist when adding a new guide to the **Algorithms** series.
 - [ ] 7. Publish (newsletter fires via GitHub workflow)
 ```
 
+**Example domain:** Read `.cursor/rules/example-domain.md`. Use plain scenarios (order → stock → email → shipping) when an example needs a story. No invented company names or vague jargon. Keep algorithm cores generic once the pattern is clear.
+
 ---
 
 ## 1. Register in the series

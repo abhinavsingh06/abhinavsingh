@@ -13,29 +13,30 @@ const STEPS: Step[] = [
   {
     id: "order",
     label: "Customer places order",
-    direct: "API receives POST /orders. It must succeed before anything else runs.",
+    direct:
+      "Order API receives POST /orders. Nothing else runs until the handler returns.",
     kafka:
-      "API writes order to DB, publishes OrderPlaced to Kafka, returns 201. Downstream work happens later.",
+      "Order API saves the order, publishes OrderPlaced, returns 201. Downstream work happens later.",
   },
   {
-    id: "payment",
-    label: "Charge payment",
+    id: "stock",
+    label: "Reserve stock",
     direct:
-      "Order API calls Payment service over HTTP. If Payment is slow or down, checkout waits or fails.",
+      "Order API calls Inventory over HTTP. If Inventory is slow or down, checkout waits or fails.",
     kafka:
-      "Payment service reads OrderPlaced, charges card, publishes PaymentCaptured. Order API is already done.",
+      "Inventory reads OrderPlaced, reserves stock, publishes StockReserved. Order API is already done.",
   },
   {
     id: "email",
-    label: "Send confirmation email",
+    label: "Send confirmation",
     direct:
-      "Order API (or Payment) calls Email service. Another sync hop. Timeouts stack up.",
+      "Order API (or Inventory) calls Notifications. Another sync hop. Timeouts stack up.",
     kafka:
-      "Email service reads PaymentCaptured and sends mail. Add a warehouse service later — same event, no Order API change.",
+      "Notifications reads StockReserved and sends email. Add Shipping later — same event, no Order API change.",
   },
   {
     id: "scale",
-    label: "Black Friday traffic",
+    label: "Sale-day traffic spike",
     direct:
       "Every service must handle peak load at once. One slow dependency backs up the whole chain.",
     kafka:
@@ -51,7 +52,9 @@ export default function KafkaFlowCompare() {
   return (
     <div className="my-8 min-w-0 max-w-full overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--bg-2)]">
       <div className="border-b border-[var(--line)] px-4 py-4 sm:px-6">
-        <p className="text-sm text-[var(--muted)]">Same story, two architectures</p>
+        <p className="text-sm text-[var(--muted)]">
+          Same story, two architectures
+        </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <button
             type="button"
