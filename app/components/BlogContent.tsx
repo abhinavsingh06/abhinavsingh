@@ -63,6 +63,8 @@ import GoUninitDebate from "./GoUninitDebate";
 import GoControlFlowTopics from "./GoControlFlowTopics";
 import GoForShapes from "./GoForShapes";
 import GoWhileDebate from "./GoWhileDebate";
+import KafkaFlowCompare from "./KafkaFlowCompare";
+import KafkaFitChecker from "./KafkaFitChecker";
 
 interface Heading {
   id: string;
@@ -764,6 +766,20 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         elements.push(<GoWhileDebate key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-FLOW-COMPARE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaFlowCompare key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-FIT-CHECKER]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaFitChecker key={keyCounter++} />);
         continue;
       }
 

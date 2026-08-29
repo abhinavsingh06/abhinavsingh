@@ -10,6 +10,7 @@ export const ALGORITHM_SERIES = {
   title: "Algorithms",
   description:
     "Interactive pattern guides for interview prep and CS fundamentals — new topics added over time.",
+  archiveCategory: "Algorithms",
   posts: [
     {
       slug: "two-pointers-technique",
@@ -53,6 +54,7 @@ export interface SeriesInfo {
   id: string;
   title: string;
   description: string;
+  archiveCategory: string;
   posts: SeriesPostRef[];
   slug: string;
   index: number;

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
-import { getSeriesInfo } from "@/lib/algorithm-series";
+import { getSeriesInfo } from "@/lib/series";
 import { siteName, siteUrl } from "@/lib/site";
 import { getViewCountSync } from "@/lib/views";
 import { getLikeCountSync } from "@/lib/likes";
@@ -139,6 +139,7 @@ export default function BlogPostPage({
               : null
           }
           showArchiveLink={!series.next}
+          archiveCategory={series.archiveCategory}
         />
       ) : (
         (prev || next) && (

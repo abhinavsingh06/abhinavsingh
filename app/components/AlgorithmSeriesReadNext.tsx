@@ -13,6 +13,7 @@ interface AlgorithmSeriesReadNextProps {
   nextPost: NavPost | null;
   prevPost: NavPost | null;
   showArchiveLink?: boolean;
+  archiveCategory?: string;
 }
 
 export default function AlgorithmSeriesReadNext({
@@ -20,6 +21,7 @@ export default function AlgorithmSeriesReadNext({
   nextPost,
   prevPost,
   showArchiveLink = false,
+  archiveCategory = "Algorithms",
 }: AlgorithmSeriesReadNextProps) {
   if (!prevPost && !nextPost && !showArchiveLink) return null;
 
@@ -51,7 +53,7 @@ export default function AlgorithmSeriesReadNext({
         </Link>
       ) : showArchiveLink ? (
         <Link
-          href="/blog?category=Algorithms"
+          href={`/blog?category=${encodeURIComponent(archiveCategory)}`}
           onClick={() =>
             trackSeriesContinue(
               currentSlug,
