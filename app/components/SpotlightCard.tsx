@@ -7,6 +7,7 @@ interface SpotlightCardProps {
   className?: string;
   as?: "div" | "a" | "article" | "section";
   href?: string;
+  onClick?: () => void;
 }
 
 export default function SpotlightCard({
@@ -14,6 +15,7 @@ export default function SpotlightCard({
   className = "",
   as = "div",
   href,
+  onClick,
 }: SpotlightCardProps) {
   const ref = useRef<HTMLElement | null>(null);
 
@@ -36,6 +38,7 @@ export default function SpotlightCard({
         ref={(node) => {
           ref.current = node;
         }}
+        onClick={onClick}
         onPointerMove={handleMove}
         className={cls}>
         {children}

@@ -1,10 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { trackNewsletterSignup } from "@/lib/analytics";
+import {
+  trackNewsletterSignup,
+  type NewsletterPlacement,
+} from "@/lib/analytics";
 import { useToast } from "./ToastProvider";
 
-export default function Newsletter() {
+interface NewsletterProps {
+  placement?: NewsletterPlacement;
+}
+
+export default function Newsletter({ placement = "post_footer" }: NewsletterProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -35,7 +42,7 @@ export default function Newsletter() {
       }
 
       if (data.subscriberAdded) {
-        trackNewsletterSignup();
+        trackNewsletterSignup(placement);
       }
 
       setStatus("success");

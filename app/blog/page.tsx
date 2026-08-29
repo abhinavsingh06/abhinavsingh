@@ -125,7 +125,7 @@ export default function BlogPage({
 
       {/* ──────────────── NEWSLETTER ──────────────── */}
       <section className="mx-auto max-w-[1400px] px-5 pt-20 sm:px-8 sm:pt-28">
-        <Newsletter />
+        <Newsletter placement="blog_index" />
       </section>
 
       <SiteFooter />

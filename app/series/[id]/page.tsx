@@ -7,7 +7,7 @@ import { getPostBySlug } from "@/lib/posts";
 import { siteUrl } from "@/lib/site";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
-import SpotlightCard from "../../components/SpotlightCard";
+import SeriesGuideCard from "../../components/SeriesGuideCard";
 
 export function generateStaticParams() {
   return getAllSeries().map((series) => ({ id: series.id }));
@@ -90,39 +90,17 @@ export default function SeriesPage({
       <main className="mx-auto max-w-[1400px] px-5 pb-20 sm:px-8">
         <div className="grid grid-cols-1 gap-3 sm:gap-4">
           {posts.map(({ ref, post, part }) => (
-            <SpotlightCard
+            <SeriesGuideCard
               key={post.slug}
-              as="a"
-              href={`/blog/${post.slug}`}
-              className="group block p-6 sm:p-8">
-              <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-                <div className="min-w-0 flex-1">
-                  <div className="mb-4 flex flex-wrap items-center gap-3">
-                    <span className="font-mono-xs text-[var(--muted)]">
-                      {String(part).padStart(2, "0")} / {series.posts.length}
-                    </span>
-                    {ref.topic ? (
-                      <>
-                        <span className="text-[var(--muted)]">·</span>
-                        <span className="font-mono-xs text-[var(--muted)]">
-                          {ref.topic}
-                        </span>
-                      </>
-                    ) : null}
-                    <span className="chip chip-accent">{post.category}</span>
-                  </div>
-                  <h2 className="font-display text-3xl leading-tight transition-colors group-hover:text-[var(--accent)] sm:text-4xl">
-                    {post.title}
-                  </h2>
-                  <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[var(--fg-2)]">
-                    {post.excerpt}
-                  </p>
-                </div>
-                <span className="link-arrow shrink-0 font-mono-sm text-[var(--accent)]">
-                  Read <span className="arrow">→</span>
-                </span>
-              </div>
-            </SpotlightCard>
+              seriesId={series.id}
+              slug={post.slug}
+              part={part}
+              total={series.posts.length}
+              topic={ref.topic}
+              category={post.category}
+              title={post.title}
+              excerpt={post.excerpt}
+            />
           ))}
         </div>
       </main>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { postSlugFromPollId, trackPollVote } from "@/lib/analytics";
 
 interface PollOption {
   id: string;
@@ -62,6 +63,9 @@ export default function Poll({
 
     localStorage.setItem(`poll-${pollId}`, optionId);
     localStorage.setItem(`poll-results-${pollId}`, JSON.stringify(updated));
+
+    const optionText = options.find((opt) => opt.id === optionId)?.text ?? optionId;
+    trackPollVote(postSlugFromPollId(pollId), pollId, optionText);
   };
 
   const totalVotes = options.reduce((sum, opt) => sum + opt.votes, 0);

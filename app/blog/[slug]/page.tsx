@@ -20,6 +20,7 @@ import AlgorithmSeriesReadNext from "../../components/AlgorithmSeriesReadNext";
 import PostJsonLd from "../../components/PostJsonLd";
 import PostShare from "../../components/PostShare";
 import RelatedPosts from "../../components/RelatedPosts";
+import PostAnalytics from "../../components/PostAnalytics";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -90,6 +91,13 @@ export default function BlogPostPage({
 
   return (
     <div className="blog-post-page relative min-h-screen bg-[var(--bg)] text-[var(--fg)]">
+      <PostAnalytics
+        context={{
+          post_slug: post.slug,
+          post_category: post.category,
+          series_id: series?.id,
+        }}
+      />
       <PostJsonLd post={post} />
       <ReadingProgress />
       <PostHeartLikeDock postId={post.slug} initialLikes={likeCount} />
@@ -221,7 +229,7 @@ export default function BlogPostPage({
       <RelatedPosts slug={post.slug} />
 
       <section className="blog-post-page-inner pt-16 pb-8 sm:pt-24">
-        <Newsletter />
+        <Newsletter placement="post_footer" />
       </section>
 
       <SiteFooter />

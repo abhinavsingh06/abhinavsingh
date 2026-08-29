@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { trackPostLike } from "@/lib/analytics";
 import { dispatchLikeSync, LIKE_SYNC_EVENT, type LikeSyncDetail } from "./LikeButton";
 import { useToast } from "./ToastProvider";
 
@@ -114,6 +115,7 @@ export default function HeartLike({
         setLikes(data.likes);
         setLiked(data.liked);
         dispatchLikeSync({ postId, likes: data.likes, liked: data.liked });
+        trackPostLike(postId, data.liked);
       } else {
         setLiked(prevLiked);
         setLikes(prevLikes);

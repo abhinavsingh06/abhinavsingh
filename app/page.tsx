@@ -5,6 +5,7 @@ import Newsletter from "./components/Newsletter";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 import SpotlightCard from "./components/SpotlightCard";
+import StartHereCard from "./components/StartHereCard";
 import NumberTicker from "./components/NumberTicker";
 import LiveClock from "./components/LiveClock";
 import ScrambleText from "./components/ScrambleText";
@@ -226,32 +227,13 @@ export default function Home() {
         {startHere ? (
           <div className="mb-14 sm:mb-16">
             <p className="font-mono-xs mb-4 text-[var(--muted)]">Featured</p>
-            <SpotlightCard
-              as="a"
-              href={`/blog/${startHere.slug}`}
-              className="reveal group block border border-[var(--accent)] bg-[var(--accent-soft)] p-6 sm:p-8">
-              <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                <div className="min-w-0">
-                  <div className="mb-4 flex flex-wrap items-center gap-2">
-                    <span className="chip chip-accent">Start here</span>
-                    {startHereSeries ? (
-                      <span className="font-mono-xs text-[var(--muted)]">
-                        {startHereSeries.title} series
-                      </span>
-                    ) : null}
-                  </div>
-                  <h3 className="font-display text-3xl leading-tight text-[var(--accent)] sm:text-5xl">
-                    {startHere.title}
-                  </h3>
-                  <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-[var(--fg-2)]">
-                    {startHere.excerpt}
-                  </p>
-                </div>
-                <span className="link-arrow shrink-0 font-mono-sm text-[var(--fg)] group-hover:text-[var(--accent)]">
-                  Read guide <span className="arrow">→</span>
-                </span>
-              </div>
-            </SpotlightCard>
+            <StartHereCard
+              slug={startHere.slug}
+              title={startHere.title}
+              excerpt={startHere.excerpt}
+              seriesTitle={startHereSeries?.title}
+              seriesId={startHereSeries?.id}
+            />
           </div>
         ) : null}
 
@@ -417,7 +399,7 @@ export default function Home() {
       <section
         id="newsletter"
         className="relative mx-auto max-w-[1400px] px-5 pt-28 sm:px-8 sm:pt-36">
-        <Newsletter />
+        <Newsletter placement="homepage" />
       </section>
 
       <SiteFooter />

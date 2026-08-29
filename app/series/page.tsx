@@ -3,7 +3,7 @@ import { getAllSeries } from "@/lib/series";
 import { siteUrl } from "@/lib/site";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import SpotlightCard from "../components/SpotlightCard";
+import SeriesIndexCard from "../components/SeriesIndexCard";
 
 export const metadata = {
   title: "Series",
@@ -41,27 +41,13 @@ export default function SeriesIndexPage() {
 
       <main className="mx-auto max-w-[1400px] grid grid-cols-1 gap-3 px-5 pb-20 sm:grid-cols-2 sm:gap-4 sm:px-8">
         {seriesList.map((series) => (
-          <SpotlightCard
+          <SeriesIndexCard
             key={series.id}
-            as="a"
-            href={`/series/${series.id}`}
-            className="group block p-6 sm:p-8">
-            <div className="relative z-10 flex h-full flex-col gap-4">
-              <span className="font-mono-xs text-[var(--muted)]">
-                {series.posts.length}{" "}
-                {series.posts.length === 1 ? "guide" : "guides"}
-              </span>
-              <h2 className="font-display text-3xl leading-tight transition-colors group-hover:text-[var(--accent)] sm:text-4xl">
-                {series.title}
-              </h2>
-              <p className="text-[15px] leading-relaxed text-[var(--fg-2)]">
-                {series.description}
-              </p>
-              <span className="link-arrow mt-auto font-mono-sm text-[var(--accent)]">
-                View series <span className="arrow">→</span>
-              </span>
-            </div>
-          </SpotlightCard>
+            id={series.id}
+            title={series.title}
+            description={series.description}
+            guideCount={series.posts.length}
+          />
         ))}
       </main>
 
