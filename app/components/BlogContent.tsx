@@ -63,6 +63,9 @@ import GoUninitDebate from "./GoUninitDebate";
 import GoControlFlowTopics from "./GoControlFlowTopics";
 import GoForShapes from "./GoForShapes";
 import GoWhileDebate from "./GoWhileDebate";
+import JsDeclCompare from "./JsDeclCompare";
+import JsTypesLab from "./JsTypesLab";
+import JsNullUndefined from "./JsNullUndefined";
 import KafkaFlowCompare from "./KafkaFlowCompare";
 import KafkaFitChecker from "./KafkaFitChecker";
 
@@ -74,14 +77,17 @@ interface Heading {
 
 interface BlogContentProps {
   content: string;
+  postSlug?: string;
   onHeadingsExtracted?: (headings: Heading[]) => void;
 }
 
 export default function BlogContent({
   content,
+  postSlug = "post",
   onHeadingsExtracted,
 }: BlogContentProps) {
   const { elements, headings } = useMemo(() => {
+    let pollIndex = 0;
     const unescapedContent = content
       .replace(/\\`\\`\\`/g, "```")
       .replace(/\\`/g, "`");
@@ -246,12 +252,13 @@ export default function BlogContent({
             text: opt.trim(),
             votes: 0,
           }));
+          const pollId = `${postSlug}-poll-${pollIndex++}`;
           elements.push(
             <Poll
               key={keyCounter++}
               question={question}
               options={pollOptions}
-              pollId={`poll-${keyCounter}`}
+              pollId={pollId}
             />
           );
         }
@@ -769,6 +776,27 @@ export default function BlogContent({
         continue;
       }
 
+      if (trimmed === "[JS-DECL-COMPARE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<JsDeclCompare key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[JS-TYPES-LAB]") {
+        flushParagraph();
+        flushList();
+        elements.push(<JsTypesLab key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[JS-NULL-UNDEFINED]") {
+        flushParagraph();
+        flushList();
+        elements.push(<JsNullUndefined key={keyCounter++} />);
+        continue;
+      }
+
       if (trimmed === "[KAFKA-FLOW-COMPARE]") {
         flushParagraph();
         flushList();
@@ -1017,7 +1045,7 @@ export default function BlogContent({
     }
 
     return { elements, headings };
-  }, [content]);
+  }, [content, postSlug]);
 
   useEffect(() => {
     if (onHeadingsExtracted) {

@@ -67,6 +67,9 @@ export default function BlogPage({
               {cat}
             </Link>
           ))}
+          <Link href="/series" className="chip">
+            Series
+          </Link>
         </div>
       </section>
 

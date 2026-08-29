@@ -3,7 +3,8 @@ title: Understanding React Server Components
 excerpt: A deep dive into React Server Components and how they're changing the way we build React applications.
 date: 2024-01-10
 category: React
-featured: true
+featured: false
+draft: true
 ---
 
 

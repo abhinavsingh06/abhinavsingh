@@ -19,6 +19,7 @@ import SpotlightCard from "../../components/SpotlightCard";
 import AlgorithmSeriesReadNext from "../../components/AlgorithmSeriesReadNext";
 import PostJsonLd from "../../components/PostJsonLd";
 import PostShare from "../../components/PostShare";
+import RelatedPosts from "../../components/RelatedPosts";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -46,6 +47,7 @@ export async function generateMetadata({
       title: post.title,
       description: post.excerpt,
       publishedTime: post.date,
+      modifiedTime: post.updated ?? post.date,
       authors: [siteName],
       siteName,
       images: [
@@ -103,9 +105,11 @@ export default function BlogPostPage({
 
           <div className="mt-6 text-sm text-[var(--muted)]">
             {series ? (
-              <span>
-                {series.part}/{series.total}
-              </span>
+              <Link
+                href={`/series/${series.id}`}
+                className="transition-colors hover:text-[var(--fg)]">
+                {series.title} · {series.part}/{series.total}
+              </Link>
             ) : (
               <span>{post.category}</span>
             )}
@@ -117,6 +121,19 @@ export default function BlogPostPage({
                 year: "numeric",
               })}
             </span>
+            {post.updated && post.updated !== post.date ? (
+              <>
+                <span className="mx-2">·</span>
+                <span>
+                  Updated{" "}
+                  {new Date(post.updated).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </span>
+              </>
+            ) : null}
             <span className="mx-2">·</span>
             <span>{post.readTime}</span>
           </div>
@@ -135,7 +152,7 @@ export default function BlogPostPage({
             trackView
             className="sr-only"
           />
-          <BlogPostShell content={post.content} />
+          <BlogPostShell content={post.content} postSlug={post.slug} />
           <PostShare
             slug={post.slug}
             title={post.title}
@@ -159,6 +176,7 @@ export default function BlogPostPage({
           }
           showArchiveLink={!series.next}
           archiveCategory={series.archiveCategory}
+          seriesId={series.id}
         />
       ) : (
         (prev || next) && (
@@ -199,6 +217,8 @@ export default function BlogPostPage({
           </section>
         )
       )}
+
+      <RelatedPosts slug={post.slug} />
 
       <section className="blog-post-page-inner pt-16 pb-8 sm:pt-24">
         <Newsletter />

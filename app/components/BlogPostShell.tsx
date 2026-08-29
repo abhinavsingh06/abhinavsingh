@@ -12,9 +12,10 @@ interface Heading {
 
 interface BlogPostShellProps {
   content: string;
+  postSlug: string;
 }
 
-export default function BlogPostShell({ content }: BlogPostShellProps) {
+export default function BlogPostShell({ content, postSlug }: BlogPostShellProps) {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [showMobileTOC, setShowMobileTOC] = useState(false);
 
@@ -40,7 +41,11 @@ export default function BlogPostShell({ content }: BlogPostShellProps) {
 
       <div className="blog-post-grid">
         <div className="blog-post-main min-w-0">
-          <BlogContent content={content} onHeadingsExtracted={setHeadings} />
+          <BlogContent
+            content={content}
+            postSlug={postSlug}
+            onHeadingsExtracted={setHeadings}
+          />
         </div>
 
         {headings.length > 0 && (

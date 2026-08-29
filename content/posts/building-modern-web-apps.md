@@ -3,7 +3,8 @@ title: Building Modern Web Applications in 2024
 excerpt: Exploring the latest trends, tools, and techniques for building scalable and performant web applications.
 date: 2024-01-15
 category: Web Development
-featured: true
+featured: false
+draft: true
 ---
 
 

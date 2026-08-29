@@ -14,6 +14,7 @@ interface AlgorithmSeriesReadNextProps {
   prevPost: NavPost | null;
   showArchiveLink?: boolean;
   archiveCategory?: string;
+  seriesId?: string;
 }
 
 export default function AlgorithmSeriesReadNext({
@@ -22,6 +23,7 @@ export default function AlgorithmSeriesReadNext({
   prevPost,
   showArchiveLink = false,
   archiveCategory = "Algorithms",
+  seriesId,
 }: AlgorithmSeriesReadNextProps) {
   if (!prevPost && !nextPost && !showArchiveLink) return null;
 
@@ -53,11 +55,15 @@ export default function AlgorithmSeriesReadNext({
         </Link>
       ) : showArchiveLink ? (
         <Link
-          href={`/blog?category=${encodeURIComponent(archiveCategory)}`}
+          href={
+            seriesId
+              ? `/series/${seriesId}`
+              : `/blog?category=${encodeURIComponent(archiveCategory)}`
+          }
           onClick={() =>
             trackSeriesContinue(
               currentSlug,
-              "algorithms-index",
+              seriesId ?? "algorithms-index",
               "series_complete"
             )
           }

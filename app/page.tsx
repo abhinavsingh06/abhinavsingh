@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAllPosts, getCategories } from "@/lib/posts";
+import { getStartHerePost, getSeriesForPost } from "@/lib/series";
 import Newsletter from "./components/Newsletter";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
@@ -10,7 +11,13 @@ import ScrambleText from "./components/ScrambleText";
 
 export default function Home() {
   const posts = getAllPosts();
-  const recentPosts = posts.slice(0, 4);
+  const startHere = getStartHerePost();
+  const startHereSeries = startHere
+    ? getSeriesForPost(startHere.slug)
+    : undefined;
+  const recentPosts = posts
+    .filter((post) => post.slug !== startHere?.slug)
+    .slice(0, 4);
   const categories = getCategories();
   const totalPosts = posts.length;
   const year = new Date().getFullYear();
@@ -206,7 +213,7 @@ export default function Home() {
         className="relative mx-auto max-w-[1400px] px-5 pt-28 sm:px-8 sm:pt-36">
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="label-tag mb-4">/ 01 — Recent writing</p>
+            <p className="label-tag mb-4">/ Writing</p>
             <h2 className="font-display text-5xl sm:text-7xl">
               Notes &amp; <span className="text-[var(--accent)]">essays</span>
             </h2>
@@ -216,54 +223,79 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-          {recentPosts.map((post, i) => (
+        {startHere ? (
+          <div className="mb-14 sm:mb-16">
+            <p className="font-mono-xs mb-4 text-[var(--muted)]">Featured</p>
             <SpotlightCard
-              key={post.slug}
               as="a"
-              href={`/blog/${post.slug}`}
-              className={`reveal group block p-6 sm:p-8 ${
-                i === 0 ? "sm:col-span-2 sm:row-span-1" : ""
-              }`}>
-              <div className="relative z-10 flex h-full flex-col gap-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="chip chip-accent">{post.category}</span>
+              href={`/blog/${startHere.slug}`}
+              className="reveal group block border border-[var(--accent)] bg-[var(--accent-soft)] p-6 sm:p-8">
+              <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                <div className="min-w-0">
+                  <div className="mb-4 flex flex-wrap items-center gap-2">
+                    <span className="chip chip-accent">Start here</span>
+                    {startHereSeries ? (
+                      <span className="font-mono-xs text-[var(--muted)]">
+                        {startHereSeries.title} series
+                      </span>
+                    ) : null}
+                  </div>
+                  <h3 className="font-display text-3xl leading-tight text-[var(--accent)] sm:text-5xl">
+                    {startHere.title}
+                  </h3>
+                  <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-[var(--fg-2)]">
+                    {startHere.excerpt}
+                  </p>
+                </div>
+                <span className="link-arrow shrink-0 font-mono-sm text-[var(--fg)] group-hover:text-[var(--accent)]">
+                  Read guide <span className="arrow">→</span>
+                </span>
+              </div>
+            </SpotlightCard>
+          </div>
+        ) : null}
+
+        <div>
+          <p className="font-mono-xs mb-4 text-[var(--muted)]">Latest</p>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            {recentPosts.map((post) => (
+              <SpotlightCard
+                key={post.slug}
+                as="a"
+                href={`/blog/${post.slug}`}
+                className="reveal group block p-6">
+                <div className="relative z-10 flex h-full flex-col gap-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="chip">{post.category}</span>
                     <span className="font-mono-xs text-[var(--muted)]">
                       {post.readTime}
                     </span>
                   </div>
-                  <span className="font-mono-xs text-[var(--muted)]">
-                    {String(i + 1).padStart(2, "0")} / {recentPosts.length}
-                  </span>
+
+                  <h3 className="font-display text-2xl leading-tight text-[var(--fg)] transition-colors group-hover:text-[var(--accent)] sm:text-3xl">
+                    {post.title}
+                  </h3>
+
+                  <p className="text-[14.5px] leading-relaxed text-[var(--fg-2)] line-clamp-3">
+                    {post.excerpt}
+                  </p>
+
+                  <div className="mt-auto flex items-center justify-between border-t border-[var(--line)] pt-4">
+                    <span className="font-mono-xs text-[var(--muted)]">
+                      {new Date(post.date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      })}
+                    </span>
+                    <span className="font-mono-xs text-[var(--muted)] transition-colors group-hover:text-[var(--accent)]">
+                      Read →
+                    </span>
+                  </div>
                 </div>
-
-                <h3
-                  className={`font-display leading-[1.05] transition-colors group-hover:text-[var(--accent)] ${
-                    i === 0 ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl"
-                  }`}>
-                  {post.title}
-                </h3>
-
-                <p className="text-[15px] leading-relaxed text-[var(--fg-2)]">
-                  {post.excerpt}
-                </p>
-
-                <div className="mt-auto flex items-center justify-between border-t border-[var(--line)] pt-4">
-                  <span className="font-mono-xs text-[var(--muted)]">
-                    {new Date(post.date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "2-digit",
-                    })}
-                  </span>
-                  <span className="link-arrow font-mono-sm text-[var(--accent)]">
-                    Read <span className="arrow">→</span>
-                  </span>
-                </div>
-              </div>
-            </SpotlightCard>
-          ))}
+              </SpotlightCard>
+            ))}
+          </div>
         </div>
       </section>
 

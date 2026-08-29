@@ -75,6 +75,11 @@ export default function SiteFooter() {
                     </Link>
                   </li>
                   <li>
+                    <Link href="/series" className="link-arrow font-mono-sm">
+                      Series <span className="arrow">→</span>
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/#about" className="link-arrow font-mono-sm">
                       About <span className="arrow">→</span>
                     </Link>

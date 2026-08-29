@@ -19,7 +19,7 @@ export function buildPostJsonLd(post: BlogPost) {
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: post.updated ?? post.date,
     author: {
       "@type": "Person",
       name: siteName,
