@@ -1,0 +1,52 @@
+---
+description: Blog and LinkedIn publishing schedule — Tue/Thu evenings, 2 posts/week, September 2026 calendar
+alwaysApply: true
+---
+
+# Content publishing schedule
+
+## Rhythm (ongoing)
+
+- **2 posts per week** — each publish day ships **blog + LinkedIn on the same evening**
+- **Publish days:** **Tuesday and Thursday only** — no Friday (low evening engagement)
+- **Time window:** ~7:30–9:30 PM IST (deploy blog earlier; LinkedIn after verify)
+- **Buffer:** Finish the next post before the prior publish day; Tue/Thu are ship-only
+
+## If a slot slips
+
+| Missed | Move to |
+|--------|---------|
+| Tuesday | Following Thursday (not Friday) |
+| Thursday | Following Tuesday |
+| Whole week | Drop the lighter post; never skip Kafka 2–style series anchors |
+
+## September 2026 calendar
+
+| Date | Day | Blog |
+|------|-----|------|
+| Sep 1 | Tue | Kafka Post 2 — broker, topic, partition, offset |
+| Sep 3 | Thu | JavaScript #2 — functions & scope |
+| Sep 8 | Tue | Algorithms #8 — Binary Trees / BST |
+| Sep 10 | Thu | Kafka Post 3 — first producer & consumer |
+| Sep 15 | Tue | Algorithms #9 — Heaps |
+| Sep 17 | Thu | Kafka Post 4 — consumer groups & replay |
+| Sep 22 | Tue | Algorithms #10 — Graphs BFS |
+| Sep 24 | Thu | Kafka Post 5 — Kafka vs HTTP / RabbitMQ / SQS |
+
+**Month mix:** 5 Kafka · 3 Algorithms · 1 JavaScript
+
+## LinkedIn (same evening as blog)
+
+- Problem-first hook, 3 bullets, one deep link, one question
+- Run LinkedIn Post Inspector on new URLs before posting
+- Reply to comments in the first hour when possible
+
+## Priority if overloaded
+
+1. Kafka series momentum (homepage Start here)
+2. Algorithm guides (proven format)
+3. Defer JS or comparison posts before deferring Kafka 2 / Trees
+
+## After September
+
+Continue **Tue + Thu evening** rhythm unless the user changes it. Extend Kafka (lag, rebalances, ops) and Algorithms (DFS, DP intro) in the same cadence.

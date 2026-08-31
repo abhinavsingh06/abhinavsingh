@@ -161,33 +161,37 @@ export default function BlogPostPage({
             className="sr-only"
           />
           <BlogPostShell content={post.content} postSlug={post.slug} />
-          <PostShare
-            slug={post.slug}
-            title={post.title}
-            url={getPostUrl(post.slug)}
-          />
+          <footer className="mt-12 border-t border-[var(--line)] pt-8">
+            <PostShare
+              slug={post.slug}
+              title={post.title}
+              url={getPostUrl(post.slug)}
+              compact
+            />
+            {series ? (
+              <AlgorithmSeriesReadNext
+                currentSlug={post.slug}
+                nextPost={
+                  series.next
+                    ? { slug: series.next.slug, label: series.next.shortTitle }
+                    : null
+                }
+                prevPost={
+                  series.prev
+                    ? { slug: series.prev.slug, label: series.prev.shortTitle }
+                    : null
+                }
+                showArchiveLink={!series.next}
+                archiveCategory={series.archiveCategory}
+                seriesId={series.id}
+                className="mt-6"
+              />
+            ) : null}
+          </footer>
         </article>
       </div>
 
-      {series ? (
-        <AlgorithmSeriesReadNext
-          currentSlug={post.slug}
-          nextPost={
-            series.next
-              ? { slug: series.next.slug, label: series.next.shortTitle }
-              : null
-          }
-          prevPost={
-            series.prev
-              ? { slug: series.prev.slug, label: series.prev.shortTitle }
-              : null
-          }
-          showArchiveLink={!series.next}
-          archiveCategory={series.archiveCategory}
-          seriesId={series.id}
-        />
-      ) : (
-        (prev || next) && (
+      {!series && (prev || next) && (
           <section className="blog-post-page-inner border-t border-[var(--line)] py-12">
             <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
               {prev ? (
@@ -223,10 +227,9 @@ export default function BlogPostPage({
               )}
             </div>
           </section>
-        )
       )}
 
-      <RelatedPosts slug={post.slug} />
+      {!series ? <RelatedPosts slug={post.slug} /> : null}
 
       <section className="blog-post-page-inner pt-16 pb-8 sm:pt-24">
         <Newsletter placement="post_footer" />

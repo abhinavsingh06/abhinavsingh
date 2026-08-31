@@ -16,6 +16,11 @@ export const KAFKA_SERIES = {
       shortTitle: "Why Kafka Exists",
       topic: "Foundations",
     },
+    {
+      slug: "kafka-core-vocabulary",
+      shortTitle: "Core Vocabulary",
+      topic: "Foundations",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 

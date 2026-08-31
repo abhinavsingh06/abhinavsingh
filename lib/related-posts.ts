@@ -11,23 +11,15 @@ export function getRelatedPosts(slug: string, limit = 3): BlogPost[] {
   const seen = new Set<string>();
 
   const series = getSeriesInfo(slug);
-  if (series) {
-    for (const ref of series.posts) {
-      if (ref.slug === slug || seen.has(ref.slug)) continue;
-      const match = all.find((p) => p.slug === ref.slug);
-      if (match) {
-        related.push(match);
-        seen.add(match.slug);
-      }
-    }
-  }
+  const seriesSlugs = new Set(series?.posts.map((p) => p.slug) ?? []);
 
   for (const candidate of all) {
     if (related.length >= limit) break;
-    if (candidate.category !== post.category || seen.has(candidate.slug)) continue;
+    if (seriesSlugs.has(candidate.slug) || seen.has(candidate.slug)) continue;
+    if (candidate.category !== post.category) continue;
     related.push(candidate);
     seen.add(candidate.slug);
   }
 
-  return related.slice(0, limit);
+  return related;
 }

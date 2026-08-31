@@ -68,6 +68,8 @@ import JsTypesLab from "./JsTypesLab";
 import JsNullUndefined from "./JsNullUndefined";
 import KafkaFlowCompare from "./KafkaFlowCompare";
 import KafkaFitChecker from "./KafkaFitChecker";
+import KafkaMessageTrace from "./KafkaMessageTrace";
+import KafkaPartitionKeys from "./KafkaPartitionKeys";
 
 interface Heading {
   id: string;
@@ -808,6 +810,20 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         elements.push(<KafkaFitChecker key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-MESSAGE-TRACE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaMessageTrace key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-PARTITION-KEYS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaPartitionKeys key={keyCounter++} />);
         continue;
       }
 

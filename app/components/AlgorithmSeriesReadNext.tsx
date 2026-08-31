@@ -15,6 +15,7 @@ interface AlgorithmSeriesReadNextProps {
   showArchiveLink?: boolean;
   archiveCategory?: string;
   seriesId?: string;
+  className?: string;
 }
 
 export default function AlgorithmSeriesReadNext({
@@ -24,12 +25,13 @@ export default function AlgorithmSeriesReadNext({
   showArchiveLink = false,
   archiveCategory = "Algorithms",
   seriesId,
+  className = "",
 }: AlgorithmSeriesReadNextProps) {
   if (!prevPost && !nextPost && !showArchiveLink) return null;
 
   return (
     <nav
-      className="blog-post-page-inner mt-10 flex items-center justify-between gap-6 text-sm"
+      className={`flex items-center justify-between gap-6 text-sm ${className}`}
       aria-label="Series navigation">
       {prevPost ? (
         <Link
