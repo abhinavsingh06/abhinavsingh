@@ -47,6 +47,11 @@ export const ALGORITHM_SERIES = {
       shortTitle: "Stacks & Queues",
       topic: "Stacks & Queues",
     },
+    {
+      slug: "binary-trees-technique",
+      shortTitle: "Binary Trees",
+      topic: "Trees",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 

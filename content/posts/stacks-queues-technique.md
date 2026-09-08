@@ -480,4 +480,4 @@ Window length = `right − left + 1`. Overall **O(n)**.
 7. Nested pop loops stay **O(n)** when each element is processed once.
 8. Queues shine even more in **BFS** — next up in trees & graphs.
 
-Pair this with [Sliding Window](/blog/sliding-window-technique) for window problems, [Hashing](/blog/hashing-technique) for bracket maps, and [Linked Lists](/blog/linked-list-technique) for deque implementations under the hood.
+Pair this with [Sliding Window](/blog/sliding-window-technique) for window problems, [Hashing](/blog/hashing-technique) for bracket maps, [Linked Lists](/blog/linked-list-technique) for deque implementations under the hood, and [Binary Trees](/blog/binary-trees-technique) for BFS on hierarchies.

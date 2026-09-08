@@ -49,6 +49,12 @@ import StackQueuePracticeLadder from "./StackQueuePracticeLadder";
 import StackQueueComplexitySheet from "./StackQueueComplexitySheet";
 import StackQueuePatternOverview from "./StackQueuePatternOverview";
 import StackQueueVsComparison from "./StackQueueVsComparison";
+import BinaryTreeAnimation from "./BinaryTreeAnimation";
+import BinaryTreeQuickRef from "./BinaryTreeQuickRef";
+import BinaryTreePracticeLadder from "./BinaryTreePracticeLadder";
+import BinaryTreeComplexitySheet from "./BinaryTreeComplexitySheet";
+import BinaryTreePatternOverview from "./BinaryTreePatternOverview";
+import BinaryTreeVsArrays from "./BinaryTreeVsArrays";
 import GoOriginTimeline from "./GoOriginTimeline";
 import GoOmittedFeatures from "./GoOmittedFeatures";
 import GoVsCppSheet from "./GoVsCppSheet";
@@ -675,6 +681,54 @@ export default function BlogContent({
           const preset = sqMatch[1].trim();
           elements.push(
             <StackQueueAnimation key={keyCounter++} preset={preset} />
+          );
+        }
+        continue;
+      }
+
+      if (trimmed === "[BINARY-TREE-PATTERNS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinaryTreePatternOverview key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[BINARY-TREE-PRACTICE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinaryTreePracticeLadder key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[BINARY-TREE-QUICK-REF]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinaryTreeQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[BINARY-TREE-COMPLEXITY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinaryTreeComplexitySheet key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[BINARY-TREE-VS-ARRAYS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<BinaryTreeVsArrays key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed.startsWith("[BINARY-TREE:")) {
+        flushParagraph();
+        flushList();
+        const btMatch = trimmed.match(/\[BINARY-TREE:(.+?)\]/);
+        if (btMatch) {
+          const preset = btMatch[1].trim();
+          elements.push(
+            <BinaryTreeAnimation key={keyCounter++} preset={preset} />
           );
         }
         continue;
