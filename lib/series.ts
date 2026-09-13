@@ -9,11 +9,24 @@ import {
   KAFKA_SERIES,
   type KafkaSeriesInfo,
 } from "./kafka-series";
+import {
+  getSystemDesignSeriesInfo,
+  SYSTEM_DESIGN_SERIES,
+  type SystemDesignSeriesInfo,
+} from "./system-design-series";
 import { getFeaturedPosts, getPostBySlug, type BlogPost } from "./posts";
 
-export type { SeriesPostRef, AlgorithmSeriesInfo, KafkaSeriesInfo };
+export type {
+  SeriesPostRef,
+  AlgorithmSeriesInfo,
+  KafkaSeriesInfo,
+  SystemDesignSeriesInfo,
+};
 
-export type SeriesInfo = AlgorithmSeriesInfo | KafkaSeriesInfo;
+export type SeriesInfo =
+  | AlgorithmSeriesInfo
+  | KafkaSeriesInfo
+  | SystemDesignSeriesInfo;
 
 export interface SeriesCatalogEntry {
   id: string;
@@ -35,10 +48,18 @@ export const ALL_SERIES: SeriesCatalogEntry[] = [
     posts: [...ALGORITHM_SERIES.posts],
     startHereSlug: "two-pointers-technique",
   },
+  {
+    ...SYSTEM_DESIGN_SERIES,
+    posts: [...SYSTEM_DESIGN_SERIES.posts],
+  },
 ];
 
 export function getSeriesInfo(slug: string): SeriesInfo | null {
-  return getAlgorithmSeriesInfo(slug) ?? getKafkaSeriesInfo(slug);
+  return (
+    getAlgorithmSeriesInfo(slug) ??
+    getKafkaSeriesInfo(slug) ??
+    getSystemDesignSeriesInfo(slug)
+  );
 }
 
 export function getAllSeries(): SeriesCatalogEntry[] {

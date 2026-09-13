@@ -1,16 +1,20 @@
 ---
-description: Blog and LinkedIn publishing schedule — Tue/Thu evenings, 2 posts/week, September 2026 calendar
+description: Canonical content plan — Tue/Thu publish rhythm, Algorithms + Kafka + System Design calendars, LinkedIn, voice, priorities
 alwaysApply: true
 ---
 
-# Content publishing schedule
+# Content publishing plan (canonical)
 
-## Rhythm (ongoing)
+Follow this schedule and these conventions unless the user explicitly changes them.
 
-- **2 posts per week** — each publish day ships **blog + LinkedIn on the same evening**
-- **Publish days:** **Tuesday and Thursday only** — no Friday (low evening engagement)
-- **Time window:** ~7:30–9:30 PM IST (deploy blog earlier; LinkedIn after verify)
+## Rhythm (locked)
+
+- **2 posts per week**
+- **Blog + LinkedIn on the same evening** (never split across days)
+- **Publish days: Tuesday and Thursday only** — no Friday (low evening engagement)
+- **Window:** ~7:30–9:30 PM IST (deploy/verify blog earlier; LinkedIn after Post Inspector)
 - **Buffer:** Finish the next post before the prior publish day; Tue/Thu are ship-only
+- **Same-evening checklist:** deploy → verify live URL → LinkedIn Post Inspector → post caption → reply to comments ~1h
 
 ## If a slot slips
 
@@ -18,35 +22,122 @@ alwaysApply: true
 |--------|---------|
 | Tuesday | Following Thursday (not Friday) |
 | Thursday | Following Tuesday |
-| Whole week | Drop the lighter post; never skip Kafka 2–style series anchors |
+| Whole week | Drop the lightest post; never skip series anchors below |
 
-## September 2026 calendar
+**Anchors (do not drop):** Kafka foundation/hands-on, Trees-style algorithm launches, System Design #1 (URL shortener template).
 
-| Date | Day | Blog |
-|------|-----|------|
-| Sep 1 | Tue | Kafka Post 2 — broker, topic, partition, offset |
-| Sep 3 | Thu | JavaScript #2 — functions & scope |
-| Sep 8 | Tue | Algorithms #8 — Binary Trees / BST |
-| Sep 10 | Thu | Kafka Post 3 — first producer & consumer |
-| Sep 15 | Tue | Algorithms #9 — Heaps |
-| Sep 17 | Thu | Kafka Post 4 — consumer groups & replay |
-| Sep 22 | Tue | Algorithms #10 — Graphs BFS |
-| Sep 24 | Thu | Kafka Post 5 — Kafka vs HTTP / RabbitMQ / SQS |
+## Three series
 
-**Month mix:** 5 Kafka · 3 Algorithms · 1 JavaScript
+| Series | Shape | ~Per month |
+|--------|--------|------------|
+| **Algorithms** | Interactive pattern guides (animations, practice ladder) | 2 |
+| **Kafka** | Progressive arc — why → vocab → hands-on → groups → compare → ops | 2 |
+| **System Design** | **One problem per post** — not topic dumps | 2 |
 
-## LinkedIn (same evening as blog)
+Homepage **Start here** stays **Kafka** until System Design has **3+** published posts. Then reconsider.
 
-- Problem-first hook, 3 bullets, one deep link, one question
-- Run LinkedIn Post Inspector on new URLs before posting
-- Reply to comments in the first hour when possible
+### Cross-links
+
+- SD Notification / feed / chat → Kafka series (why, vocab, produce/consume, groups)
+- Algorithms heaps/trees ↔ SD when priority queues or hierarchies appear
+- Plain examples: order → stock → email → shipping (see `example-domain` rule). No invented brands.
+
+## Writing voice (all series)
+
+- Problem-first opening; interactive early when it teaches
+- One clear insight per section — avoid repeating the same takeaway 3–4 times (“Remember this…” + sticky × N + take-home dump)
+- **Do not** label sections “for beginners” / “for experienced readers” — weave depth into the main flow
+- LinkedIn: problem hook, ~3 bullets, one deep link, one question — no “Post N of series” framing unless useful
+
+### System Design post template
+
+1. Problem statement (who, scale hint, constraints)
+2. Clarify (interactive questions)
+3. Capacity / back-of-envelope (interactive if useful)
+4. API + data model
+5. Step-up architecture (add pieces only when a bottleneck appears)
+6. Failures / scale
+7. Tradeoffs
+8. Interview takeaways (short)
+
+Interactives to prefer: clarify quiz, capacity slider, architecture steps, bottleneck picker, tradeoff cards.
+
+## September 2026
+
+| Date | Day | Blog | Series |
+|------|-----|------|--------|
+| Sep 1 | Tue | Kafka Post 2 — vocabulary | Kafka ✅ |
+| Sep 3 | Thu | JavaScript #2 — functions & scope | JS (optional; skip OK) |
+| Sep 8 | Tue | Algorithms #8 — Binary Trees / BST | Algorithms ✅ |
+| Sep 10 | Thu | Kafka Post 3 — first producer & consumer | Kafka ✅ |
+| **Sep 15** | Tue | **Algorithms #9 — Heaps** | Algorithms ← next |
+| **Sep 17** | Thu | Kafka Post 4 — consumer groups & replay | Kafka |
+| **Sep 22** | Tue | Algorithms #10 — Graphs BFS | Algorithms |
+| **Sep 24** | Thu | **System Design #1 — URL shortener** (pilot) | System Design |
+
+Kafka Post 5 (vs HTTP / RabbitMQ / SQS) → **Oct 1** (comparison is deferrable vs Kafka 4 / Graphs / SD #1).
+
+## October 2026
+
+| Date | Day | Blog | Series |
+|------|-----|------|--------|
+| Oct 1 | Thu | Kafka Post 5 — vs HTTP / RabbitMQ / SQS | Kafka |
+| Oct 6 | Tue | System Design #2 — Pastebin / file link | System Design |
+| Oct 8 | Thu | Algorithms #11 — Graphs DFS | Algorithms |
+| Oct 13 | Tue | Kafka Post 6 — lag, rebalances, ops basics | Kafka |
+| Oct 15 | Thu | System Design #3 — Rate limiter | System Design |
+| Oct 20 | Tue | Algorithms #12 — DP intro (or heaps follow-up) | Algorithms |
+| Oct 22 | Thu | System Design #4 — Notification system *(→ Kafka)* | System Design |
+| Oct 27 | Tue | Kafka Post 7 — idempotent consumers / exactly-once framing | Kafka |
+| Oct 29 | Thu | System Design #5 — News feed | System Design |
+
+## November 2026 (start)
+
+| Date | Day | Blog | Series |
+|------|-----|------|--------|
+| Nov 3 | Tue | System Design #6 — Chat / presence | System Design |
+| Nov 5 | Thu | Algorithms — continue | Algorithms |
+| Nov 10 | Tue | Kafka — next ops/design topic | Kafka |
+| Nov 12 | Thu | System Design #7+ (autocomplete, ticket booking, …) | System Design |
+
+Then steady **~2 / month / series** unless the user changes it.
+
+## System Design problem backlog
+
+| # | Problem | Ship |
+|---|---------|------|
+| 1 | URL shortener | Sep 24 |
+| 2 | Pastebin / file link | Oct 6 |
+| 3 | Rate limiter | Oct 15 |
+| 4 | Notification system | Oct 22 |
+| 5 | News feed | Oct 29 |
+| 6 | Chat / presence | Nov 3 |
+| 7+ | Autocomplete, ticket booking, ride-hailing, … | After Nov |
+
+## Kafka arc (reference)
+
+1. Why Kafka exists ✅  
+2. Core vocabulary ✅  
+3. First producer & consumer ✅  
+4. Consumer groups & replay (Sep 17)  
+5. vs HTTP / RabbitMQ / SQS (Oct 1)  
+6. Lag / rebalances / ops (Oct 13)  
+7. Idempotent consumers (Oct 27)  
+
+## Algorithms arc (reference)
+
+… → Stacks/Queues ✅ → Trees/BST ✅ → **Heaps (Sep 15)** → Graphs BFS (Sep 22) → Graphs DFS (Oct 8) → DP intro (Oct 20) → …
 
 ## Priority if overloaded
 
-1. Kafka series momentum (homepage Start here)
-2. Algorithm guides (proven format)
-3. Defer JS or comparison posts before deferring Kafka 2 / Trees
+1. Kafka momentum (Start here)
+2. Algorithm guides
+3. System Design #1 template, then steady SD
+4. Defer JS, Kafka comparison, or later SD problems before Heaps / Kafka 4 / Graphs / SD #1
 
-## After September
+## LinkedIn
 
-Continue **Tue + Thu evening** rhythm unless the user changes it. Extend Kafka (lag, rebalances, ops) and Algorithms (DFS, DP intro) in the same cadence.
+- Same evening as blog
+- Problem-first; one URL; one question
+- Post Inspector on new URLs
+- SD posts: sell the **problem** (“Design a URL shortener…”), not “new series”

@@ -78,6 +78,11 @@ import KafkaMessageTrace from "./KafkaMessageTrace";
 import KafkaPartitionKeys from "./KafkaPartitionKeys";
 import KafkaProduceConsumeLab from "./KafkaProduceConsumeLab";
 import KafkaLocalPitfalls from "./KafkaLocalPitfalls";
+import SdUrlClarify from "./SdUrlClarify";
+import SdUrlCapacity from "./SdUrlCapacity";
+import SdUrlSequence from "./SdUrlSequence";
+import SdUrlCodeGen from "./SdUrlCodeGen";
+import SdUrlPressure from "./SdUrlPressure";
 
 interface Heading {
   id: string;
@@ -894,6 +899,41 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         elements.push(<KafkaLocalPitfalls key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[SD-URL-CLARIFY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<SdUrlClarify key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[SD-URL-CAPACITY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<SdUrlCapacity key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[SD-URL-SEQUENCE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<SdUrlSequence key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[SD-URL-CODE-GEN]") {
+        flushParagraph();
+        flushList();
+        elements.push(<SdUrlCodeGen key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[SD-URL-PRESSURE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<SdUrlPressure key={keyCounter++} />);
         continue;
       }
 
