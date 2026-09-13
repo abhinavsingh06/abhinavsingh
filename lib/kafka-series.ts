@@ -21,6 +21,11 @@ export const KAFKA_SERIES = {
       shortTitle: "Core Vocabulary",
       topic: "Foundations",
     },
+    {
+      slug: "kafka-first-producer-consumer",
+      shortTitle: "First Produce & Consume",
+      topic: "Hands-on",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 

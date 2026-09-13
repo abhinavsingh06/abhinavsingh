@@ -76,6 +76,8 @@ import KafkaFlowCompare from "./KafkaFlowCompare";
 import KafkaFitChecker from "./KafkaFitChecker";
 import KafkaMessageTrace from "./KafkaMessageTrace";
 import KafkaPartitionKeys from "./KafkaPartitionKeys";
+import KafkaProduceConsumeLab from "./KafkaProduceConsumeLab";
+import KafkaLocalPitfalls from "./KafkaLocalPitfalls";
 
 interface Heading {
   id: string;
@@ -878,6 +880,20 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         elements.push(<KafkaPartitionKeys key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-PRODUCE-CONSUME-LAB]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaProduceConsumeLab key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-LOCAL-PITFALLS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaLocalPitfalls key={keyCounter++} />);
         continue;
       }
 

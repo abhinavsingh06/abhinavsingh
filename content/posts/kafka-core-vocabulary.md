@@ -118,3 +118,5 @@ Broker stores it. Topic names it. Partition parallelizes it. Offset bookmarks it
 Mis-keyed events, vague topic sprawl, and non-idempotent consumers cause most “Kafka is unreliable” war stories. The log is honest; the application contract has to be honest too.
 
 Next post we stop drawing boxes: Docker up, one producer, one consumer, one message on `orders`. You will watch offset `0` appear for real.
+
+*[Continue → Your First Kafka Producer and Consumer](/blog/kafka-first-producer-consumer)*

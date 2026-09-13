@@ -113,4 +113,4 @@ The durable-log model shines when **producers stay dumb** (append facts) and **c
 
 ---
 
-Next in the series: core vocabulary — broker, topic, partition, offset — without the jargon wall.
+Next in the series: [core vocabulary](/blog/kafka-core-vocabulary) — broker, topic, partition, offset — then [your first producer and consumer](/blog/kafka-first-producer-consumer).
