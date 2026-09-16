@@ -277,4 +277,6 @@ You did not need ZooKeeper, Schema Registry, or exactly-once settings. Those sho
 
 Produce appends to a topic. Consume reads from an offset. If the consumer is down, the log holds the backlog until it returns.
 
-Next: **consumer groups** — why two services can both read `orders` without stealing each other's messages, and what a rebalance actually does.
+Next: **consumer groups & replay** — why two services can both read `orders` without stealing each other's messages, and how to reset an offset after a bad side effect.
+
+*[Continue → Kafka Consumer Groups & Replay](/blog/kafka-consumer-groups-replay)*

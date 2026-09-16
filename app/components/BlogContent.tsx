@@ -78,6 +78,9 @@ import KafkaMessageTrace from "./KafkaMessageTrace";
 import KafkaPartitionKeys from "./KafkaPartitionKeys";
 import KafkaProduceConsumeLab from "./KafkaProduceConsumeLab";
 import KafkaLocalPitfalls from "./KafkaLocalPitfalls";
+import KafkaConsumerGroups from "./KafkaConsumerGroups";
+import KafkaReplayLab from "./KafkaReplayLab";
+import KafkaGroupMyths from "./KafkaGroupMyths";
 import SdUrlClarify from "./SdUrlClarify";
 import SdUrlCapacity from "./SdUrlCapacity";
 import SdUrlSequence from "./SdUrlSequence";
@@ -899,6 +902,27 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         elements.push(<KafkaLocalPitfalls key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-CONSUMER-GROUPS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaConsumerGroups key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-REPLAY-LAB]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaReplayLab key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-GROUP-MYTHS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaGroupMyths key={keyCounter++} />);
         continue;
       }
 

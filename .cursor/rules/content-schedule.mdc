@@ -70,8 +70,8 @@ Interactives to prefer: clarify quiz, capacity slider, architecture steps, bottl
 | Sep 3 | Thu | JavaScript #2 — functions & scope | JS (optional; skip OK) |
 | Sep 8 | Tue | Algorithms #8 — Binary Trees / BST | Algorithms ✅ |
 | Sep 10 | Thu | Kafka Post 3 — first producer & consumer | Kafka ✅ |
-| **Sep 15** | Tue | **Algorithms #9 — Heaps** | Algorithms ← next |
-| **Sep 17** | Thu | Kafka Post 4 — consumer groups & replay | Kafka |
+| **Sep 15** | Tue | **Algorithms #9 — Heaps** | Algorithms _(slipped — reschedule)_ |
+| **Sep 17** | Thu | Kafka Post 4 — consumer groups & replay | Kafka ✅ |
 | **Sep 22** | Tue | Algorithms #10 — Graphs BFS | Algorithms |
 | **Sep 24** | Thu | **System Design #1 — URL shortener** (pilot) | System Design |
 
@@ -119,10 +119,10 @@ Then steady **~2 / month / series** unless the user changes it.
 1. Why Kafka exists ✅  
 2. Core vocabulary ✅  
 3. First producer & consumer ✅  
-4. Consumer groups & replay (Sep 17)  
-5. vs HTTP / RabbitMQ / SQS (Oct 1)  
-6. Lag / rebalances / ops (Oct 13)  
-7. Idempotent consumers (Oct 27)  
+4. Consumer groups & replay (Sep 17) ✅ 
+5. vs HTTP / RabbitMQ / SQS (Oct 1) 
+6. Lag / rebalances / ops (Oct 13) 
+7. Idempotent consumers (Oct 27)
 
 ## Algorithms arc (reference)
 

@@ -26,6 +26,11 @@ export const KAFKA_SERIES = {
       shortTitle: "First Produce & Consume",
       topic: "Hands-on",
     },
+    {
+      slug: "kafka-consumer-groups-replay",
+      shortTitle: "Groups & Replay",
+      topic: "Hands-on",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 
