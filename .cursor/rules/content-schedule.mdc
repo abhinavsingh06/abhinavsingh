@@ -72,7 +72,7 @@ Interactives to prefer: clarify quiz, capacity slider, architecture steps, bottl
 | Sep 10 | Thu | Kafka Post 3 — first producer & consumer | Kafka ✅ |
 | **Sep 15** | Tue | **Algorithms #9 — Heaps** | Algorithms _(slipped — reschedule)_ |
 | **Sep 17** | Thu | Kafka Post 4 — consumer groups & replay | Kafka ✅ |
-| **Sep 22** | Tue | Algorithms #10 — Graphs BFS | Algorithms |
+| **Sep 22** | Tue | Algorithms #10 — Graphs BFS | Algorithms _(written — ship Tue Sep 29)_ |
 | **Sep 24** | Thu | **System Design #1 — URL shortener** (pilot) | System Design |
 
 Kafka Post 5 (vs HTTP / RabbitMQ / SQS) → **Oct 1** (comparison is deferrable vs Kafka 4 / Graphs / SD #1).
@@ -126,7 +126,7 @@ Then steady **~2 / month / series** unless the user changes it.
 
 ## Algorithms arc (reference)
 
-… → Stacks/Queues ✅ → Trees/BST ✅ → **Heaps (Sep 15)** → Graphs BFS (Sep 22) → Graphs DFS (Oct 8) → DP intro (Oct 20) → …
+… → Stacks/Queues ✅ → Trees/BST ✅ → **Heaps (Sep 15, slipped)** → Graphs BFS ✅ → Graphs DFS (Oct 8) → DP intro (Oct 20) → …
 
 ## Priority if overloaded
 

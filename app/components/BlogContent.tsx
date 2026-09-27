@@ -55,6 +55,12 @@ import BinaryTreePracticeLadder from "./BinaryTreePracticeLadder";
 import BinaryTreeComplexitySheet from "./BinaryTreeComplexitySheet";
 import BinaryTreePatternOverview from "./BinaryTreePatternOverview";
 import BinaryTreeVsArrays from "./BinaryTreeVsArrays";
+import GraphBfsAnimation from "./GraphBfsAnimation";
+import GraphBfsPatternOverview from "./GraphBfsPatternOverview";
+import GraphBfsPracticeLadder from "./GraphBfsPracticeLadder";
+import GraphBfsQuickRef from "./GraphBfsQuickRef";
+import GraphBfsComplexitySheet from "./GraphBfsComplexitySheet";
+import GraphBfsVsDfs from "./GraphBfsVsDfs";
 import GoOriginTimeline from "./GoOriginTimeline";
 import GoOmittedFeatures from "./GoOmittedFeatures";
 import GoVsCppSheet from "./GoVsCppSheet";
@@ -739,6 +745,53 @@ export default function BlogContent({
           const preset = btMatch[1].trim();
           elements.push(
             <BinaryTreeAnimation key={keyCounter++} preset={preset} />
+          );
+        }
+        continue;
+      }
+
+      if (trimmed === "[GRAPH-BFS-PATTERNS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GraphBfsPatternOverview key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GRAPH-BFS-PRACTICE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GraphBfsPracticeLadder key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GRAPH-BFS-QUICK-REF]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GraphBfsQuickRef key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GRAPH-BFS-COMPLEXITY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GraphBfsComplexitySheet key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[GRAPH-BFS-VS-DFS]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GraphBfsVsDfs key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed.startsWith("[GRAPH-BFS:")) {
+        flushParagraph();
+        flushList();
+        const gMatch = trimmed.match(/\[GRAPH-BFS:(.+?)\]/);
+        if (gMatch) {
+          elements.push(
+            <GraphBfsAnimation key={keyCounter++} preset={gMatch[1].trim()} />
           );
         }
         continue;

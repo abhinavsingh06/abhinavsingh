@@ -370,4 +370,6 @@ No need to build full parent paths when the ordering holds.
 5. Validate BST with **(lo, hi)** bounds or a strictly increasing inorder pass.
 6. LCA in a BST is a single walk: diverge left/right until the split node.
 
-Next in the series: **heaps** — priority queues built on complete binary trees, where parent–child order replaces the full BST invariant.
+Next in the series: **graphs BFS** — shortest hops on a graph or grid, using the same queue as level-order.
+
+*[Continue → Graphs BFS](/blog/graphs-bfs-technique)*

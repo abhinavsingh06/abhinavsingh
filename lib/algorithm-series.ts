@@ -52,6 +52,11 @@ export const ALGORITHM_SERIES = {
       shortTitle: "Binary Trees",
       topic: "Trees",
     },
+    {
+      slug: "graphs-bfs-technique",
+      shortTitle: "Graphs BFS",
+      topic: "Graphs",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 
