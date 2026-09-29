@@ -25,15 +25,15 @@ export default function GraphBfsQuickRef() {
       <div className="border-b border-[var(--line)] px-4 py-4 sm:px-6">
         <p className="text-sm text-[var(--muted)]">Pattern picker</p>
       </div>
-      <ol className="divide-y divide-[var(--line)]">
+      <div className="divide-y divide-[var(--line)]">
         {STEPS.map((s, i) => (
-          <li key={s.q} className="px-4 py-4 sm:px-6">
+          <div key={s.q} className="px-4 py-4 sm:px-6">
             <p className="font-mono-xs text-[var(--accent)]">{i + 1}</p>
             <p className="mt-1 text-[15px] text-[var(--fg)]">{s.q}</p>
             <p className="mt-2 text-sm leading-relaxed text-[var(--fg-2)]">{s.a}</p>
-          </li>
+          </div>
         ))}
-      </ol>
+      </div>
     </div>
   );
 }

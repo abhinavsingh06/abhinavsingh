@@ -246,4 +246,4 @@ Consumer groups turn one durable log into many independent readers — or into a
 
 Replay is not “please send it again.” It is “I moved my bookmark; give me those offsets again.”
 
-Next: **Kafka vs HTTP / RabbitMQ / SQS** — when the durable log is the right tool, and when a queue or a plain POST is enough.
+Next: [the deploy paused inventory](/blog/kafka-lag-rebalance) — the group rebalances, checkout keeps publishing, and lag is the pile of orders nobody has read yet.

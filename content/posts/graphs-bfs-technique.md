@@ -1,28 +1,34 @@
 ---
-title: Graphs BFS — Shortest Hops, Queues, and Grids
-excerpt: Breadth-first search on graphs and grids — visited set, unweighted shortest path, and multi-source BFS, with step-through animations.
+title: DFS Found a Path. It Was the Long One.
+excerpt: Inventory’s route to shipping is three hops. Notify’s is two. The search that dives deep still says it found shipping — and hands you the slow path.
 date: 2026-09-29
 category: Algorithms
 featured: true
 ---
 
-An order has to reach shipping. Two routes exist: Order → Notify → Shipping, or Order → Inventory → Packing → Shipping. You want the **fewest hops**, not the first path a depth-first walk happens to find.
+An order has to reach shipping. Two routes exist.
 
-That is **breadth-first search**. A queue expands one distance at a time. The first time you touch a node, you already have a shortest path in an unweighted graph.
+Order → Inventory → Packing → Shipping. Three hops.
 
-This continues after [Binary Trees](/blog/binary-trees-technique) — level-order on a tree is BFS with no extra edges. On a graph, the same queue works, plus a **visited** set so cycles do not loop forever. [Stacks & Queues](/blog/stacks-queues-technique) is the queue.
+Order → Notify → Shipping. Two hops.
 
-> **BFS visits by distance. The first time you reach a node, that distance is minimal — if every edge costs 1.**
+A depth-first walk can take the long route, arrive, and stop. It found a path. It did not find the **fewest hops**. That is the bug hiding inside “I reached the node, so I’m done.”
 
-[POLL:Where do you want BFS to click?|Shortest path on a graph|Grid / matrix problems|Multi-source (rotting, nearest 0)]
+Step it. The short path lights up the first time Shipping is touched.
 
-## Core patterns
+[GRAPH-BFS:services]
 
-[GRAPH-BFS-PATTERNS]
+Notify wins. The long route is still valid. It is just late. The search that expands **one hop at a time** cannot reach Shipping before every closer node is already done. That search is breadth-first search — a queue, plus a visited set so a cycle cannot enqueue the same node forever.
 
-## The graph
+> **The first time you reach a node, the distance is minimal — if every edge costs 1.**
 
-Store an **adjacency list**: each node maps to its neighbors.
+This sits after [Binary Trees](/blog/binary-trees-technique), where level-order was the same queue on a tree with no extra edges, and after [Stacks & Queues](/blog/stacks-queues-technique).
+
+[POLL:Which path would you have shipped?|The first path I found|The one with fewer hops|I would have counted both]
+
+## The one line that keeps it correct
+
+Mark a node **when you enqueue it**, not when you dequeue it. Wait until dequeue and the same neighbor sits in the queue twice. The hop count lies, and the run stops being O(V + E).
 
 ```text
 order      → inventory, notify
@@ -31,15 +37,9 @@ notify     → shipping
 packing    → shipping
 ```
 
-Undirected edges are stored both ways. A tree is a graph that happens to have no cycles and one parent each. BFS does not care — the visited set is what keeps a cycle from enqueueing the same node forever.
+## What else uses the same queue
 
-## Walk it
-
-Start at Order. Watch the queue, the distance labels, and which path lights up when Shipping is first reached.
-
-[GRAPH-BFS:services]
-
-Notify wins. Inventory’s route is longer. DFS might have walked the long way first and still been “correct” about reachability — wrong about **fewest hops**.
+[GRAPH-BFS-PATTERNS]
 
 ## The template
 
@@ -287,11 +287,8 @@ Space is the queue plus the visited set — worst case every node. On a grid tha
 
 ## Takeaways
 
-1. BFS = **queue + visited**. Expand in order of increasing distance.
-2. Mark visited **when you enqueue**.
-3. On an unweighted graph or grid, the first visit is a **shortest path**.
-4. Grids are graphs with implicit 4-direction edges. Walls are missing nodes.
-5. Multi-source BFS seeds the queue with every distance-0 node in one pass.
-6. Weights that are not all 1 break plain BFS — switch algorithms instead of forcing the queue.
+The long path was real. It was the wrong one to ship. Expand one hop at a time, mark on enqueue, and stop trusting “I found the node” when the question was “how soon.”
 
-Next in the series: **graphs DFS** — cycles, components, and topological order, when diving deep beats expanding by level.
+Weights that are not all 1 break this. A cheap edge hiding behind a long chain of 1s needs Dijkstra, not a louder queue.
+
+Next: the failure DFS is for — a cycle that keeps the same order in flight, so diving deep is the point.

@@ -87,6 +87,7 @@ import KafkaLocalPitfalls from "./KafkaLocalPitfalls";
 import KafkaConsumerGroups from "./KafkaConsumerGroups";
 import KafkaReplayLab from "./KafkaReplayLab";
 import KafkaGroupMyths from "./KafkaGroupMyths";
+import KafkaLagStory from "./KafkaLagStory";
 import SdUrlClarify from "./SdUrlClarify";
 import SdUrlCapacity from "./SdUrlCapacity";
 import SdUrlSequence from "./SdUrlSequence";
@@ -976,6 +977,13 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         elements.push(<KafkaGroupMyths key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-LAG-STORY]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaLagStory key={keyCounter++} />);
         continue;
       }
 

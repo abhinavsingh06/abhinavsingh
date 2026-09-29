@@ -44,10 +44,25 @@ Homepage **Start here** stays **Kafka** until System Design has **3+** published
 
 ## Writing voice (all series)
 
-- Problem-first opening; interactive early when it teaches
+- **One scar per post.** The title is the bad outcome (the long path, the paused deploy, the email that went out twice). The technique shows up after the reader wants the fix.
+- Problem-first opening; the interactive is the proof, and it comes before the template
 - One clear insight per section — avoid repeating the same takeaway 3–4 times (“Remember this…” + sticky × N + take-home dump)
 - **Do not** label sections “for beginners” / “for experienced readers” — weave depth into the main flow
-- LinkedIn: problem hook, ~3 bullets, one deep link, one question — no “Post N of series” framing unless useful
+- Reference material (pattern tables, practice ladders, three-language listings) stays on the page, below the scar. It is not the headline.
+
+## What gets a LinkedIn post
+
+Consumer groups & replay is the bar (**1,011 impressions**). It opened on a fight: two services need the same event, a queue lets one win, a bad reservation is fixed by moving a bookmark.
+
+Guides that read as chapters (vocabulary, Docker lab, “complete guide,” canonical “design a URL shortener”) stay on the site and do not get a syllabus caption.
+
+LinkedIn, when a post ships:
+
+- Same evening as the blog, ~8:00–8:30 PM IST inside the 7:30–9:30 window
+- First two lines are the scar, not the chapter name
+- ~3 bullets, one URL, one question
+- No “Post N of series”
+- Post Inspector on new URLs, then reply to comments ~1h
 
 ### System Design post template
 
@@ -72,72 +87,76 @@ Interactives to prefer: clarify quiz, capacity slider, architecture steps, bottl
 | Sep 10 | Thu | Kafka Post 3 — first producer & consumer | Kafka ✅ |
 | **Sep 15** | Tue | **Algorithms #9 — Heaps** | Algorithms _(slipped — reschedule)_ |
 | **Sep 17** | Thu | Kafka Post 4 — consumer groups & replay | Kafka ✅ |
-| **Sep 22** | Tue | Algorithms #10 — Graphs BFS | Algorithms _(written — ship Tue Sep 29)_ |
-| **Sep 24** | Thu | **System Design #1 — URL shortener** (pilot) | System Design |
+| **Sep 22** | Tue | Algorithms #10 — Graphs BFS | Algorithms _(rewritten Sep 29 as a scar)_ |
+| **Sep 24** | Thu | **System Design #1 — URL shortener** | System Design ✅ draft |
+| **Sep 29** | Tue | **DFS found the long path** (Graphs BFS) | Algorithms ✅ rewritten |
+| **Sep 30** | Wed | LinkedIn only for the BFS scar, 8:30–9:30 AM IST | One-time morning. Not a new blog day. |
 
-Kafka Post 5 (vs HTTP / RabbitMQ / SQS) → **Oct 1** (comparison is deferrable vs Kafka 4 / Graphs / SD #1).
+## From tomorrow — Thursday 1 Oct
 
-## October 2026
+Tue/Thu evenings only. Public title is the hook. Series name stays in the file and the series nav.
 
-| Date | Day | Blog | Series |
-|------|-----|------|--------|
-| Oct 1 | Thu | Kafka Post 5 — vs HTTP / RabbitMQ / SQS | Kafka |
-| Oct 6 | Tue | System Design #2 — Pastebin / file link | System Design |
-| Oct 8 | Thu | Algorithms #11 — Graphs DFS | Algorithms |
-| Oct 13 | Tue | Kafka Post 6 — lag, rebalances, ops basics | Kafka |
-| Oct 15 | Thu | System Design #3 — Rate limiter | System Design |
-| Oct 20 | Tue | Algorithms #12 — DP intro (or heaps follow-up) | Algorithms |
-| Oct 22 | Thu | System Design #4 — Notification system *(→ Kafka)* | System Design |
-| Oct 27 | Tue | Kafka Post 7 — idempotent consumers / exactly-once framing | Kafka |
-| Oct 29 | Thu | System Design #5 — News feed | System Design |
+| Date | Day | Public hook | Under the hood | LinkedIn |
+|------|-----|-------------|----------------|----------|
+| Oct 1 | Thu | The deploy paused inventory. Orders piled up. | Kafka lag & rebalances ✅ | Yes |
+| Oct 6 | Tue | One cycle, and the same order never finished. | Graphs DFS | Yes — scar only |
+| Oct 8 | Thu | The replay reserved the stock twice. | Idempotent consumers | Yes — sequel to the 1,011 post |
+| Oct 13 | Tue | The urgent shipment waited behind ordinary orders. | Heaps (Sep 15 slip) | Yes — scar only |
+| Oct 15 | Thu | The shipping email went out twice. | Notifications *(→ Kafka)* | Yes |
+| Oct 20 | Tue | The script that burned checkout. | Rate limiter | Yes |
+| Oct 22 | Thu | You deleted the file. The link still worked. | Pastebin | Yes |
+| Oct 27 | Tue | Checkout waited on the email call. | Kafka vs HTTP / RabbitMQ / SQS | Yes — only in this frame |
+| Oct 29 | Thu | The feed still showed a cancelled order. | News feed | Yes |
+
+Comparison post is **Oct 27**, not Oct 1. A survey title does not get a LinkedIn slot.
 
 ## November 2026 (start)
 
-| Date | Day | Blog | Series |
-|------|-----|------|--------|
-| Nov 3 | Tue | System Design #6 — Chat / presence | System Design |
-| Nov 5 | Thu | Algorithms — continue | Algorithms |
-| Nov 10 | Tue | Kafka — next ops/design topic | Kafka |
-| Nov 12 | Thu | System Design #7+ (autocomplete, ticket booking, …) | System Design |
+| Date | Day | Public hook | Under the hood |
+|------|-----|-------------|----------------|
+| Nov 3 | Tue | Someone typed, and the other side never saw it. | Chat / presence |
+| Nov 5 | Thu | Recomputing the same order subtotal on every line. | DP intro |
+| Nov 10 | Tue | Kafka ops follow-up only if a fresh scar exists | Kafka |
+| Nov 12 | Thu | Next SD scar (autocomplete, ticket booking, …) | System Design |
 
-Then steady **~2 / month / series** unless the user changes it.
+Then steady **~2 / month / series** unless the user changes it. If a week is overloaded, drop the lightest **reference** piece. Do not drop a scar that continues Kafka groups/replay.
 
 ## System Design problem backlog
 
-| # | Problem | Ship |
-|---|---------|------|
-| 1 | URL shortener | Sep 24 |
-| 2 | Pastebin / file link | Oct 6 |
-| 3 | Rate limiter | Oct 15 |
-| 4 | Notification system | Oct 22 |
-| 5 | News feed | Oct 29 |
-| 6 | Chat / presence | Nov 3 |
-| 7+ | Autocomplete, ticket booking, ride-hailing, … | After Nov |
+| # | Scar | Ship |
+|---|------|------|
+| 1 | One link goes viral (URL shortener) | Sep 24 |
+| 2 | The shipping email went out twice | Oct 15 |
+| 3 | The script that burned checkout (rate limiter) | Oct 20 |
+| 4 | Deleted file, live link (pastebin) | Oct 22 |
+| 5 | Feed showed a cancelled order | Oct 29 |
+| 6 | The other side never saw the message (chat) | Nov 3 |
+| 7+ | Autocomplete, ticket booking, ride-hailing | After Nov |
 
 ## Kafka arc (reference)
 
 1. Why Kafka exists ✅  
 2. Core vocabulary ✅  
 3. First producer & consumer ✅  
-4. Consumer groups & replay (Sep 17) ✅ 
-5. vs HTTP / RabbitMQ / SQS (Oct 1) 
-6. Lag / rebalances / ops (Oct 13) 
-7. Idempotent consumers (Oct 27)
+4. Consumer groups & replay (Sep 17) ✅ — **1,011 impressions**  
+5. Lag / rebalances (Oct 1) — pulled forward  
+6. Idempotent consumers (Oct 8) — pulled forward  
+7. vs HTTP / RabbitMQ / SQS (Oct 27) — deferred, scar-framed  
 
 ## Algorithms arc (reference)
 
-… → Stacks/Queues ✅ → Trees/BST ✅ → **Heaps (Sep 15, slipped)** → Graphs BFS ✅ → Graphs DFS (Oct 8) → DP intro (Oct 20) → …
+… → Stacks/Queues ✅ → Trees/BST ✅ → Graphs BFS ✅ (Sep 29, scar title) → Graphs DFS (Oct 6) → **Heaps (Oct 13, slipped from Sep 15)** → DP intro (Nov 5) → …
 
 ## Priority if overloaded
 
-1. Kafka momentum (Start here)
-2. Algorithm guides
-3. System Design #1 template, then steady SD
-4. Defer JS, Kafka comparison, or later SD problems before Heaps / Kafka 4 / Graphs / SD #1
+1. The next Kafka scar (lag, then double-processing)
+2. SD scars that continue that story (email went out twice)
+3. Algorithm posts only with a scar title — never a “complete guide” caption
+4. Defer the Kafka comparison, pastebin, and JS before lag / idempotent consumers / the notification scar
 
 ## LinkedIn
 
-- Same evening as blog
-- Problem-first; one URL; one question
-- Post Inspector on new URLs
-- SD posts: sell the **problem** (“Design a URL shortener…”), not “new series”
+- Scar in the first two lines. Technique name is optional and never the title.
+- One URL. One question. No series numbering.
+- Post Inspector on new URLs.
+- If the evening window is missed, the next morning 8:30–9:30 AM IST is allowed **once** for that post. Then return to Tue/Thu evenings.
