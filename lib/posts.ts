@@ -68,20 +68,40 @@ function shouldExcludeFile(filename: string): boolean {
   );
 }
 
+/** Slug stays the filename. Posts may live in series folders under content/posts. */
+function listPostFiles(dir: string): string[] {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const files: string[] = [];
+
+  for (const entry of entries) {
+    if (shouldExcludeFile(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...listPostFiles(full));
+    } else if (entry.name.endsWith(".md")) {
+      files.push(full);
+    }
+  }
+
+  return files;
+}
+
+function findPostFile(slug: string): string | undefined {
+  return listPostFiles(postsDirectory).find(
+    (file) => path.basename(file, ".md") === slug
+  );
+}
+
 function isPublished(post: BlogPost): boolean {
   return !post.draft;
 }
 
 export function getAllPosts(): BlogPost[] {
   try {
-    const filenames = fs.readdirSync(postsDirectory);
-    const posts = filenames
-      .filter(
-        (filename) => filename.endsWith(".md") && !shouldExcludeFile(filename)
-      )
-      .map((filename) => {
+    const posts = listPostFiles(postsDirectory)
+      .map((filePath) => {
+        const filename = path.basename(filePath);
         try {
-          const filePath = path.join(postsDirectory, filename);
           const fileContent = fs.readFileSync(filePath, "utf8");
           return parseMarkdownFile(fileContent, filename);
         } catch (error) {
@@ -108,8 +128,8 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
       return undefined;
     }
 
-    const filePath = path.join(postsDirectory, filename);
-    if (!fs.existsSync(filePath)) {
+    const filePath = findPostFile(slug);
+    if (!filePath) {
       return undefined;
     }
     const fileContent = fs.readFileSync(filePath, "utf8");

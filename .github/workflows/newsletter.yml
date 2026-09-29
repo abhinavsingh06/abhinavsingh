@@ -38,12 +38,16 @@ jobs:
           if [ "${{ github.event_name }}" = "push" ]; then
             before="${{ github.event.before }}"
             if [ -n "$before" ] && [ "$before" != "0000000000000000000000000000000000000000" ]; then
-              files=$(git diff --name-only --diff-filter=AM "$before" "${{ github.sha }}" -- 'content/posts/*.md' || true)
+              files=$(git diff --name-only --diff-filter=AM "$before" "${{ github.sha }}" -- content/posts || true)
             else
-              files=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- 'content/posts/*.md' || true)
+              files=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- content/posts || true)
             fi
 
-            slugs=$(printf '%s\n' "$files" | sed -n 's|^content/posts/\(.*\)\.md$|\1|p' | grep -v '^README$' || true)
+            slugs=$(printf '%s\n' "$files" | while IFS= read -r f; do
+              case "$f" in
+                *.md) basename "$f" .md ;;
+              esac
+            done | grep -v '^README$' || true)
             echo "New/updated posts: ${slugs:-none}"
           fi
 

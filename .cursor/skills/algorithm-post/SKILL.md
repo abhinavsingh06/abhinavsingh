@@ -15,7 +15,7 @@ Follow this checklist when adding a new guide to the **Algorithms** series.
 
 ```
 - [ ] 1. Register in lib/algorithm-series.ts
-- [ ] 2. Create content/posts/{slug}.md
+- [ ] 2. Create content/posts/algorithms/{slug}.md
 - [ ] 3. Build interactive components (if new technique)
 - [ ] 4. Wire placeholders in app/components/BlogContent.tsx
 - [ ] 5. Cross-link prior series posts in intro
@@ -48,7 +48,7 @@ Append to `posts` in `lib/algorithm-series.ts`:
 
 ## 2. Create the markdown post
 
-File: `content/posts/{slug}.md`
+File: `content/posts/algorithms/{slug}.md`
 
 ```markdown
 ---
@@ -181,7 +181,7 @@ If extending hashing/two-pointers/etc. instead of a new technique:
 | Area | Path |
 |------|------|
 | Series config | `lib/algorithm-series.ts` |
-| Post content | `content/posts/*.md` |
+| Post content | `content/posts/algorithms/*.md` |
 | Placeholder router | `app/components/BlogContent.tsx` |
 | Series banner / read-next | `app/components/AlgorithmSeriesBanner.tsx`, `AlgorithmSeriesReadNext.tsx` |
 | Post page | `app/blog/[slug]/page.tsx` |

@@ -18,21 +18,21 @@ Follow this schedule and these conventions unless the user explicitly changes th
 
 ## If a slot slips
 
-| Missed | Move to |
-|--------|---------|
-| Tuesday | Following Thursday (not Friday) |
-| Thursday | Following Tuesday |
+| Missed     | Move to                                                 |
+| ---------- | ------------------------------------------------------- |
+| Tuesday    | Following Thursday (not Friday)                         |
+| Thursday   | Following Tuesday                                       |
 | Whole week | Drop the lightest post; never skip series anchors below |
 
 **Anchors (do not drop):** Kafka foundation/hands-on, Trees-style algorithm launches, System Design #1 (URL shortener template).
 
 ## Three series
 
-| Series | Shape | ~Per month |
-|--------|--------|------------|
-| **Algorithms** | Interactive pattern guides (animations, practice ladder) | 2 |
-| **Kafka** | Progressive arc — why → vocab → hands-on → groups → compare → ops | 2 |
-| **System Design** | **One problem per post** — not topic dumps | 2 |
+| Series            | Shape                                                             | ~Per month |
+| ----------------- | ----------------------------------------------------------------- | ---------- |
+| **Algorithms**    | Interactive pattern guides (animations, practice ladder)          | 2          |
+| **Kafka**         | Progressive arc — why → vocab → hands-on → groups → compare → ops | 2          |
+| **System Design** | **One problem per post** — not topic dumps                        | 2          |
 
 Homepage **Start here** stays **Kafka** until System Design has **3+** published posts. Then reconsider.
 
@@ -79,69 +79,69 @@ Interactives to prefer: clarify quiz, capacity slider, architecture steps, bottl
 
 ## September 2026
 
-| Date | Day | Blog | Series |
-|------|-----|------|--------|
-| Sep 1 | Tue | Kafka Post 2 — vocabulary | Kafka ✅ |
-| Sep 3 | Thu | JavaScript #2 — functions & scope | JS (optional; skip OK) |
-| Sep 8 | Tue | Algorithms #8 — Binary Trees / BST | Algorithms ✅ |
-| Sep 10 | Thu | Kafka Post 3 — first producer & consumer | Kafka ✅ |
-| **Sep 15** | Tue | **Algorithms #9 — Heaps** | Algorithms _(slipped — reschedule)_ |
-| **Sep 17** | Thu | Kafka Post 4 — consumer groups & replay | Kafka ✅ |
-| **Sep 22** | Tue | Algorithms #10 — Graphs BFS | Algorithms _(rewritten Sep 29 as a scar)_ |
-| **Sep 24** | Thu | **System Design #1 — URL shortener** | System Design ✅ draft |
-| **Sep 29** | Tue | **DFS found the long path** (Graphs BFS) | Algorithms ✅ rewritten |
-| **Sep 30** | Wed | LinkedIn only for the BFS scar, 8:30–9:30 AM IST | One-time morning. Not a new blog day. |
+| Date       | Day | Blog                                             | Series                                    |
+| ---------- | --- | ------------------------------------------------ | ----------------------------------------- |
+| Sep 1      | Tue | Kafka Post 2 — vocabulary                        | Kafka ✅                                  |
+| Sep 3      | Thu | JavaScript #2 — functions & scope                | JS (optional; skip OK)                    |
+| Sep 8      | Tue | Algorithms #8 — Binary Trees / BST               | Algorithms ✅                             |
+| Sep 10     | Thu | Kafka Post 3 — first producer & consumer         | Kafka ✅                                  |
+| **Sep 15** | Tue | **Algorithms #9 — Heaps**                        | Algorithms _(slipped — reschedule)_       |
+| **Sep 17** | Thu | Kafka Post 4 — consumer groups & replay          | Kafka ✅                                  |
+| **Sep 22** | Tue | Algorithms #10 — Graphs BFS                      | Algorithms _(rewritten Sep 29 as a scar)_ |
+| **Sep 24** | Thu | **System Design #1 — URL shortener**             | System Design ✅ draft                    |
+| **Sep 29** | Tue | **DFS found the long path** (Graphs BFS)         | Algorithms ✅ rewritten                   |
+| **Sep 30** | Wed | LinkedIn only for the BFS scar, 8:30–9:30 AM IST | One-time morning. Not a new blog day.     |
 
 ## From tomorrow — Thursday 1 Oct
 
 Tue/Thu evenings only. Public title is the hook. Series name stays in the file and the series nav.
 
-| Date | Day | Public hook | Under the hood | LinkedIn |
-|------|-----|-------------|----------------|----------|
-| Oct 1 | Thu | The deploy paused inventory. Orders piled up. | Kafka lag & rebalances ✅ | Yes |
-| Oct 6 | Tue | One cycle, and the same order never finished. | Graphs DFS | Yes — scar only |
-| Oct 8 | Thu | The replay reserved the stock twice. | Idempotent consumers | Yes — sequel to the 1,011 post |
-| Oct 13 | Tue | The urgent shipment waited behind ordinary orders. | Heaps (Sep 15 slip) | Yes — scar only |
-| Oct 15 | Thu | The shipping email went out twice. | Notifications *(→ Kafka)* | Yes |
-| Oct 20 | Tue | The script that burned checkout. | Rate limiter | Yes |
-| Oct 22 | Thu | You deleted the file. The link still worked. | Pastebin | Yes |
-| Oct 27 | Tue | Checkout waited on the email call. | Kafka vs HTTP / RabbitMQ / SQS | Yes — only in this frame |
-| Oct 29 | Thu | The feed still showed a cancelled order. | News feed | Yes |
+| Date   | Day | Public hook                                        | Under the hood                 | LinkedIn                       |
+| ------ | --- | -------------------------------------------------- | ------------------------------ | ------------------------------ |
+| Oct 1  | Thu | The deploy paused inventory. Orders piled up.      | Kafka lag & rebalances ✅      | Yes                            |
+| Oct 6  | Tue | One cycle, and the same order never finished.      | Graphs DFS                     | Yes — scar only                |
+| Oct 8  | Thu | The replay reserved the stock twice.               | Idempotent consumers           | Yes — sequel to the 1,011 post |
+| Oct 13 | Tue | The urgent shipment waited behind ordinary orders. | Heaps (Sep 15 slip)            | Yes — scar only                |
+| Oct 15 | Thu | The shipping email went out twice.                 | Notifications _(→ Kafka)_      | Yes                            |
+| Oct 20 | Tue | The script that burned checkout.                   | Rate limiter                   | Yes                            |
+| Oct 22 | Thu | You deleted the file. The link still worked.       | Pastebin                       | Yes                            |
+| Oct 27 | Tue | Checkout waited on the email call.                 | Kafka vs HTTP / RabbitMQ / SQS | Yes — only in this frame       |
+| Oct 29 | Thu | The feed still showed a cancelled order.           | News feed                      | Yes                            |
 
 Comparison post is **Oct 27**, not Oct 1. A survey title does not get a LinkedIn slot.
 
 ## November 2026 (start)
 
-| Date | Day | Public hook | Under the hood |
-|------|-----|-------------|----------------|
-| Nov 3 | Tue | Someone typed, and the other side never saw it. | Chat / presence |
-| Nov 5 | Thu | Recomputing the same order subtotal on every line. | DP intro |
-| Nov 10 | Tue | Kafka ops follow-up only if a fresh scar exists | Kafka |
-| Nov 12 | Thu | Next SD scar (autocomplete, ticket booking, …) | System Design |
+| Date   | Day | Public hook                                        | Under the hood  |
+| ------ | --- | -------------------------------------------------- | --------------- |
+| Nov 3  | Tue | Someone typed, and the other side never saw it.    | Chat / presence |
+| Nov 5  | Thu | Recomputing the same order subtotal on every line. | DP intro        |
+| Nov 10 | Tue | Kafka ops follow-up only if a fresh scar exists    | Kafka           |
+| Nov 12 | Thu | Next SD scar (autocomplete, ticket booking, …)     | System Design   |
 
 Then steady **~2 / month / series** unless the user changes it. If a week is overloaded, drop the lightest **reference** piece. Do not drop a scar that continues Kafka groups/replay.
 
 ## System Design problem backlog
 
-| # | Scar | Ship |
-|---|------|------|
-| 1 | One link goes viral (URL shortener) | Sep 24 |
-| 2 | The shipping email went out twice | Oct 15 |
-| 3 | The script that burned checkout (rate limiter) | Oct 20 |
-| 4 | Deleted file, live link (pastebin) | Oct 22 |
-| 5 | Feed showed a cancelled order | Oct 29 |
-| 6 | The other side never saw the message (chat) | Nov 3 |
-| 7+ | Autocomplete, ticket booking, ride-hailing | After Nov |
+| #   | Scar                                           | Ship      |
+| --- | ---------------------------------------------- | --------- |
+| 1   | One link goes viral (URL shortener)            | Sep 24    |
+| 2   | The shipping email went out twice              | Oct 15    |
+| 3   | The script that burned checkout (rate limiter) | Oct 20    |
+| 4   | Deleted file, live link (pastebin)             | Oct 22    |
+| 5   | Feed showed a cancelled order                  | Oct 29    |
+| 6   | The other side never saw the message (chat)    | Nov 3     |
+| 7+  | Autocomplete, ticket booking, ride-hailing     | After Nov |
 
 ## Kafka arc (reference)
 
-1. Why Kafka exists ✅  
-2. Core vocabulary ✅  
-3. First producer & consumer ✅  
-4. Consumer groups & replay (Sep 17) ✅ — **1,011 impressions**  
-5. Lag / rebalances (Oct 1) — pulled forward  
-6. Idempotent consumers (Oct 8) — pulled forward  
-7. vs HTTP / RabbitMQ / SQS (Oct 27) — deferred, scar-framed  
+1. Why Kafka exists ✅
+2. Core vocabulary ✅
+3. First producer & consumer ✅
+4. Consumer groups & replay (Sep 17) ✅ — **1,011 impressions**
+5. Lag / rebalances (Oct 1) — pulled forward
+6. Idempotent consumers (Oct 8) — pulled forward
+7. vs HTTP / RabbitMQ / SQS (Oct 27) — deferred, scar-framed
 
 ## Algorithms arc (reference)
 

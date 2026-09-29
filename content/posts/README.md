@@ -4,8 +4,8 @@ This directory contains all blog posts in Markdown format.
 
 ## Adding a New Blog Post
 
-1. Create a new `.md` file in this directory
-2. Use the filename as the slug (e.g., `my-new-post.md` will have slug `my-new-post`)
+1. Create a new `.md` file in the series folder: `kafka/`, `algorithms/`, `system-design/`, `go/`, or `archive/`
+2. Use the filename as the slug (e.g., `kafka/my-new-post.md` still has slug `my-new-post`)
 3. Add frontmatter at the top of the file with the following format:
 
 ```markdown
