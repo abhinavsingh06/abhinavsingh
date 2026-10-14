@@ -76,4 +76,4 @@ That `await` sits inside the poll loop. `max.poll.interval.ms` is how long Kafka
 
 Email’s lag at zero does not mean inventory’s is. A replay you triggered on purpose also jumps lag — that is the bookmark you moved in the last post, not this deploy. Lag that sits still while checkout has stopped publishing is a quiet afternoon. Lag that rises while orders are still being placed is 14:07.
 
-Inventory will come back and read all 262. Some of those reserves will run twice. That is the next outage, and it starts the moment this pile drains.
+Inventory will come back and read all 262. Some of those reserves will run twice. That outage starts the moment this pile drains: [the same order, reserved twice](/blog/kafka-duplicate-reserve).

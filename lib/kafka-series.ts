@@ -36,6 +36,11 @@ export const KAFKA_SERIES = {
       shortTitle: "Lag & Rebalance",
       topic: "Operations",
     },
+    {
+      slug: "kafka-duplicate-reserve",
+      shortTitle: "Duplicate Reserve",
+      topic: "Correctness",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 

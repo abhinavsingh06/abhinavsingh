@@ -214,7 +214,7 @@ Then start the consumer again **without** inventing new produce traffic. You are
 
 **Retention matters.** If the segment aged out, replay cannot invent bytes back. Know your topic retention before you promise “we can always rebuild.”
 
-**Idempotency matters.** Replay re-delivers. Upsert by `orderId`, ignore duplicate emails, use an “already processed” store — something that makes a second pass safe. Exactly-once tooling exists; most teams win first with boring idempotent handlers (we go deep on that later in the series).
+**Idempotency matters.** Replay re-delivers. Upsert by `orderId`, ignore duplicate emails, use an “already processed” store — something that makes a second pass safe. Exactly-once tooling exists; most teams win first with boring idempotent handlers. That is [the duplicate reserve](/blog/kafka-duplicate-reserve).
 
 ## Rebalances in one paragraph
 

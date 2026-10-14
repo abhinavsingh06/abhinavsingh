@@ -88,6 +88,7 @@ import KafkaConsumerGroups from "./KafkaConsumerGroups";
 import KafkaReplayLab from "./KafkaReplayLab";
 import KafkaGroupMyths from "./KafkaGroupMyths";
 import KafkaLagStory from "./KafkaLagStory";
+import KafkaDuplicateReserve from "./KafkaDuplicateReserve";
 import SdUrlClarify from "./SdUrlClarify";
 import SdUrlCapacity from "./SdUrlCapacity";
 import SdUrlSequence from "./SdUrlSequence";
@@ -984,6 +985,13 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         elements.push(<KafkaLagStory key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[KAFKA-DUPLICATE-RESERVE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<KafkaDuplicateReserve key={keyCounter++} />);
         continue;
       }
 
