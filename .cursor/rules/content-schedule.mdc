@@ -99,10 +99,10 @@ Tue/Thu evenings only. Public title is the hook. Series name stays in the file a
 | Date   | Day | Public hook                                        | Under the hood                 | LinkedIn                       |
 | ------ | --- | -------------------------------------------------- | ------------------------------ | ------------------------------ |
 | Oct 1  | Thu | The deploy paused inventory. Orders piled up.      | Kafka lag & rebalances ✅      | Yes                            |
-| Oct 6  | Tue | One cycle, and the same order never finished.      | Graphs DFS                     | Yes — scar only                |
-| Oct 8  | Thu | The replay reserved the stock twice.               | Idempotent consumers           | Yes — sequel to the 1,011 post |
-| Oct 13 | Tue | The urgent shipment waited behind ordinary orders. | Heaps (Sep 15 slip)            | Yes — scar only                |
-| Oct 15 | Thu | The shipping email went out twice.                 | Notifications _(→ Kafka)_      | Yes                            |
+| Oct 6  | Tue | One cycle, and the same order never finished.      | Graphs DFS ✅                  | Yes — scar only                |
+| Oct 8  | Thu | The replay reserved the stock twice.               | Idempotent consumers ✅        | Yes — sequel to the 1,011 post |
+| Oct 13 | Tue | The urgent shipment waited behind ordinary orders. | Heaps ✅                       | Yes — scar only                |
+| Oct 15 | Thu | The shipping email went out twice.                 | Notifications ✅               | Yes                            |
 | Oct 20 | Tue | The script that burned checkout.                   | Rate limiter                   | Yes                            |
 | Oct 22 | Thu | You deleted the file. The link still worked.       | Pastebin                       | Yes                            |
 | Oct 27 | Tue | Checkout waited on the email call.                 | Kafka vs HTTP / RabbitMQ / SQS | Yes — only in this frame       |

@@ -291,4 +291,4 @@ The long path was real. It was the wrong one to ship. Expand one hop at a time, 
 
 Weights that are not all 1 break this. A cheap edge hiding behind a long chain of 1s needs Dijkstra, not a louder queue.
 
-Next: the failure DFS is for — a cycle that keeps the same order in flight, so diving deep is the point.
+Next: [one cycle, and the same order never finished](/blog/graphs-dfs-technique).

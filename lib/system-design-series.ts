@@ -16,6 +16,11 @@ export const SYSTEM_DESIGN_SERIES = {
       shortTitle: "URL Shortener",
       topic: "Storage & redirects",
     },
+    {
+      slug: "notifications-email-twice",
+      shortTitle: "Notifications",
+      topic: "Email",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 

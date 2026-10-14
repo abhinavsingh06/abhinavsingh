@@ -57,6 +57,16 @@ export const ALGORITHM_SERIES = {
       shortTitle: "Graphs BFS",
       topic: "Graphs",
     },
+    {
+      slug: "graphs-dfs-technique",
+      shortTitle: "Graphs DFS",
+      topic: "Graphs",
+    },
+    {
+      slug: "heaps-technique",
+      shortTitle: "Heaps",
+      topic: "Heaps",
+    },
   ] satisfies SeriesPostRef[],
 } as const;
 

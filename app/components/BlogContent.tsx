@@ -61,6 +61,8 @@ import GraphBfsPracticeLadder from "./GraphBfsPracticeLadder";
 import GraphBfsQuickRef from "./GraphBfsQuickRef";
 import GraphBfsComplexitySheet from "./GraphBfsComplexitySheet";
 import GraphBfsVsDfs from "./GraphBfsVsDfs";
+import GraphDfsCycle from "./GraphDfsCycle";
+import HeapUrgentShip from "./HeapUrgentShip";
 import GoOriginTimeline from "./GoOriginTimeline";
 import GoOmittedFeatures from "./GoOmittedFeatures";
 import GoVsCppSheet from "./GoVsCppSheet";
@@ -94,6 +96,7 @@ import SdUrlCapacity from "./SdUrlCapacity";
 import SdUrlSequence from "./SdUrlSequence";
 import SdUrlCodeGen from "./SdUrlCodeGen";
 import SdUrlPressure from "./SdUrlPressure";
+import SdEmailDedupe from "./SdEmailDedupe";
 
 interface Heading {
   id: string;
@@ -799,6 +802,20 @@ export default function BlogContent({
         continue;
       }
 
+      if (trimmed === "[GRAPH-DFS-CYCLE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<GraphDfsCycle key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[HEAP-URGENT-SHIP]") {
+        flushParagraph();
+        flushList();
+        elements.push(<HeapUrgentShip key={keyCounter++} />);
+        continue;
+      }
+
       if (trimmed === "[GO-ORIGIN-TIMELINE]") {
         flushParagraph();
         flushList();
@@ -1027,6 +1044,13 @@ export default function BlogContent({
         flushParagraph();
         flushList();
         elements.push(<SdUrlPressure key={keyCounter++} />);
+        continue;
+      }
+
+      if (trimmed === "[SD-EMAIL-DEDUPE]") {
+        flushParagraph();
+        flushList();
+        elements.push(<SdEmailDedupe key={keyCounter++} />);
         continue;
       }
 
